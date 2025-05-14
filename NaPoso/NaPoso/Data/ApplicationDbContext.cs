@@ -10,13 +10,11 @@ namespace NaPoso.Data
             : base(options)
         {
         }
-        public DbSet<Korisnik> Korisnik { get; set; }
         public DbSet<Recenzija> Recenzija { get; set; }
         public DbSet<Oglas> Oglas { get; set; }
         public DbSet<Obavijest> Obavijest { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Korisnik>().ToTable("Korisnik");
             modelBuilder.Entity<Recenzija>().ToTable("Recenzija");
             modelBuilder.Entity<Oglas>().ToTable("Oglas");
             modelBuilder.Entity<Obavijest>().ToTable("Obavijest");
