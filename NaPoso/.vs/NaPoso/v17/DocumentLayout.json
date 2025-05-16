@@ -7,12 +7,16 @@
       "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\models\\recenzija.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\models\\oglas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\models\\oglas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\models\\obavijest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\models\\obavijest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\models\\oglas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\models\\oglas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,30 +26,43 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "NaPoso\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T12:14:02.82Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Oglas.cs",
               "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\Oglas.cs",
               "RelativeDocumentMoniker": "NaPoso\\Models\\Oglas.cs",
               "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\Oglas.cs",
               "RelativeToolTip": "NaPoso\\Models\\Oglas.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-14T17:31:17.628Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Obavijest.cs",
               "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\Obavijest.cs",
               "RelativeDocumentMoniker": "NaPoso\\Models\\Obavijest.cs",
               "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\Obavijest.cs",
               "RelativeToolTip": "NaPoso\\Models\\Obavijest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-14T14:04:19.479Z",
               "EditorCaption": ""
@@ -58,7 +75,7 @@
               "RelativeDocumentMoniker": "NaPoso\\Models\\Recenzija.cs",
               "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\Recenzija.cs",
               "RelativeToolTip": "NaPoso\\Models\\Recenzija.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAOAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-14T17:31:18.294Z",
               "EditorCaption": ""

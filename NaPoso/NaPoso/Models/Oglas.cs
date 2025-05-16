@@ -4,7 +4,7 @@ namespace NaPoso.Models
 {
     public class Oglas
     {
-        public int Idoglasa { get; set; }
+        public int Id { get; set; }
         public int KlijentId { get; set; }
         public int RadnikId { get; set; }
         public string Opis { get; set; }
