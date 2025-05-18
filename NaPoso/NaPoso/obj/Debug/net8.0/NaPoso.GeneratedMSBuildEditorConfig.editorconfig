@@ -1,11 +1,19 @@
 is_global = true
 build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = NaPoso
 build_property.RootNamespace = NaPoso
@@ -30,6 +38,66 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Obavijest/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2JhdmlqZXN0XENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Obavijest/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2JhdmlqZXN0XERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Obavijest/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2JhdmlqZXN0XERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Obavijest/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2JhdmlqZXN0XEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Obavijest/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2JhdmlqZXN0XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Recenzija/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjZW56aWphXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Recenzija/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjZW56aWphXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Recenzija/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjZW56aWphXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Recenzija/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjZW56aWphXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Recenzija/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVjZW56aWphXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Korisnik/Documents/GitHub/Grupa5-Tim4/NaPoso/NaPoso/Views/Shared/Error.cshtml]
