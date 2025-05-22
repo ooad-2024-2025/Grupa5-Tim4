@@ -30,22 +30,22 @@ namespace NaPoso.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        //private readonly IEmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
         public List<SelectListItem> RoleList { get; set; }
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger
-            /*IEmailSender emailSender*/)
+            ILogger<RegisterModel> logger,
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-            //_emailSender = emailSender;
+            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -105,9 +105,6 @@ namespace NaPoso.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
            
         }
-
-        
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             RoleList = new List<SelectListItem>
@@ -121,6 +118,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            Console.WriteLine("OnPostAsync called");
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
@@ -136,7 +134,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
                     await _userManager.AddToRoleAsync(user, Input.Role); 
                     _logger.LogInformation("User created a new account with password.");
 
-                    /*var userId = await _userManager.GetUserIdAsync(user);
+                    var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
@@ -156,7 +154,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
-                    }*/
+                    }
                 }
                 foreach (var error in result.Errors)
                 {

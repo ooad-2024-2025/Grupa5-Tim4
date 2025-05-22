@@ -2,14 +2,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using NaPoso.Data;
+using NaPoso.Services; 
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -23,13 +25,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-
-var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
+async Task CreateRoles(IServiceProvider serviceProvider)
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     string[] roles = new[] { "Klijent", "Radnik" };
     foreach (var role in roles)
     {
@@ -39,6 +37,16 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
+
+var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await CreateRoles(services);
+}
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -55,7 +63,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
