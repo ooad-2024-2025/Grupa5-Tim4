@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NaPoso.Data;
 using NaPoso.Models;
+using SQLitePCL;
+using static NaPoso.Enums.Enums;
 
 namespace NaPoso.Controllers
 {
@@ -49,15 +51,34 @@ namespace NaPoso.Controllers
             return View();
         }
 
-        // POST: Oglas/Create
+        //POST: Oglas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,KlijentId,RadnikId,Opis,Lokacija,TipPosla,CijenaPosla,Naslov,Status")] Oglas oglas)
+        public async Task<IActionResult> Create([Bind("Opis,Lokacija,TipPosla,CijenaPosla,Naslov")] Oglas oglas)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error);  // Ili logiraj negdje
+                }
+                return View(oglas);
+            }
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null)
+                {
+                    // Nema usera, vrati neki error ili redirect na login
+                    return Unauthorized();
+                }
+                oglas.KlijentId = userId;
+                oglas.Status = Status.AktivanOglas;
+                oglas.RadnikId = null;
+
                 _context.Add(oglas);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

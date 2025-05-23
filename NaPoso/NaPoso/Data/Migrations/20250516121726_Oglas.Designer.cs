@@ -265,7 +265,7 @@ namespace NaPoso.Data.Migrations
                         .HasColumnType("float");
 
                     b.Property<int>("KlijentId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Lokacija")
                         .IsRequired()
@@ -280,10 +280,10 @@ namespace NaPoso.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RadnikId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RecenzijaId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
