@@ -21,7 +21,7 @@ namespace NaPoso.Data
             modelBuilder.Entity<Oglas>().ToTable("Oglas");
             modelBuilder.Entity<Obavijest>().ToTable("Obavijest");
             modelBuilder.Entity<ObavijestKorisniku>().ToTable("ObavijestKorisniku");
-            modelBuilder.Entity<OglasKorisnik>().ToTable("OglasKorisnikU");
+            modelBuilder.Entity<OglasKorisnik>().ToTable("OglasKorisnik");
 
             base.OnModelCreating(modelBuilder);
         }
