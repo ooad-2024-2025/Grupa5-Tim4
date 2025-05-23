@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Oglas>
+
+<h2>Moji Oglasi</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Naslov</th>
+            <th>Lokacija</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Naslov</td>
+                <td>@item.Lokacija</td>
+                <td>@item.Status</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalji</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a>
+                    <a asp-controller="Oglas" asp-action="PrijavljeniRadnici" asp-route-oglasId="@item.Id" class="btn btn-primary">
+                        Prikaži prijavljene radnike
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

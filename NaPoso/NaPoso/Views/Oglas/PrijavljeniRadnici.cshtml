@@ -1,0 +1,22 @@
+﻿@model IEnumerable<NaPoso.Models.OglasKorisnik>
+
+<h3>Prijavljeni radnici</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ime</th>
+            <th>Email</th>
+            <th>Datum prijave</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var prijava in Model)
+        {
+            <tr>
+                <td>@prijava.Korisnik.Email</td>
+                <td>@prijava.DatumPrijave.ToString("dd.MM.yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

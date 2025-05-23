@@ -321,27 +321,38 @@ namespace NaPoso.Data.Migrations
                     b.ToTable("Oglas", (string)null);
                 });
 
-            modelBuilder.Entity("NaPoso.Models.OglasKorisnik", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            modelBuilder.Entity<NaPoso.Models.OglasKorisnik>(b =>
+            {
+                b.HasKey(e => e.Id);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int")
+                    .UseIdentityColumn();
 
-                    b.Property<string>("KorisnikId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property(e => e.KorisnikId)
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");  // isto kao IdentityUser.Id
 
-                    b.Property<int>("oglasId")
-                        .HasColumnType("int");
+                b.Property(e => e.OglasId)
+                    .HasColumnType("int");
 
-                    b.HasKey("Id");
+                b.HasIndex(e => e.OglasId);
 
-                    b.HasIndex("oglasId");
+                // Podesi vezu na Oglas (jedan Oglas ima mnogo OglasKorisnik)
+                b.HasOne(e => e.Oglas)
+                    .WithMany() // ako nema navigacionog svojstva u Oglas za kolekciju, ostavi ovako
+                    .HasForeignKey(e => e.OglasId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                    b.ToTable("OglasKorisnik", (string)null);
-                });
+                // Podesi vezu na IdentityUser (AspNetUsers)
+                b.HasOne<Microsoft.AspNetCore.Identity.IdentityUser>()
+                    .WithMany()
+                    .HasForeignKey(e => e.KorisnikId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.ToTable("OglasKorisnik");
+            });
 
             modelBuilder.Entity("NaPoso.Models.Recenzija", b =>
                 {

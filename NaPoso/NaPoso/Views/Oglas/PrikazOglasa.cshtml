@@ -1,0 +1,29 @@
+﻿@model IEnumerable<NaPoso.Models.Oglas>
+
+@{
+    ViewData["Title"] = "Oglasi za radnike";
+}
+
+<h2>Aktivni oglasi</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Naslov</th>
+            <th>Opis</th>
+            <th>Lokacija</th>
+            <th>Cijena</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var oglas in Model)
+        {
+            <tr>
+                <td>@oglas.Naslov</td>
+                <td>@oglas.Opis</td>
+                <td>@oglas.Lokacija</td>
+                <td>@oglas.CijenaPosla</td>
+            </tr>
+        }
+    </tbody>
+</table>

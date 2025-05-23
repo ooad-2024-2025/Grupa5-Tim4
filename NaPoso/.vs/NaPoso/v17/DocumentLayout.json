@@ -3,36 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Data\\Migrations\\20250523082836_ChangeKlijentIdToString.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:NaPoso\\Data\\Migrations\\20250523082836_ChangeKlijentIdToString.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\oglas\\prijavljeniradnici.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\oglas\\prijavljeniradnici.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\data\\migrations\\20250516121726_oglas.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\data\\migrations\\20250516121726_oglas.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\models\\oglas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\models\\oglas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\models\\oglaskorisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\models\\oglaskorisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\controllers\\oglascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\controllers\\oglascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\oglas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\oglas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\home\\klijent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\home\\klijent.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\home\\radnik.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\home\\radnik.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -47,105 +27,40 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "20250523082836_ChangeKlijentIdToString.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Data\\Migrations\\20250523082836_ChangeKlijentIdToString.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Data\\Migrations\\20250523082836_ChangeKlijentIdToString.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Data\\Migrations\\20250523082836_ChangeKlijentIdToString.cs",
-              "RelativeToolTip": "NaPoso\\Data\\Migrations\\20250523082836_ChangeKlijentIdToString.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T08:28:36.425Z",
+              "Title": "PrijavljeniRadnici.cshtml",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "RelativeToolTip": "NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-23T10:04:25.796Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "20250516121726_Oglas.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Data\\Migrations\\20250516121726_Oglas.Designer.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Data\\Migrations\\20250516121726_Oglas.Designer.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Data\\Migrations\\20250516121726_Oglas.Designer.cs",
-              "RelativeToolTip": "NaPoso\\Data\\Migrations\\20250516121726_Oglas.Designer.cs",
-              "ViewState": "AgIAABEBAAAAAAAAAAAowB0BAAA0AAAAAAAAAA==",
+              "Title": "OglasKorisnik.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\OglasKorisnik.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Models\\OglasKorisnik.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\OglasKorisnik.cs",
+              "RelativeToolTip": "NaPoso\\Models\\OglasKorisnik.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAwAwAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T08:25:04.115Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Program.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Program.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Program.cs",
-              "RelativeToolTip": "NaPoso\\Program.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAswEoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T08:08:39.186Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\Create.cshtml",
-              "RelativeDocumentMoniker": "NaPoso\\Views\\Oglas\\Create.cshtml",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\Create.cshtml",
-              "RelativeToolTip": "NaPoso\\Views\\Oglas\\Create.cshtml",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAACcAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-23T07:48:04.476Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "OglasController.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Controllers\\OglasController.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
-              "RelativeToolTip": "NaPoso\\Controllers\\OglasController.cs",
-              "ViewState": "AgIAADIAAAAAAAAAAAAkwEQAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T07:46:42.357Z",
+              "WhenOpened": "2025-05-23T10:01:36.775Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Oglas.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\Oglas.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Models\\Oglas.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\Oglas.cs",
-              "RelativeToolTip": "NaPoso\\Models\\Oglas.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAgwA4AAAAZAAAAAAAAAA==",
+              "Title": "OglasController.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Controllers\\OglasController.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
+              "RelativeToolTip": "NaPoso\\Controllers\\OglasController.cs",
+              "ViewState": "AgIAAMkAAAAAAAAAAAAswNkAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-23T07:46:34.595Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Radnik.cshtml",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Home\\Radnik.cshtml",
-              "RelativeDocumentMoniker": "NaPoso\\Views\\Home\\Radnik.cshtml",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Home\\Radnik.cshtml",
-              "RelativeToolTip": "NaPoso\\Views\\Home\\Radnik.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-22T18:39:37.759Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Klijent.cshtml",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Home\\Klijent.cshtml",
-              "RelativeDocumentMoniker": "NaPoso\\Views\\Home\\Klijent.cshtml",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Home\\Klijent.cshtml",
-              "RelativeToolTip": "NaPoso\\Views\\Home\\Klijent.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-22T18:31:51.628Z",
+              "WhenOpened": "2025-05-23T09:55:50.881Z",
               "EditorCaption": ""
             }
           ]

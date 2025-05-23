@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -173,6 +175,46 @@ namespace NaPoso.Controllers
         private bool OglasExists(int id)
         {
             return _context.Oglas.Any(e => e.Id == id);
+        }
+        [Authorize(Roles = "Radnik")]
+        public async Task<IActionResult> PrikazOglasa()
+        {
+            var oglasi = await _context.Oglas
+                .Where(o => o.Status == Status.AktivanOglas && o.RadnikId == null)
+                .ToListAsync();
+            return View(oglasi);
+        }
+        [Authorize(Roles = "Klijent")]
+        public async Task<IActionResult> OglasiKlijenta()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var oglasi = await _context.Oglas
+                .Where(o => o.KlijentId == userId)
+                .ToListAsync();
+
+            return View(oglasi);
+        }
+        [Authorize(Roles = "Klijent")]
+        public async Task<IActionResult> PrijavljeniRadnici(int oglasId)
+        {
+            // Prvo dohvatimo oglas i proverimo da li klijent koji gleda je vlasnik oglasa
+            var oglas = await _context.Oglas
+                .FirstOrDefaultAsync(o => o.Id == oglasId);
+
+            if (oglas == null)
+                return NotFound();
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (oglas.KlijentId != userId)
+                return Forbid();
+
+            // Dohvati prijave za taj oglas, ukljucujuci informacije o radniku (korisniku)
+            var prijave = await _context.OglasKorisnik
+                .Where(ok => ok.OglasId == oglasId)
+                //.Include(ok => ok.Korisnik) // ako imas navigacionu property za korisnika
+                .ToListAsync();
+
+            return View(prijave);
         }
     }
 }
