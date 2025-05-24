@@ -211,10 +211,87 @@ namespace NaPoso.Controllers
             // Dohvati prijave za taj oglas, ukljucujuci informacije o radniku (korisniku)
             var prijave = await _context.OglasKorisnik
                 .Where(ok => ok.OglasId == oglasId)
-                //.Include(ok => ok.Korisnik) // ako imas navigacionu property za korisnika
+                .Include(ok => ok.Korisnik) // ako imas navigacionu property za korisnika
                 .ToListAsync();
 
             return View(prijave);
+        }
+        [Authorize(Roles = "Radnik")]
+        public async Task<IActionResult> PrijaviRadnikaNaOglas(int oglasId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Provjera da li se već prijavio
+            var postoji = await _context.OglasKorisnik
+                .AnyAsync(ok => ok.OglasId == oglasId && ok.KorisnikId == userId);
+
+            if (!postoji)
+            {
+                var prijava = new Models.OglasKorisnik
+                {
+                    OglasId = oglasId,
+                    KorisnikId = userId,
+                    Status = Status.AktivanOglas
+                };
+
+                _context.OglasKorisnik.Add(prijava);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("PrikazOglasa");
+        }
+
+        [Authorize(Roles = "Radnik")]
+        public async Task<IActionResult> PrijaviSe(int oglasId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // Provjera da li se već prijavio
+            var prijava = new OglasKorisnik
+            {
+                KorisnikId = userId,
+                OglasId = oglasId,
+                Status = Status.AktivanOglas
+            };
+
+            _context.OglasKorisnik.Add(prijava);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("MojiOglasi");
+        }
+        [Authorize(Roles = "Klijent")]
+        public async Task<IActionResult> Prihvati(int id)
+        {
+            var prijava = await _context.OglasKorisnik
+                .Include(p => p.Oglas)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prijava == null || prijava.Oglas == null)
+                return NotFound();
+
+            // Dodaj radnika u oglas i promijeni status
+            prijava.Oglas.RadnikId = prijava.KorisnikId;
+            prijava.Oglas.Status = Status.PronadjenRadnik;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.Id });
+        }
+
+        [Authorize(Roles = "Klijent")]
+        public async Task<IActionResult> Odbij(int id)
+        {
+            var prijava = await _context.OglasKorisnik
+                .Include(p => p.Oglas)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prijava == null || prijava.Oglas == null)
+                return NotFound();
+
+            // Možeš obrisati prijavu, ili joj promijeniti status
+            _context.OglasKorisnik.Remove(prijava);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.Id });
         }
     }
 }

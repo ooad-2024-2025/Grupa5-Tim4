@@ -1,13 +1,14 @@
 ﻿@model IEnumerable<NaPoso.Models.OglasKorisnik>
-
+@using NaPoso.Enums
+@using static NaPoso.Enums.Enums
 <h3>Prijavljeni radnici</h3>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Ime</th>
             <th>Email</th>
             <th>Datum prijave</th>
+			<th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -16,7 +17,16 @@
             <tr>
                 <td>@prijava.Korisnik.Email</td>
                 <td>@prijava.DatumPrijave.ToString("dd.MM.yyyy")</td>
+                <td>@prijava.Oglas.Status</td>
+                <td>
+                    @if (prijava.Oglas.Status == Status.AktivanOglas)
+                    {
+                        <a asp-action="Prihvati" asp-route-id="@prijava.Oglas.Id" class="btn btn-success">Prihvati</a>
+                        <a asp-action="Odbij" asp-route-id="@prijava.Oglas.Id" class="btn btn-success"> Odbij </a>
+                    }
+                </td>
             </tr>
+            
         }
     </tbody>
 </table>

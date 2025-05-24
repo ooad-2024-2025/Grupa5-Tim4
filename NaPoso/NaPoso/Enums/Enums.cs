@@ -11,8 +11,8 @@
 
         public enum Status
         {
-            PronadjenRadnik,
-            AktivanOglas
+            AktivanOglas = 1,
+            PronadjenRadnik = 0
         }
 
         public enum Obavjestenje

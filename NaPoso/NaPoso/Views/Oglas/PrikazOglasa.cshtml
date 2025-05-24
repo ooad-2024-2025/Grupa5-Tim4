@@ -23,6 +23,10 @@
                 <td>@oglas.Opis</td>
                 <td>@oglas.Lokacija</td>
                 <td>@oglas.CijenaPosla</td>
+				<td>
+                    <a asp-controller="Oglas" asp-action="PrijaviRadnikaNaOglas" asp-route-oglasId="@oglas.Id" class="btn btn-success">
+                        Prijavi se
+                    </a>
             </tr>
         }
     </tbody>

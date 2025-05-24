@@ -24,6 +24,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 async Task CreateRoles(IServiceProvider serviceProvider)
 {
@@ -71,4 +72,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+app.MapHub<ChatHub>("/chatHub");
 app.Run();
