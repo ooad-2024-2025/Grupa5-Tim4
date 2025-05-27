@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NaPoso.Data;
 
@@ -11,9 +12,11 @@ using NaPoso.Data;
 namespace NaPoso.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250524134250_Message12")]
+    partial class Message12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,7 +232,6 @@ namespace NaPoso.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("KlijentId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RadnikId")
@@ -263,14 +265,9 @@ namespace NaPoso.Data.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("chatId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PosiljaocId");
-
-                    b.HasIndex("chatId");
 
                     b.ToTable("Message", (string)null);
                 });
@@ -469,9 +466,7 @@ namespace NaPoso.Data.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Klijent")
                         .WithMany()
-                        .HasForeignKey("KlijentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("KlijentId");
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Radnik")
                         .WithMany()
@@ -491,14 +486,6 @@ namespace NaPoso.Data.Migrations
                         .HasForeignKey("PosiljaocId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("NaPoso.Models.Chat", "Chat")
-                        .WithMany()
-                        .HasForeignKey("chatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
 
                     b.Navigation("Posiljaoc");
                 });

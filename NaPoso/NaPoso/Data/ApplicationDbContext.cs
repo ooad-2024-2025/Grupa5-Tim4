@@ -19,6 +19,8 @@ namespace NaPoso.Data
         public DbSet<Message> Message { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Recenzija>().ToTable("Recenzija");
             modelBuilder.Entity<Oglas>().ToTable("Oglas");
             modelBuilder.Entity<Obavijest>().ToTable("Obavijest");
