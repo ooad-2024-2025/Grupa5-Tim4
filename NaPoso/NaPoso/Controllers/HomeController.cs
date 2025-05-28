@@ -8,10 +8,10 @@ namespace NaPoso.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Korisnik> _userManager;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(UserManager<IdentityUser> userManager, ILogger<HomeController> logger)
+        public HomeController(UserManager<Korisnik> userManager, ILogger<HomeController> logger)
         {
             _userManager = userManager;
             _logger = logger;

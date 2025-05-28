@@ -9,11 +9,11 @@ using NaPoso.Data;
 
 #nullable disable
 
-namespace NaPoso.Data.Migrations
+namespace NaPoso.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250516121726_Oglas")]
-    partial class Oglas
+    [Migration("20250528191404_Korisnik")]
+    partial class Korisnik
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,7 +77,7 @@ namespace NaPoso.Data.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.Korisnik", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -140,9 +140,11 @@ namespace NaPoso.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -167,15 +169,13 @@ namespace NaPoso.Data.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -191,7 +191,7 @@ namespace NaPoso.Data.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikRole<string>", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -206,18 +206,16 @@ namespace NaPoso.Data.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikToken<string>", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -253,6 +251,28 @@ namespace NaPoso.Data.Migrations
                     b.ToTable("Obavijest", (string)null);
                 });
 
+            modelBuilder.Entity("NaPoso.Models.ObavijestKorisniku", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("KorisnikId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("obavijestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("obavijestId");
+
+                    b.ToTable("ObavijestKorisniku", (string)null);
+                });
+
             modelBuilder.Entity("NaPoso.Models.Oglas", b =>
                 {
                     b.Property<int>("Id")
@@ -264,32 +284,28 @@ namespace NaPoso.Data.Migrations
                     b.Property<double>("CijenaPosla")
                         .HasColumnType("float");
 
-                    b.Property<int>("KlijentId")
+                    b.Property<string>("KlijentId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Lokacija")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Naslov")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Opis")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RadnikId")
+                    b.Property<string>("RadnikId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RecenzijaId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("RecenzijaId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("TipPosla")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -297,6 +313,35 @@ namespace NaPoso.Data.Migrations
                     b.HasIndex("RecenzijaId");
 
                     b.ToTable("Oglas", (string)null);
+                });
+
+            modelBuilder.Entity("NaPoso.Models.OglasKorisnik", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DatumPrijave")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("KorisnikId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("OglasId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KorisnikId");
+
+                    b.HasIndex("OglasId");
+
+                    b.ToTable("OglasKorisnik", (string)null);
                 });
 
             modelBuilder.Entity("NaPoso.Models.Recenzija", b =>
@@ -319,6 +364,19 @@ namespace NaPoso.Data.Migrations
                     b.ToTable("Recenzija", (string)null);
                 });
 
+            modelBuilder.Entity("NaPoso.Models.Korisnik", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.Korisnik");
+
+                    b.Property<string>("Ime")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Prezime")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Korisnik", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -328,25 +386,25 @@ namespace NaPoso.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.Korisnik", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.Korisnik", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikRole<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
@@ -354,31 +412,66 @@ namespace NaPoso.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.Korisnik", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.KorisnikToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.Korisnik", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("NaPoso.Models.ObavijestKorisniku", b =>
+                {
+                    b.HasOne("NaPoso.Models.Obavijest", "obavijest")
+                        .WithMany()
+                        .HasForeignKey("obavijestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("obavijest");
                 });
 
             modelBuilder.Entity("NaPoso.Models.Oglas", b =>
                 {
                     b.HasOne("NaPoso.Models.Recenzija", "Recenzija")
                         .WithMany()
-                        .HasForeignKey("RecenzijaId")
+                        .HasForeignKey("RecenzijaId");
+
+                    b.Navigation("Recenzija");
+                });
+
+            modelBuilder.Entity("NaPoso.Models.OglasKorisnik", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.Korisnik", "Korisnik")
+                        .WithMany()
+                        .HasForeignKey("KorisnikId");
+
+                    b.HasOne("NaPoso.Models.Oglas", "Oglas")
+                        .WithMany()
+                        .HasForeignKey("OglasId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Recenzija");
+                    b.Navigation("Korisnik");
+
+                    b.Navigation("Oglas");
+                });
+
+            modelBuilder.Entity("NaPoso.Models.Korisnik", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.Korisnik", null)
+                        .WithOne()
+                        .HasForeignKey("NaPoso.Models.Korisnik", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

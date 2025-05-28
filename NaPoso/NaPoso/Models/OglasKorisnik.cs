@@ -12,7 +12,7 @@ namespace NaPoso.Models
         public Oglas Oglas { get; set; }
 
         public string? KorisnikId { get; set; }
-        public IdentityUser Korisnik { get; set; }
+        public Korisnik Korisnik { get; set; }
 
         public Status Status { get; set; } = Status.AktivanOglas;
 
