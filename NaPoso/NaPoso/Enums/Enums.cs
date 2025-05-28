@@ -1,4 +1,7 @@
-﻿namespace NaPoso.Enums
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace NaPoso.Enums
 {
     public class Enums
     {
@@ -11,8 +14,8 @@
 
         public enum Status
         {
-            AktivanOglas = 1,
-            PronadjenRadnik = 0
+            Aktivan = 1,
+            Neaktivan = 0
         }
 
         public enum Obavjestenje

@@ -3,16 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\models\\oglaskorisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\models\\oglaskorisnik.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\account\\login.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\account\\login.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\controllers\\oglascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\controllers\\oglascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\oglas\\prijavljeniradnici.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\oglas\\prijavljeniradnici.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\enums\\enums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\enums\\enums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\oglas\\oglasiklijenta.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\oglas\\oglasiklijenta.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\oglas\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\oglas\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\views\\oglas\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\oglas\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -27,40 +43,92 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "_LoginPartial.cshtml",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Shared\\_LoginPartial.cshtml",
-              "RelativeDocumentMoniker": "NaPoso\\Views\\Shared\\_LoginPartial.cshtml",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Shared\\_LoginPartial.cshtml",
-              "RelativeToolTip": "NaPoso\\Views\\Shared\\_LoginPartial.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAABfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-28T20:12:48.636Z",
+              "Title": "OglasKorisnik.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\OglasKorisnik.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Models\\OglasKorisnik.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Models\\OglasKorisnik.cs",
+              "RelativeToolTip": "NaPoso\\Models\\OglasKorisnik.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAApwBAAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-28T23:01:46.302Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Login.cshtml.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml.cs",
-              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml.cs",
-              "ViewState": "AgIAADkAAAAAAAAAAAAUwEsAAAAoAAAAAAAAAA==",
+              "Title": "OglasController.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Controllers\\OglasController.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
+              "RelativeToolTip": "NaPoso\\Controllers\\OglasController.cs",
+              "ViewState": "AgIAABYBAAAAAAAAAAApwB8BAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T19:56:14.766Z",
+              "WhenOpened": "2025-05-28T23:00:44.976Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Enums.cs",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Enums\\Enums.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Enums\\Enums.cs",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Enums\\Enums.cs",
+              "RelativeToolTip": "NaPoso\\Enums\\Enums.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAwBEAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-28T23:00:19Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB0AAAAWAAAAAAAAAA==",
+              "Title": "PrijavljeniRadnici.cshtml",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "RelativeToolTip": "NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "ViewState": "AgIAABAAAAAAAAAAAAApwBkAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-05-28T19:56:14.124Z",
+              "WhenOpened": "2025-05-28T22:58:51.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\Details.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Views\\Oglas\\Details.cshtml",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\Details.cshtml",
+              "RelativeToolTip": "NaPoso\\Views\\Oglas\\Details.cshtml",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-28T22:57:08.272Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Delete.cshtml",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\Delete.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Views\\Oglas\\Delete.cshtml",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\Delete.cshtml",
+              "RelativeToolTip": "NaPoso\\Views\\Oglas\\Delete.cshtml",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAADsAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-28T22:49:43.916Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "OglasiKlijenta.cshtml",
+              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\OglasiKlijenta.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Views\\Oglas\\OglasiKlijenta.cshtml",
+              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\OglasiKlijenta.cshtml",
+              "RelativeToolTip": "NaPoso\\Views\\Oglas\\OglasiKlijenta.cshtml",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAmwCUAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-28T22:48:42.655Z",
               "EditorCaption": ""
             }
           ]

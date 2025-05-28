@@ -103,6 +103,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
             [StringLength(100, ErrorMessage = "Lozinka mora biti barem {2} znakova i maksimalno {1} znakova duga.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Lozinka")]
+            [RegularExpression(@"^(?=.*\d)(?=.*[A-Z]).+$", ErrorMessage = "Lozinka mora sadržavati barem jedan broj i jedno veliko slovo.")]
             public string Password { get; set; }
 
             /// <summary>

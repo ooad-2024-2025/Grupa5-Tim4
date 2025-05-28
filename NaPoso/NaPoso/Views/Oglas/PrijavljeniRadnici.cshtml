@@ -6,6 +6,8 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Ime</th>
+			<th>Prezime</th>
             <th>Email</th>
             <th>Datum prijave</th>
 			<th>Status</th>
@@ -15,11 +17,13 @@
         @foreach (var prijava in Model)
         {
             <tr>
+				<td>@prijava.Korisnik.Ime</td>
+				<td>@prijava.Korisnik.Prezime</td>
                 <td>@prijava.Korisnik.Email</td>
                 <td>@prijava.DatumPrijave.ToString("dd.MM.yyyy")</td>
                 <td>@prijava.Oglas.Status</td>
                 <td>
-                    @if (prijava.Oglas.Status == Status.AktivanOglas)
+                    @if (prijava.Oglas.Status == Status.Aktivan)
                     {
                         <a asp-action="Prihvati" asp-route-id="@prijava.Oglas.Id" class="btn btn-success">Prihvati</a>
                         <a asp-action="Odbij" asp-route-id="@prijava.Oglas.Id" class="btn btn-success"> Odbij </a>
@@ -30,3 +34,6 @@
         }
     </tbody>
 </table>
+<div>
+	<a asp-action="OglasiKlijenta">Nazad</a>
+</div>

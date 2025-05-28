@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -78,12 +80,12 @@ namespace NaPoso.Controllers
                     return Unauthorized();
                 }
                 oglas.KlijentId = userId;
-                oglas.Status = Status.AktivanOglas;
+                oglas.Status = Status.Aktivan;
                 oglas.RadnikId = null;
 
                 _context.Add(oglas);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(OglasiKlijenta));
             }
             return View(oglas);
         }
@@ -109,7 +111,7 @@ namespace NaPoso.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,KlijentId,RadnikId,Opis,Lokacija,TipPosla,CijenaPosla,Naslov,Status")] Oglas oglas)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Opis,Lokacija,TipPosla,CijenaPosla,Naslov,Status")] Oglas oglas)
         {
             if (id != oglas.Id)
             {
@@ -120,7 +122,19 @@ namespace NaPoso.Controllers
             {
                 try
                 {
-                    _context.Update(oglas);
+                    var oglasIzBaze = await _context.Oglas.FindAsync(id);
+                    if (oglasIzBaze == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Ažuriraj samo potrebna polja
+                    oglasIzBaze.Opis = oglas.Opis;
+                    oglasIzBaze.Lokacija = oglas.Lokacija;
+                    oglasIzBaze.TipPosla = oglas.TipPosla;
+                    oglasIzBaze.CijenaPosla = oglas.CijenaPosla;
+                    oglasIzBaze.Naslov = oglas.Naslov;
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -134,10 +148,11 @@ namespace NaPoso.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Edit), new { id = oglas.Id });
             }
             return View(oglas);
         }
+
 
         // GET: Oglas/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -169,7 +184,7 @@ namespace NaPoso.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(OglasiKlijenta));
         }
 
         private bool OglasExists(int id)
@@ -180,7 +195,7 @@ namespace NaPoso.Controllers
         public async Task<IActionResult> PrikazOglasa()
         {
             var oglasi = await _context.Oglas
-                .Where(o => o.Status == Status.AktivanOglas && o.RadnikId == null)
+                .Where(o => o.Status == Status.Aktivan && o.RadnikId == null)
                 .ToListAsync();
             return View(oglasi);
         }
@@ -231,7 +246,7 @@ namespace NaPoso.Controllers
                 {
                     OglasId = oglasId,
                     KorisnikId = userId,
-                    Status = Status.AktivanOglas
+                    Status = Status.Aktivan
                 };
 
                 _context.OglasKorisnik.Add(prijava);
@@ -250,7 +265,7 @@ namespace NaPoso.Controllers
             {
                 KorisnikId = userId,
                 OglasId = oglasId,
-                Status = Status.AktivanOglas
+                Status = Status.Aktivan
             };
 
             _context.OglasKorisnik.Add(prijava);
@@ -270,7 +285,7 @@ namespace NaPoso.Controllers
 
             // Dodaj radnika u oglas i promijeni status
             prijava.Oglas.RadnikId = prijava.KorisnikId;
-            prijava.Oglas.Status = Status.PronadjenRadnik;
+            prijava.Oglas.Status = Status.Neaktivan;
 
             await _context.SaveChangesAsync();
 
@@ -293,5 +308,6 @@ namespace NaPoso.Controllers
 
             return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.Id });
         }
+        
     }
 }

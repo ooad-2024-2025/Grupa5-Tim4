@@ -14,7 +14,7 @@ namespace NaPoso.Models
         public string? KorisnikId { get; set; }
         public Korisnik Korisnik { get; set; }
 
-        public Status Status { get; set; } = Status.AktivanOglas;
+        public Status Status { get; set; } = Status.Aktivan;
 
         public DateTime DatumPrijave { get; set; } = DateTime.Now;
 
