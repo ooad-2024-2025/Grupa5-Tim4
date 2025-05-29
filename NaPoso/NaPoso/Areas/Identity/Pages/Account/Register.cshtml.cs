@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -17,10 +16,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using NaPoso.Enums;
 using NaPoso.Models;
 
 namespace NaPoso.Areas.Identity.Pages.Account
@@ -33,7 +30,6 @@ namespace NaPoso.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<Korisnik> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        public List<SelectListItem> RoleList { get; set; }
 
         public RegisterModel(
             UserManager<Korisnik> userManager,
@@ -56,6 +52,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -74,24 +71,17 @@ namespace NaPoso.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-            [Required(ErrorMessage = "Polje Ime je obavezno.")]
-            [StringLength(50, ErrorMessage = "Ime mora sadržavati barem {2} znaka.", MinimumLength = 3)]
-            [Display(Name = "Ime")]
-            public string Ime { get; set; }
-
-            [Required(ErrorMessage = "Polje Prezime je obavezno.")]
-            [StringLength(50, ErrorMessage = "Prezime mora sadržavati barem {2} znaka.", MinimumLength = 3)]
-            [Display(Name = "Prezime")]
-            public string Prezime { get; set; }
-            [Required(ErrorMessage = "Ovo polje je obavezno.")]
-            [Display(Name = "Odaberi ulogu")]
-            public string Role { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required(ErrorMessage = "Polje Email je obavezno.")]
-            [EmailAddress(ErrorMessage = "Email mora sadržavati znak '@' i biti u ispravnom formatu.")]
+            [Display(Name = "Broj telefona")]
+            [Required(ErrorMessage = "Broj telefona je obavezan.")]
+            [RegularExpression(@"^\+\d{6,15}$", ErrorMessage = "Broj telefona mora počinjati znakom + i sadržavati samo brojeve.")]
+            public string BrojTelefona { get; set; }
+
+            [Required(ErrorMessage ="Ovo polje je obavezno.")]
+            [EmailAddress(ErrorMessage = "Email mora sadržavati @ i biti u ispravnom formatu.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -99,46 +89,39 @@ namespace NaPoso.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required(ErrorMessage = "Polje Lozinka je obavezno.")]
+            [Required(ErrorMessage = "Ovo polje je obavezno.")]
             [StringLength(100, ErrorMessage = "Lozinka mora biti barem {2} znakova i maksimalno {1} znakova duga.", MinimumLength = 6)]
+            [RegularExpression(@"^(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora sadržavati barem jedno veliko slovo i jedan broj.")]
             [DataType(DataType.Password)]
             [Display(Name = "Lozinka")]
-            [RegularExpression(@"^(?=.*\d)(?=.*[A-Z]).+$", ErrorMessage = "Lozinka mora sadržavati barem jedan broj i jedno veliko slovo.")]
             public string Password { get; set; }
+
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required(ErrorMessage = "Ovo polje je obavezno.")]
+            [Required(ErrorMessage ="Ovo polje je obavezno.")]
             [DataType(DataType.Password)]
-            [Display(Name = "Potvrdi Lozinku")]
+            [Display(Name = "Potvrdi lozinku")]
             [Compare("Password", ErrorMessage = "Lozinke se ne poklapaju.")]
             public string ConfirmPassword { get; set; }
-           
         }
+
+
         public async Task OnGetAsync(string returnUrl = null)
         {
-            RoleList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "Klijent", Text = "Klijent" },
-                new SelectListItem { Value = "Radnik", Text = "Radnik" }
-            };
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            Console.WriteLine("OnPostAsync called");
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
-                user.Ime = Input.Ime;
-                user.Prezime = Input.Prezime;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -146,8 +129,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, Input.Role); 
-                    _logger.LogInformation("Korisnik je kreirao novi nalog sa lozinkom.");
+                    _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

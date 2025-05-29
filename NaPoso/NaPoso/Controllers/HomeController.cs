@@ -31,7 +31,11 @@ namespace NaPoso.Controllers
 
             return View(); // ako nije logovan, pokaži home stranicu
         }
-
+        [Authorize(Roles = "Admin")]
+        public IActionResult Admin()
+        {
+            return View();
+        }
         [Authorize(Roles = "Radnik")]
         public IActionResult Radnik()
         {

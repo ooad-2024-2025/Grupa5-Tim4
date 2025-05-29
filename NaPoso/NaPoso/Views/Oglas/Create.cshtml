@@ -14,6 +14,11 @@
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <label asp-for="Naslov" class="control-label"></label>
+                <input asp-for="Naslov" class="form-control" />
+                <span asp-validation-for="Naslov" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Opis" class="control-label"></label>
                 <input asp-for="Opis" class="form-control" />
                 <span asp-validation-for="Opis" class="text-danger"></span>
@@ -32,11 +37,6 @@
                 <label asp-for="CijenaPosla" class="control-label"></label>
                 <input asp-for="CijenaPosla" class="form-control" />
                 <span asp-validation-for="CijenaPosla" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Naslov" class="control-label"></label>
-                <input asp-for="Naslov" class="form-control" />
-                <span asp-validation-for="Naslov" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Objavi" class="btn btn-primary" />
