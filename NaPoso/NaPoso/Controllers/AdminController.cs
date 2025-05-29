@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NaPoso.Data;
 using NaPoso.Models;
@@ -9,18 +10,23 @@ namespace NaPoso.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Korisnik> _userManager; // Added UserManager for user role management  
 
-        public AdminController(ApplicationDbContext context)
+        public AdminController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
+            _userManager = userManager; // Initialize UserManager  
         }
 
         public IActionResult Index()
         {
-            // Primi statistiku iz baze
+            // Fetch statistics from the database  
             var totalUsers = _context.Users.Count();
-            var totalJobs = _context.Oglas.Count(); // ako imaš entitet Posao
-            var totalClients = _context.Users.Count(static u => u.UserRoles.Any(r => r.RoleId == "Klijent")); // prilagodi ako koristiš IdentityUserRole
+            var totalJobs = _context.Oglas.Count(); // Assuming you have an entity for jobs  
+
+            // Fix for the error: Use UserManager to check roles  
+            var users = _context.Users.ToList();
+            var totalClients = users.Count(u => _userManager.GetRolesAsync((Korisnik)u).Result.Contains("Klijent"));
 
             var model = new Statistika
             {
@@ -29,7 +35,7 @@ namespace NaPoso.Controllers
                 UkupnoKlijenata = totalClients
             };
 
-            return View(model);
+            return View("~/Views/Admin/Index.cshtml", model);
         }
     }
 }
