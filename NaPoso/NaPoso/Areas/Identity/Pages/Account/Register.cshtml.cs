@@ -77,7 +77,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
             /// </summary>
             [Display(Name = "Broj telefona")]
             [Required(ErrorMessage = "Broj telefona je obavezan.")]
-            [RegularExpression(@"^\+\d{6,15}$", ErrorMessage = "Broj telefona mora počinjati znakom + i sadržavati samo brojeve.")]
+            [RegularExpression(@"^\+\d{6,15}$", ErrorMessage = "Broj telefona mora počinjati sa +387 i sadržavati samo brojeve.")]
             public string BrojTelefona { get; set; }
 
             [Required(ErrorMessage ="Ovo polje je obavezno.")]
@@ -127,8 +127,12 @@ namespace NaPoso.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                // Postavi email i broj telefona
+                user.PhoneNumber = Input.BrojTelefona;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -143,7 +147,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
-
+                    await _userManager.AddToRoleAsync(user, Input.Uloga ?? "Klijent");
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 

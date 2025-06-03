@@ -17,7 +17,7 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.BrojTelefona" class="form-control" autocomplete="brojtelefona" aria-required="true" placeholder="name@example.com" />
+                <input asp-for="Input.BrojTelefona" id="phone" class="form-control" autocomplete="tel" aria-required="true" placeholder="+387..." value="+387" />
                 <label asp-for="Input.BrojTelefona">Broj Telefona</label>
                 <span asp-validation-for="Input.BrojTelefona" class="text-danger"></span>
             </div>
