@@ -106,6 +106,10 @@ namespace NaPoso.Areas.Identity.Pages.Account
             [Display(Name = "Potvrdi lozinku")]
             [Compare("Password", ErrorMessage = "Lozinke se ne poklapaju.")]
             public string ConfirmPassword { get; set; }
+
+            [Display(Name = "Uloge")]
+            [Required(ErrorMessage = "Ovo polje je obavezno.")]
+            public string Uloga { get; set; } 
         }
 
 

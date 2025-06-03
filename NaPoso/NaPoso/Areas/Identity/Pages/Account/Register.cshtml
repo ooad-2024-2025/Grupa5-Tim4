@@ -31,6 +31,12 @@
                 <label asp-for="Input.ConfirmPassword">Potvrdi Lozinku</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            <select asp-for="Input.Uloga" class="form-select" aria-required="true">
+                <option value="">-- Odaberi ulogu --</option>
+                <option value="Klijent">Klijent</option>
+                <option value="Radnik">Radnik</option>
+            </select>
+            <span asp-validation-for="Input.Uloga" class="text-danger"></span>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registriraj se</button>
         </form>
     </div>
