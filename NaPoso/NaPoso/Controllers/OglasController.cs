@@ -283,31 +283,41 @@ namespace NaPoso.Controllers
             if (prijava == null || prijava.Oglas == null)
                 return NotFound();
 
+            // Store the oglasId before any changes
+            int oglasId = prijava.OglasId;
+
             // Dodaj radnika u oglas i promijeni status
             prijava.Oglas.RadnikId = prijava.KorisnikId;
             prijava.Oglas.Status = Status.Neaktivan;
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.Id });
+            // Redirect to payment using the stored oglasId
+            return RedirectToAction("InitiatePayment", new { oglasId = oglasId });
         }
 
         [Authorize(Roles = "Klijent")]
-        public async Task<IActionResult> Odbij(int id)
+        public async Task<IActionResult> InitiatePayment(int oglasId)
         {
-            var prijava = await _context.OglasKorisnik
-                .Include(p => p.Oglas)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (prijava == null || prijava.Oglas == null)
+            // Get job details for payment
+            var oglas = await _context.Oglas.FirstOrDefaultAsync(o => o.Id == oglasId);
+            if (oglas == null)
+            {
                 return NotFound();
+            }
 
-            // Možeš obrisati prijavu, ili joj promijeniti status
-            _context.OglasKorisnik.Remove(prijava);
-            await _context.SaveChangesAsync();
+            // Store oglasId in TempData for retrieval after payment
+            TempData["OglasId"] = oglasId;
 
-            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.Id });
+            // Calculate amount in cents
+            long amountInCents = (long)(oglas.CijenaPosla * 100);
+
+            // Build a direct URL to the Razor Page
+            var checkoutUrl = $"/Identity/Payment/Checkout?amount={amountInCents}&productName={Uri.EscapeDataString($"Plaćanje za oglas: {oglas.Naslov}")}";
+
+            // Redirect to the URL
+            return Redirect(checkoutUrl);
         }
-        
+
     }
 }

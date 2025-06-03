@@ -25,9 +25,8 @@
                 <td>
                     @if (prijava.Oglas.Status == Status.Aktivan)
                     {
-                        <a asp-action="Prihvati" asp-route-id="@prijava.Oglas.Id" class="btn btn-success">Prihvati</a>
-                        <a asp-action="Odbij" asp-route-id="@prijava.Oglas.Id" class="btn btn-success"> Odbij </a>
-                    }
+                        <a asp-action="Prihvati" asp-route-id="@prijava.Id" class="btn btn-success">Prihvati</a>
+                        <a asp-action="Odbij" asp-route-id="@prijava.Id" class="btn btn-success"> Odbij </a>                    }
                 </td>
             </tr>
             

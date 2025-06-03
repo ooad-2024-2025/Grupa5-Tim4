@@ -1,25 +1,45 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\",
+  "WorkspaceRootPath": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\account\\register.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\account\\register.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\controllers\\oglascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\controllers\\oglascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\views\\oglas\\prijavljeniradnici.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\views\\oglas\\prijavljeniradnici.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\account\\manage\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\account\\manage\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\controllers\\oglaskorisnikcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\controllers\\oglaskorisnikcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\account\\manage\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\account\\manage\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\payment\\cancel.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\payment\\cancel.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\korisnik\\documents\\github\\grupa5-tim4\\naposo\\naposo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\payment\\success.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\payment\\success.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\payment\\checkout.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\payment\\checkout.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\payment\\cancel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\payment\\cancel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\payment\\success.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\payment\\success.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\areas\\identity\\pages\\payment\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\areas\\identity\\pages\\payment\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|c:\\users\\dzafi\\source\\repos\\grupa5-tim4\\naposo\\naposo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{75144D29-C1F7-4BA4-AED7-8538E45F01CC}|NaPoso\\NaPoso.csproj|solutionrelative:naposo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -30,69 +50,134 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml",
-              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml",
-              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAYwB4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-03T20:04:33.953Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml.cs",
-              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Account\\Manage\\Index.cshtml.cs",
-              "ViewState": "AgIAAD0AAAAAAAAAAAAYwEgAAAANAAAAAAAAAA==",
+              "Title": "OglasKorisnikController.cs",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasKorisnikController.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Controllers\\OglasKorisnikController.cs",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasKorisnikController.cs",
+              "RelativeToolTip": "NaPoso\\Controllers\\OglasKorisnikController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T19:58:18.933Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Register.cshtml",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
-              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
-              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABMAAAChAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-03T19:48:17.852Z",
+              "WhenOpened": "2025-06-03T22:21:32.201Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Register.cshtml.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
-              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
-              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Account\\Register.cshtml.cs",
-              "ViewState": "AgIAAHIAAAAAAAAAAAAYwIcAAABSAAAAAAAAAA==",
+              "Title": "OglasController.cs",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Controllers\\OglasController.cs",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Controllers\\OglasController.cs",
+              "RelativeToolTip": "NaPoso\\Controllers\\OglasController.cs",
+              "ViewState": "AgIAACcBAAAAAAAAAAAwwD8BAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-03T19:47:17.805Z",
+              "WhenOpened": "2025-06-03T22:21:31.254Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PrijavljeniRadnici.cshtml",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "RelativeToolTip": "NaPoso\\Views\\Oglas\\PrijavljeniRadnici.cshtml",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAQwCIAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-03T22:17:23.626Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Cancel.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml.cs",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml.cs",
+              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:52:15.698Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "Success.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml.cs",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml.cs",
+              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:51:54.606Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Checkout.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml.cs",
+              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml.cs",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml.cs",
+              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T21:51:34.105Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Checkout.cshtml",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml",
+              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Checkout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-03T21:44:41.983Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Cancel.cshtml",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml",
+              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Cancel.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-03T21:44:23.503Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Success.cshtml",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml",
+              "RelativeDocumentMoniker": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml",
+              "RelativeToolTip": "NaPoso\\Areas\\Identity\\Pages\\Payment\\Success.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-03T21:44:04.137Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Program.cs",
               "RelativeDocumentMoniker": "NaPoso\\Program.cs",
-              "ToolTip": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\Program.cs",
+              "ToolTip": "C:\\Users\\dzafi\\source\\repos\\Grupa5-Tim4\\NaPoso\\NaPoso\\Program.cs",
               "RelativeToolTip": "NaPoso\\Program.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAswGwAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAABcAAAAAAAAAAAAgwCwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-03T19:26:51.521Z",
               "EditorCaption": ""

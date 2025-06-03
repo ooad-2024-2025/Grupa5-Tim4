@@ -1,0 +1,21 @@
+﻿@page
+@model NaPoso.Areas.Identity.Pages.Payment.CancelModel
+@{
+    ViewData["Title"] = "Payment Cancelled";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="card-title text-warning">
+                        <i class="fas fa-times-circle"></i> Payment Cancelled
+                    </h1>
+                    <p class="lead">Your payment was cancelled. No charges were made.</p>
+                    <a asp-page="/Index" class="btn btn-primary mt-3">Return Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

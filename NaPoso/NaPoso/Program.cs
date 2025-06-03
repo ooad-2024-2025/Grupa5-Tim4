@@ -5,7 +5,7 @@ using NaPoso;
 using NaPoso.Data;
 using NaPoso.Services;
 using NaPoso.Models;
-
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +32,17 @@ builder.Services.AddIdentity<Korisnik, IdentityRole>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
+
+// Configure Stripe
+var stripeSecretKey = builder.Configuration.GetSection("Stripe:SecretKey").Value;
+StripeConfiguration.ApiKey = stripeSecretKey;
+
+// Add this line before builder.Services.AddSingleton<StripeService>();
+builder.Services.AddHttpContextAccessor();
+
+// Also change the StripeService registration to scoped instead of singleton
+builder.Services.AddScoped<StripeService>();
+
 
 async Task CreateRoles(IServiceProvider serviceProvider)
 {

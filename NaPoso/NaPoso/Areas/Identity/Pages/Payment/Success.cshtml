@@ -1,0 +1,26 @@
+﻿@page
+@model NaPoso.Areas.Identity.Pages.Payment.SuccessModel
+@{
+    ViewData["Title"] = "Payment Successful";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="card-title text-success">
+                        <i class="fas fa-check-circle"></i> Payment Successful
+                    </h1>
+                    <p class="lead">Thank you for your payment!</p>
+                    <p>Status: @Model.PaymentStatus</p>
+                    @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                    {
+                        <p>Email: @Model.CustomerEmail</p>
+                    }
+                    <a asp-page="/Index" class="btn btn-primary mt-3">Return Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
