@@ -12,6 +12,18 @@
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-pAGv4ietcJNk/EwsQZ5BN9\u002BK4MuNYS2a9wl4Jw\u002Bq9D0="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"362"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022pAGv4ietcJNk/EwsQZ5BN9\u002BK4MuNYS2a9wl4Jw\u002Bq9D0=\u0022"},{"Name":"Last-Modified","Value":"Wed, 14 May 2025 13:59:26 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/NaPoso/documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document.3qya7u8r9e.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\documents\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"3qya7u8r9e"},{"Name":"integrity","Value":"sha256-S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg="},{"Name":"label","Value":"_content/NaPoso/documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"208684"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg=\u0022"},{"Name":"Last-Modified","Value":"Wed, 04 Jun 2025 21:38:18 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/NaPoso/documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\documents\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"208684"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg=\u0022"},{"Name":"Last-Modified","Value":"Wed, 04 Jun 2025 21:38:18 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/NaPoso/favicon.61n19gt1b8.ico">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\favicon.ico'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>

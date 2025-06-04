@@ -31,6 +31,7 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
         
         public class InputModel
         {
+            public IFormFile Dokument { get; set; }
             public string Ime { get; set; }
             public string Prezime { get; set; }
             [Phone]
@@ -81,7 +82,31 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
                 await LoadAsync(user);
                 return Page();
             }
+            if (Input.Dokument != null)
+            {
+                var ext = Path.GetExtension(Input.Dokument.FileName).ToLowerInvariant();
+                if (ext != ".jpg" && ext != ".jpeg")
+                {
+                    ModelState.AddModelError("Input.Dokument", "Dozvoljeni su samo JPG fajlovi.");
+                    await LoadAsync(user);
+                    return Page();
+                }
 
+                var documentsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "documents");
+                if (!Directory.Exists(documentsPath))
+                {
+                    Directory.CreateDirectory(documentsPath);
+                }
+
+                var filePath = Path.Combine(documentsPath, $"{user.Id}_document{ext}");
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await Input.Dokument.CopyToAsync(stream);
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Fajl spremljen na: {filePath}");
+            }
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {

@@ -11,11 +11,11 @@
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
     <div class="col-md-6">
-        <form id="profile-form" method="post">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
             <div class="form-floating mb-3">
-                <input asp-for="Input.Ime" class="form-control" readonly/>
+                <input asp-for="Input.Ime" class="form-control" readonly />
                 <label asp-for="Input.Ime" class="form-label"></label>
             </div>
             <div class="form-floating mb-3">
@@ -23,18 +23,24 @@
                 <label asp-for="Input.Prezime" class="form-label"></label>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+                <input asp-for="Username" class="form-control" readonly />
                 <label asp-for="Username" class="form-label"></label>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Unesite svoj broj telefona."/>
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Unesite svoj broj telefona." />
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
+
+            <div class="mb-3">
+                <input asp-for="Input.Dokument" type="file" />
+                <span asp-validation-for="Input.Dokument"></span>
+            </div>
+
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Spasi izmjene</button>
         </form>
     </div>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "+nyJbaA4ipiQeCtEdxStpT50EHHl4ow85fU4xm5i45M=",
+  "Hash": "szFRal39y4u13DSzK6Wf78jGeXekn0WIgfNRABY5it4=",
   "Source": "NaPoso",
   "BasePath": "_content/NaPoso",
   "Mode": "Default",
@@ -1340,6 +1340,27 @@
       "OriginalItemSpec": "wwwroot\\css\\site.css"
     },
     {
+      "Identity": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg",
+      "SourceId": "NaPoso",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\",
+      "BasePath": "_content/NaPoso",
+      "RelativePath": "documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "3qya7u8r9e",
+      "Integrity": "S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\documents\\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg"
+    },
+    {
       "Identity": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\favicon.ico",
       "SourceId": "NaPoso",
       "SourceType": "Discovered",
@@ -2659,6 +2680,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-pAGv4ietcJNk/EwsQZ5BN9+K4MuNYS2a9wl4Jw+q9D0="
+        }
+      ]
+    },
+    {
+      "Route": "documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document.3qya7u8r9e.jpg",
+      "AssetFile": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "208684"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 04 Jun 2025 21:38:18 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3qya7u8r9e"
+        },
+        {
+          "Name": "label",
+          "Value": "documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg="
+        }
+      ]
+    },
+    {
+      "Route": "documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg",
+      "AssetFile": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "208684"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 04 Jun 2025 21:38:18 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg="
         }
       ]
     },

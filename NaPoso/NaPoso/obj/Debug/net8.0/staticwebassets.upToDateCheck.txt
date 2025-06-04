@@ -1,4 +1,5 @@
 wwwroot\css\site.css
+wwwroot\documents\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg
 wwwroot\favicon.ico
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css

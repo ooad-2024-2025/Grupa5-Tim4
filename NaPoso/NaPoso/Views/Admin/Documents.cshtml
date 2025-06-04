@@ -1,0 +1,13 @@
+﻿@model List<string>
+
+<h2>Svi dokumenti korisnika</h2>
+
+<ul>
+    @foreach (var file in Model)
+    {
+        <li>
+            <a href="@Url.Content("~/documents/" + file)" target="_blank">@file</a>
+            
+        </li>
+    }
+</ul>

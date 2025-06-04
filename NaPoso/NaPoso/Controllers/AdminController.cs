@@ -17,7 +17,17 @@ namespace NaPoso.Controllers
             _context = context;
             _userManager = userManager; // Initialize UserManager  
         }
+        public IActionResult Documents()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot" ,"documents");
+            if(!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            var files = Directory.GetFiles(path).Select(Path.GetFileName).ToList();
 
+            return View(files);
+        }
         public IActionResult Index()
         {
             // Fetch statistics from the database  
