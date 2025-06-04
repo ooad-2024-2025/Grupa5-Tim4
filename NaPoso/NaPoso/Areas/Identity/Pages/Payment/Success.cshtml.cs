@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NaPoso.Services;
 using NaPoso.Data;
+using NaPoso.Models;
+using static NaPoso.Enums.Enums;
 
 namespace NaPoso.Areas.Identity.Pages.Payment
 {
@@ -20,6 +22,7 @@ namespace NaPoso.Areas.Identity.Pages.Payment
         public string CustomerEmail { get; set; }
         public int? OglasId { get; set; }
         public string OglasNaslov { get; set; }
+        public bool WorkerAccepted { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string session_id)
         {
@@ -32,19 +35,24 @@ namespace NaPoso.Areas.Identity.Pages.Payment
             PaymentStatus = session.PaymentStatus;
             CustomerEmail = session.CustomerDetails?.Email;
 
-            // Complete job payment process if payment successful
-            if (session.PaymentStatus == "paid" && TempData["OglasId"] != null)
+            if (session.PaymentStatus == "paid")
             {
-                if (int.TryParse(TempData["OglasId"].ToString(), out int oglasId))
+                if (TempData["PrihvatiOglasId"] != null &&
+                    TempData["PrihvatiRadnikId"] != null)
                 {
-                    OglasId = oglasId;
+                    int oglasId = (int)TempData["PrihvatiOglasId"];
+                    string radnikId = TempData["PrihvatiRadnikId"].ToString();
+
                     var oglas = await _context.Oglas.FindAsync(oglasId);
                     if (oglas != null)
                     {
-                        // Add a marker field for payment if you need it
-                        // oglas.IsPlacen = true;
-                        OglasNaslov = oglas.Naslov;
+                        oglas.RadnikId = radnikId;
+                        oglas.Status = Status.Neaktivan;
                         await _context.SaveChangesAsync();
+
+                        OglasId = oglasId;
+                        OglasNaslov = oglas.Naslov;
+                        WorkerAccepted = true;
                     }
                 }
             }

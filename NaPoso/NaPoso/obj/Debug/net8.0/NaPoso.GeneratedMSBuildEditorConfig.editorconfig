@@ -304,12 +304,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcT2dsYXNpS2xpamVudGEuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/dzafi/Source/Repos/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/PrijavaGreska.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcUHJpamF2YUdyZXNrYS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/dzafi/Source/Repos/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/PrijavljeniRadnici.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcUHJpamF2bGplbmlSYWRuaWNpLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/dzafi/Source/Repos/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/PrikazOglasa.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcUHJpa2F6T2dsYXNhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/dzafi/Source/Repos/Grupa5-Tim4/NaPoso/NaPoso/Views/Oglas/UspjesnaPrijava.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT2dsYXNcVXNwamVzbmFQcmlqYXZhLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/dzafi/Source/Repos/Grupa5-Tim4/NaPoso/NaPoso/Views/Recenzija/Create.cshtml]

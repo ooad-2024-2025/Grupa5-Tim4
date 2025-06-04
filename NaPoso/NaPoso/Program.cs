@@ -10,7 +10,6 @@ using Stripe;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
-// Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -33,14 +32,11 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
-// Configure Stripe
 var stripeSecretKey = builder.Configuration.GetSection("Stripe:SecretKey").Value;
 StripeConfiguration.ApiKey = stripeSecretKey;
 
-// Add this line before builder.Services.AddSingleton<StripeService>();
 builder.Services.AddHttpContextAccessor();
 
-// Also change the StripeService registration to scoped instead of singleton
 builder.Services.AddScoped<StripeService>();
 
 
@@ -86,7 +82,6 @@ async Task CreateAdminUser(IServiceProvider serviceProvider)
     }
     else
     {
-        // Ensure user is in Admin role
         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -104,7 +99,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -112,7 +106,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

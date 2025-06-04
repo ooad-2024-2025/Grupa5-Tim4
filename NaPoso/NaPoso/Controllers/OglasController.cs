@@ -234,45 +234,86 @@ namespace NaPoso.Controllers
         [Authorize(Roles = "Radnik")]
         public async Task<IActionResult> PrijaviRadnikaNaOglas(int oglasId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            // Provjera da li se već prijavio
-            var postoji = await _context.OglasKorisnik
-                .AnyAsync(ok => ok.OglasId == oglasId && ok.KorisnikId == userId);
-
-            if (!postoji)
+            try
             {
-                var prijava = new Models.OglasKorisnik
+                // First check if the job is still available
+                var oglas = await _context.Oglas
+                    .FirstOrDefaultAsync(o => o.Id == oglasId);
+
+                if (oglas == null || oglas.Status != Status.Aktivan || oglas.RadnikId != null)
                 {
-                    OglasId = oglasId,
-                    KorisnikId = userId,
-                    Status = Status.Aktivan
-                };
+                    // Job is not available anymore
+                    return RedirectToAction("PrijavaGreska");
+                }
 
-                _context.OglasKorisnik.Add(prijava);
-                await _context.SaveChangesAsync();
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                // Provjera da li se već prijavio
+                var postoji = await _context.OglasKorisnik
+                    .AnyAsync(ok => ok.OglasId == oglasId && ok.KorisnikId == userId);
+
+                if (!postoji)
+                {
+                    var prijava = new Models.OglasKorisnik
+                    {
+                        OglasId = oglasId,
+                        KorisnikId = userId,
+                        DatumPrijave = DateTime.Now,
+                        Status = Status.Aktivan
+                    };
+
+                    _context.OglasKorisnik.Add(prijava);
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("UspjesnaPrijava");
             }
-
-            return RedirectToAction("PrikazOglasa");
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Error in PrijaviRadnikaNaOglas: {ex.Message}");
+                return RedirectToAction("PrijavaGreska");
+            }
         }
 
         [Authorize(Roles = "Radnik")]
         public async Task<IActionResult> PrijaviSe(int oglasId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            // Provjera da li se već prijavio
-            var prijava = new OglasKorisnik
+            try
             {
-                KorisnikId = userId,
-                OglasId = oglasId,
-                Status = Status.Aktivan
-            };
+                // First check if the job is still available
+                var oglas = await _context.Oglas
+                    .FirstOrDefaultAsync(o => o.Id == oglasId);
 
-            _context.OglasKorisnik.Add(prijava);
-            await _context.SaveChangesAsync();
+                if (oglas == null || oglas.Status != Status.Aktivan || oglas.RadnikId != null)
+                {
+                    // Job is not available anymore
+                    return RedirectToAction("PrijavaGreska");
+                }
 
-            return RedirectToAction("MojiOglasi");
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var prijava = new OglasKorisnik
+                {
+                    KorisnikId = userId,
+                    OglasId = oglasId,
+                    DatumPrijave = DateTime.Now,
+                    Status = Status.Aktivan
+                };
+
+                _context.OglasKorisnik.Add(prijava);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("UspjesnaPrijava");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PrijaviSe: {ex.Message}");
+                return RedirectToAction("PrijavaGreska");
+            }
         }
+
+
         [Authorize(Roles = "Klijent")]
         public async Task<IActionResult> Prihvati(int id)
         {
@@ -283,40 +324,39 @@ namespace NaPoso.Controllers
             if (prijava == null || prijava.Oglas == null)
                 return NotFound();
 
-            // Store the oglasId before any changes
-            int oglasId = prijava.OglasId;
+            TempData["PrihvatiOglasId"] = prijava.OglasId;
+            TempData["PrihvatiRadnikId"] = prijava.KorisnikId;
+            TempData["PrihvatiPrijavaId"] = prijava.Id;
 
-            // Dodaj radnika u oglas i promijeni status
-            prijava.Oglas.RadnikId = prijava.KorisnikId;
-            prijava.Oglas.Status = Status.Neaktivan;
-
-            await _context.SaveChangesAsync();
-
-            // Redirect to payment using the stored oglasId
-            return RedirectToAction("InitiatePayment", new { oglasId = oglasId });
+            return RedirectToAction("InitiatePayment", new { oglasId = prijava.OglasId });
         }
 
         [Authorize(Roles = "Klijent")]
         public async Task<IActionResult> InitiatePayment(int oglasId)
         {
-            // Get job details for payment
             var oglas = await _context.Oglas.FirstOrDefaultAsync(o => o.Id == oglasId);
             if (oglas == null)
             {
                 return NotFound();
             }
 
-            // Store oglasId in TempData for retrieval after payment
             TempData["OglasId"] = oglasId;
 
-            // Calculate amount in cents
             long amountInCents = (long)(oglas.CijenaPosla * 100);
 
-            // Build a direct URL to the Razor Page
             var checkoutUrl = $"/Identity/Payment/Checkout?amount={amountInCents}&productName={Uri.EscapeDataString($"Plaćanje za oglas: {oglas.Naslov}")}";
 
-            // Redirect to the URL
             return Redirect(checkoutUrl);
+        }
+
+        public IActionResult UspjesnaPrijava()
+        {
+            return View();
+        }
+
+        public IActionResult PrijavaGreska()
+        {
+            return View();
         }
 
     }

@@ -12,20 +12,91 @@
                     <h2 class="card-title">Checkout</h2>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" id="checkoutForm" novalidate>
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
                         <div class="mb-3">
-                            <label asp-for="ProductName" class="form-label">Product Name</label>
+                            <label asp-for="ProductName" class="form-label">Naziv Proizvoda / Usluge</label>
                             <input asp-for="ProductName" class="form-control" required>
+                            <span asp-validation-for="ProductName" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label asp-for="Amount" class="form-label">Amount (in cents)</label>
-                            <input asp-for="Amount" class="form-control" required type="number">
-                            <div class="form-text">Enter amount in cents (e.g., 2000 for $20.00)</div>
+                            <label asp-for="Amount" class="form-label">Iznos</label>
+                            <input asp-for="Amount" class="form-control"
+                                   value="0"
+                                   required type="number"
+                                   min="50"
+                                   max="999999999999"
+                                   data-val="true"
+                                   data-val-range="Iznos mora biti između 50 i 9,999,999,999.99"
+                                   data-val-range-min="50"
+                                   data-val-range-max="999999999999"
+                                   data-val-required="Iznos je obavezan">
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                            <div class="form-text">Unesite iznos u centima (npr, 2000 za 20.00 KM). Minimalan iznos: 50 centi.</div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+                        <button type="submit" class="btn btn-primary">Nastavite s plaćanjem</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $.validator.setDefaults({
+                highlight: function (element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).removeClass('is-invalid');
+                },
+                errorElement: 'span',
+                errorClass: 'text-danger',
+                errorPlacement: function (error, element) {
+                    if (element.parent('.input-group').length) {
+                        error.insertAfter(element.parent());
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            var validator = $("#checkoutForm").validate({
+                onkeyup: true,
+                onfocusout: function (element) {
+                    this.element(element);
+                },
+                rules: {
+                    Amount: {
+                        required: true,
+                        min: 50,
+                        max: 999999999999
+                    }
+                },
+                messages: {
+                    Amount: {
+                        required: "Iznos je obavezan",
+                        min: "Iznos mora biti najmanje 50 centi",
+                        max: "Iznos ne smije prelaziti 9,999,999,999.99"
+                    }
+                }
+            });
+
+            validator.form();
+
+            $("input[name='Amount']").focus(function() {
+                if ($(this).val() === "0") {
+                    $(this).val("");
+                }
+            }).blur(function() {
+                if ($(this).val() === "") {
+                    $(this).val("0");
+                }
+            });
+        });
+    </script>
+}

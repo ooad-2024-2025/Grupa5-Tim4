@@ -10,10 +10,23 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h1 class="card-title text-warning">
-                        <i class="fas fa-times-circle"></i> Payment Cancelled
+                        <i class="fas fa-times-circle"></i> Plaćanje otkazano
                     </h1>
-                    <p class="lead">Your payment was cancelled. No charges were made.</p>
-                    <a asp-page="/Index" class="btn btn-primary mt-3">Return Home</a>
+                    <p class="lead">Vaše plaćanje je otkazano. Nema naplaćenih iznosa.</p>
+
+                    @if (Model.OglasId.HasValue)
+                    {
+                        <p>Možete se vratiti na pregled prijavljenih radnika za oglas.</p>
+                        <a asp-controller="Oglas" asp-action="PrijavljeniRadnici" asp-route-oglasId="@Model.OglasId" class="btn btn-primary mt-3">
+                            Natrag na prijave
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
+                            Povratak na početnu
+                        </a>
+                    }
                 </div>
             </div>
         </div>

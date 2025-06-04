@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Uspješna Prijava";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="card-title text-success">
+                        <i class="fas fa-check-circle"></i> Uspješna Prijava
+                    </h1>
+                    <p class="lead">Vaša prijava je uspješno primljena.</p>
+                    <p>Čekamo potvrdu klijenta i uplatu sredstava.</p>
+
+                    <a asp-controller="Oglas" asp-action="PrikazOglasa" class="btn btn-primary mt-3">
+                        Nazad na ponude poslova
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
