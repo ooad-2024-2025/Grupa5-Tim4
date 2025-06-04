@@ -75,6 +75,12 @@ namespace NaPoso.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            [Required(ErrorMessage = "Ovo polje je obavezno.")]
+            [StringLength(50, ErrorMessage = "Ime mora sadržavati maksimalno {1} znakova i minimalno {2} znakova.", MinimumLength = 2)]
+            public string Ime { get; set; }
+            [Required(ErrorMessage = "Ovo polje je obavezno.")]
+            [StringLength(50, ErrorMessage = "Prezime mora sadržavati maksimalno {1} znakova i minimalno {2} znakova.", MinimumLength = 2)]
+            public string Prezime { get; set; }
             [Display(Name = "Broj telefona")]
             [Required(ErrorMessage = "Broj telefona je obavezan.")]
             [RegularExpression(@"^\+\d{6,15}$", ErrorMessage = "Broj telefona mora počinjati sa +387 i sadržavati samo brojeve.")]
@@ -134,7 +140,9 @@ namespace NaPoso.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
+                user.Ime = Input.Ime;
+                user.Prezime = Input.Prezime;
+                user.PhoneNumber = Input.BrojTelefona;
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

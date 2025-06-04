@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NaPoso.Models;
 
 namespace NaPoso.Areas.Identity.Pages.Account.Manage
@@ -26,8 +28,11 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        
         public class InputModel
         {
+            public string Ime { get; set; }
+            public string Prezime { get; set; }
             [Phone]
             [Display(Name = "Broj telefona")]
             public string PhoneNumber { get; set; }
@@ -37,23 +42,28 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
+            System.Diagnostics.Debug.WriteLine($"Ime: {user.Ime}");
+            System.Diagnostics.Debug.WriteLine($"Prezime: {user.Prezime}");
             Username = userName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Ime = user.Ime,
+                Prezime = user.Prezime
             };
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
                 return NotFound($"Nije moguće učitati korisnika s ID-jem '{_userManager.GetUserId(User)}'.");
             }
-
+           
+            
             await LoadAsync(user);
             return Page();
         }
