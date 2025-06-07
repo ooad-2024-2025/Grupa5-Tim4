@@ -20,6 +20,7 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
+        [Display(Name = "Email")]
         public string Username { get; set; }
 
         [TempData]

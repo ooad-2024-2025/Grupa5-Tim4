@@ -2,8 +2,9 @@
 {
     public class Statistika
     {
-        public int UkupnoKorisnika { get; set; }
-        public int UkupnoPoslova { get; set; }
-        public int UkupnoKlijenata { get; set; }
+        public int BrojKorisnika { get; set; }
+        public int BrojPoslova { get; set; }
+        public int BrojKlijenata { get; set; }
+        public int BrojRadnika { get; set; }
     }
 }

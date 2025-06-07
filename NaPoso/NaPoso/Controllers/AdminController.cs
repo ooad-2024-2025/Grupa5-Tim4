@@ -52,19 +52,21 @@ namespace NaPoso.Controllers
         }
         public IActionResult Index()
         {
-            // Fetch statistics from the database  
-            var totalUsers = _context.Users.Count();
-            var totalJobs = _context.Oglas.Count(); // Assuming you have an entity for jobs  
 
-            // Fix for the error: Use UserManager to check roles  
+            var totalUsers = _context.Users.Count();
+            var totalJobs = _context.Oglas.Count();
+
             var users = _context.Users.ToList();
             var totalClients = users.Count(u => _userManager.GetRolesAsync((Korisnik)u).Result.Contains("Klijent"));
+            var totalWorkers = users.Count(u => _userManager.GetRolesAsync((Korisnik)u).Result.Contains("Radnik"));
 
             var model = new Statistika
             {
-                UkupnoKorisnika = totalUsers,
-                UkupnoPoslova = totalJobs,
-                UkupnoKlijenata = totalClients
+                BrojKorisnika = totalUsers,
+                BrojPoslova = totalJobs,
+                BrojKlijenata = totalClients,
+                BrojRadnika = totalWorkers
+
             };
 
             return View("~/Views/Admin/Index.cshtml", model);
