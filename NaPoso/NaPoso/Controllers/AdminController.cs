@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NaPoso.Data;
 using NaPoso.Models;
+using static NaPoso.Enums.Enums;
 
 namespace NaPoso.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
+        private const string V = "Neaktivan";
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Korisnik> _userManager; // Added UserManager for user role management  
 
@@ -55,6 +57,7 @@ namespace NaPoso.Controllers
 
             var totalUsers = _context.Users.Count();
             var totalJobs = _context.Oglas.Count();
+            var finishedJobs = _context.Oglas.Count(o => o.Status == Status.Neaktivan);
 
             var users = _context.Users.ToList();
             var totalClients = users.Count(u => _userManager.GetRolesAsync((Korisnik)u).Result.Contains("Klijent"));
@@ -65,7 +68,8 @@ namespace NaPoso.Controllers
                 BrojKorisnika = totalUsers,
                 BrojPoslova = totalJobs,
                 BrojKlijenata = totalClients,
-                BrojRadnika = totalWorkers
+                BrojRadnika = totalWorkers,
+                BrojZavrsenihPoslova = finishedJobs
 
             };
 

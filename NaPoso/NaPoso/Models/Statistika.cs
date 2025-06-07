@@ -6,5 +6,6 @@
         public int BrojPoslova { get; set; }
         public int BrojKlijenata { get; set; }
         public int BrojRadnika { get; set; }
+        public int BrojZavrsenihPoslova { get; set; }
     }
 }
