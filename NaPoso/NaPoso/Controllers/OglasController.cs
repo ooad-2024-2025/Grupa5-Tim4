@@ -318,19 +318,37 @@ namespace NaPoso.Controllers
         public async Task<IActionResult> Prihvati(int id)
         {
             var prijava = await _context.OglasKorisnik
+    .Include(p => p.Oglas)
+    .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (prijava == null)
+                return NotFound();
+
+            prijava.Status = Status.Prihvacen;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId }); 
+        }
+        [Authorize(Roles = "Klijent")]
+        public async Task<IActionResult> Odbij(int id)
+        {
+            var prijava = await _context.OglasKorisnik
                 .Include(p => p.Oglas)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (prijava == null || prijava.Oglas == null)
                 return NotFound();
 
-            TempData["PrihvatiOglasId"] = prijava.OglasId;
-            TempData["PrihvatiRadnikId"] = prijava.KorisnikId;
-            TempData["PrihvatiPrijavaId"] = prijava.Id;
+            // Provjera da li trenutni korisnik ima pravo odbiti ovu prijavu
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (prijava.Oglas.KlijentId != userId)
+                return Forbid();
 
-            return RedirectToAction("InitiatePayment", new { oglasId = prijava.OglasId });
+            prijava.Status = Status.Odbijen;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId });
         }
-
         [Authorize(Roles = "Klijent")]
         public async Task<IActionResult> InitiatePayment(int oglasId)
         {

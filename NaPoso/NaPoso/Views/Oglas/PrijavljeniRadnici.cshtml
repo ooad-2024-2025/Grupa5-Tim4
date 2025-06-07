@@ -23,10 +23,19 @@
                 <td>@prijava.DatumPrijave.ToString("dd.MM.yyyy")</td>
                 <td>@prijava.Oglas.Status</td>
                 <td>
-                    @if (prijava.Oglas.Status == Status.Aktivan)
+                    @if (prijava.Status == Status.Aktivan)
                     {
                         <a asp-action="Prihvati" asp-route-id="@prijava.Id" class="btn btn-success">Prihvati</a>
-                        <a asp-action="Odbij" asp-route-id="@prijava.Id" class="btn btn-success"> Odbij </a>                    }
+                        <a asp-action="Odbij" asp-route-id="@prijava.Id" class="btn btn-danger">Odbij</a>
+                    }
+                    else if (prijava.Status == Status.Prihvacen)
+                    {
+                        <a asp-action="InitiatePayment" asp-route-oglasId="@prijava.OglasId" class="btn btn-primary">Plati</a>
+                    }
+                    else if (prijava.Status == Status.Odbijen)
+                    {
+                        <span class="text-danger">Odbijeno</span>
+                    }
                 </td>
             </tr>
             
