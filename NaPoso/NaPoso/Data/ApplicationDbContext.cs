@@ -16,6 +16,7 @@ namespace NaPoso.Data
         public DbSet<Obavijest> Obavijest { get; set; }
         public DbSet<ObavijestKorisniku> ObavijestKorisniku { get; set; }
         public DbSet<OglasKorisnik> OglasKorisnik { get; set; }
+        public DbSet<OdobreniDokumenti> OdobreniDokumenti { get; set; }
         //public DbSet<Chat> Chat { get; set; }
         //public DbSet<Message> Message { get; set; }
 
@@ -29,6 +30,7 @@ namespace NaPoso.Data
             modelBuilder.Entity<Obavijest>().ToTable("Obavijest");
             modelBuilder.Entity<ObavijestKorisniku>().ToTable("ObavijestKorisniku");
             modelBuilder.Entity<OglasKorisnik>().ToTable("OglasKorisnik");
+            modelBuilder.Entity<OdobreniDokumenti>().ToTable("OdobreniDokumenti");
             /*
             modelBuilder.Entity<Chat>().ToTable("Chat");
             modelBuilder.Entity<Message>().ToTable("Message");

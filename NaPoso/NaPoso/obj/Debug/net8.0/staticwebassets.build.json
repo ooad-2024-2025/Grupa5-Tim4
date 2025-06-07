@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "fo1oa2LT8KZsg/0N2/g4/hf846JLFgNS/eIJYnlwCNY=",
+  "Hash": "O+/kz5F3icUdwGDmRrwqN+hqUiKLAt8WN0gZkM1GK3Q=",
   "Source": "NaPoso",
   "BasePath": "_content/NaPoso",
   "Mode": "Default",
@@ -1361,6 +1361,27 @@
       "OriginalItemSpec": "wwwroot\\documents\\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg"
     },
     {
+      "Identity": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.jpg",
+      "SourceId": "NaPoso",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\",
+      "BasePath": "_content/NaPoso",
+      "RelativePath": "documents/7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "30wcfntwcy",
+      "Integrity": "/dcQDF4y+ZGARL/rN6grU618q+PsKZSf9fmWQyZ/rmc=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\documents\\7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.jpg"
+    },
+    {
       "Identity": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\favicon.ico",
       "SourceId": "NaPoso",
       "SourceType": "Discovered",
@@ -2706,7 +2727,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 15:30:41 GMT"
+          "Value": "Sat, 07 Jun 2025 19:16:43 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -2751,7 +2772,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 15:30:41 GMT"
+          "Value": "Sat, 07 Jun 2025 19:16:43 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -2762,6 +2783,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-S63EMacr8g16hzLC4O8q0B1iI0tSA2t/1bMxMIgloSg="
+        }
+      ]
+    },
+    {
+      "Route": "documents/7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.30wcfntwcy.jpg",
+      "AssetFile": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279610"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/dcQDF4y+ZGARL/rN6grU618q+PsKZSf9fmWQyZ/rmc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 05 Jun 2025 15:35:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "30wcfntwcy"
+        },
+        {
+          "Name": "label",
+          "Value": "documents/7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-/dcQDF4y+ZGARL/rN6grU618q+PsKZSf9fmWQyZ/rmc="
+        }
+      ]
+    },
+    {
+      "Route": "documents/7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.jpg",
+      "AssetFile": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279610"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/dcQDF4y+ZGARL/rN6grU618q+PsKZSf9fmWQyZ/rmc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 05 Jun 2025 15:35:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-/dcQDF4y+ZGARL/rN6grU618q+PsKZSf9fmWQyZ/rmc="
         }
       ]
     },

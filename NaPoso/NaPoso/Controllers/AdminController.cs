@@ -19,14 +19,36 @@ namespace NaPoso.Controllers
         }
         public IActionResult Documents()
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot" ,"documents");
-            if(!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            var files = Directory.GetFiles(path).Select(Path.GetFileName).ToList();
+            var documentsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "documents");
+            if (!Directory.Exists(documentsPath))
+                Directory.CreateDirectory(documentsPath);
 
-            return View(files);
+            var files = Directory.GetFiles(documentsPath);
+
+            // Dohvati listu odobrenih dokumenata iz baze
+            var approvedFiles = _context.OdobreniDokumenti.Select(a => a.FileName).ToList();
+
+            var dokumenti = new List<DokumentiKorisnika>();
+
+            foreach (var file in files)
+            {
+                var fileName = Path.GetFileName(file);
+
+                // Preskoči fajlove koje je admin već prihvatio
+                if (approvedFiles.Contains(fileName))
+                    continue;
+
+                var userId = fileName.Split('_')[0];
+                var korisnik = _userManager.FindByIdAsync(userId).Result;
+
+                dokumenti.Add(new DokumentiKorisnika
+                {
+                    FileName = fileName,
+                    Korisnik = korisnik
+                });
+            }
+
+            return View(dokumenti);
         }
         public IActionResult Index()
         {
@@ -46,6 +68,33 @@ namespace NaPoso.Controllers
             };
 
             return View("~/Views/Admin/Index.cshtml", model);
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DeleteDocument(string fileName)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "documents", fileName);
+            if (System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+            }
+
+            return RedirectToAction("Documents");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult ApproveDocument(string fileName)
+        {
+            if (!_context.OdobreniDokumenti.Any(a => a.FileName == fileName))
+            {
+                _context.OdobreniDokumenti.Add(new OdobreniDokumenti
+                {
+                    FileName = fileName
+                });
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Documents");
         }
     }
 }

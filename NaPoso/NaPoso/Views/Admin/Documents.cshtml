@@ -1,13 +1,23 @@
-﻿@model List<string>
+﻿@model List<NaPoso.Models.DokumentiKorisnika>
 
 <h2>Svi dokumenti korisnika</h2>
 
 <ul>
-    @foreach (var file in Model)
+    @foreach (var doc in Model)
     {
         <li>
-            <a href="@Url.Content("~/documents/" + file)" target="_blank">@file</a>
-            
+            <a href="@Url.Content("~/documents/" + doc.FileName)" target="_blank">@doc.FileName</a>
+			- Email: @doc.Korisnik?.Email ; Ime: @doc.Korisnik?.Ime ; Prezime: @doc.Korisnik?.Prezime
+            <form asp-controller="Admin" asp-action="ApproveDocument" method="post" style="display:inline;">
+                <input type="hidden" name="fileName" value="@doc.FileName" />
+                <button type="submit" class="btn btn-success">Prihvati</button>
+            </form>
+            <form asp-controller="Admin" asp-action="DeleteDocument" method="post" style="display:inline;">
+                <input type="hidden" name="fileName" value="@doc.FileName" />
+                <button type="submit" class="btn btn-danger">Odbij</button>
+            </form>
+            <div></div>
         </li>
+
     }
 </ul>
