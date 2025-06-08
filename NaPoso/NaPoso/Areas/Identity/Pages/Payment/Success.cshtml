@@ -1,7 +1,7 @@
 ﻿@page
 @model NaPoso.Areas.Identity.Pages.Payment.SuccessModel
 @{
-    ViewData["Title"] = "Payment Successful";
+    ViewData["Title"] = "Plaćanje uspješno";
 }
 
 <div class="container mt-5">
@@ -10,15 +10,44 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h1 class="card-title text-success">
-                        <i class="fas fa-check-circle"></i> Payment Successful
+                        <i class="fas fa-check-circle"></i> Uplata Uspješna!
                     </h1>
-                    <p class="lead">Uspjesno smo vam ukrali pare hvala sto ste unijeli Vasu karticu😊</p>
+                    <p class="lead">Uspješno smo Vam ukrali pare hvala Vam što ste unijeli podatke Vaše kartice 😊</p>
                     <p>Status: @Model.PaymentStatus</p>
                     @if (!string.IsNullOrEmpty(Model.CustomerEmail))
                     {
                         <p>Email: @Model.CustomerEmail</p>
                     }
-                    <a asp-page="/Index" class="btn btn-primary mt-3">Return Home</a>
+
+                    @if (TempData.ContainsKey("DebugMissing"))
+                    {
+                        <div class="alert alert-warning">
+                            <strong>Debug:</strong> @TempData["DebugMissing"]
+                        </div>
+                    }
+
+                    @if (TempData.ContainsKey("DebugToken"))
+                    {
+                        <div class="alert alert-info">
+                            <strong>Token:</strong> @TempData["DebugToken"]
+                        </div>
+                    }
+
+                    @if (Model.OglasId.HasValue && !string.IsNullOrEmpty(Model.RadnikId))
+                    {
+                        <a asp-controller="Recenzija" asp-action="Create"
+                           asp-route-radnikId="@Model.RadnikId"
+                           asp-route-oglasId="@Model.OglasId"
+                           class="btn btn-success mt-3">Ostavi recenziju</a>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning mt-3">
+                            Nedostaju podaci za recenziju. OglasId: @Model.OglasId, RadnikId: @Model.RadnikId
+                        </div>
+                    }
+
+                    <a asp-page="/Index" class="btn btn-primary mt-3">Povratak na početnu</a>
                 </div>
             </div>
         </div>

@@ -36,8 +36,6 @@
                     else if (prijava.Status == Status.Prihvacen)
                     {
                         <a asp-action="InitiatePayment" asp-route-oglasId="@prijava.OglasId" class="btn btn-primary">Plati</a>
-                        <a asp-controller="Recenzija" asp-action="Create" asp-route-radnikId="@prijava.Korisnik.Id" class="btn btn-warning">Ostavi recenziju</a>
-
                     }
                     else if (prijava.Status == Status.Odbijen)
                     {

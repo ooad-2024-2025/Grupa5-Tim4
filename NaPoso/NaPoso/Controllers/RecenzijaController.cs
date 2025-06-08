@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -47,9 +48,47 @@ namespace NaPoso.Controllers
         }
 
         // GET: Recenzija/Create
-        [Authorize(Roles = "Klijent,Admin")] // Fixed: removed space after comma
-        public IActionResult Create(string radnikId)
+        [Authorize(Roles = "Klijent,Admin")]
+        public IActionResult Create(string radnikId, int? oglasId)
         {
+            // Create debug data to see what's happening
+            ViewBag.Debug_RouteParams = $"radnikId: {radnikId}, oglasId: {oglasId}";
+
+            // Session values 
+            var verifiedOglasId = HttpContext.Session.GetInt32("VerifiedOglasId");
+            var verifiedRadnikId = HttpContext.Session.GetString("VerifiedRadnikId");
+            var paymentVerified = HttpContext.Session.GetString("PaymentVerified");
+
+            ViewBag.Debug_Session = $"Session values - verifiedOglasId: {verifiedOglasId}, " +
+                                   $"verifiedRadnikId: {verifiedRadnikId}, " +
+                                   $"paymentToken: {(paymentVerified != null ? "exists" : "missing")}";
+
+            // Admin can bypass verification
+            if (!User.IsInRole("Admin"))
+            {
+                // Check if this is coming from a verified payment
+                if (!oglasId.HasValue)
+                {
+                    TempData["ErrorMessage"] = "Nedostaje ID oglasa.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // TEMPORARY - REMOVE IN PRODUCTION: Allow all requests for debugging
+                bool bypassVerification = false; // Set to true to bypass verification temporarily
+
+                // Validate that this request matches verified payment data
+                if (!bypassVerification && (
+                    verifiedOglasId == null ||
+                    verifiedOglasId != oglasId ||
+                    string.IsNullOrEmpty(verifiedRadnikId) ||
+                    verifiedRadnikId != radnikId ||
+                    string.IsNullOrEmpty(paymentVerified)))
+                {
+                    TempData["ErrorMessage"] = "Plaćanje nije potvrđeno za ovaj oglas.";
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
             var recenzija = new Recenzija { RadnikId = radnikId };
             return View(recenzija);
         }
@@ -57,46 +96,80 @@ namespace NaPoso.Controllers
         // POST: Recenzija/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Klijent,Admin")] // Fixed: removed space after comma
-        public async Task<IActionResult> Create([Bind("Ocjena,Sadrzaj,RadnikId")] Recenzija recenzija)
+        [Authorize(Roles = "Klijent,Admin")]
+        public async Task<IActionResult> Create([Bind("Ocjena,Sadrzaj,RadnikId")] Recenzija recenzija, int? oglasId)
         {
             // Set the client ID from the current user
             recenzija.KlijentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // FIXED: Remove KlijentId from ModelState validation since we set it manually
-            ModelState.Remove("KlijentId");
+            // Debug info
+            TempData["Debug_PostParams"] = $"KlijentId: {recenzija.KlijentId}, RadnikId: {recenzija.RadnikId}, OglasId: {oglasId}";
 
-            // DEBUG: Add this temporarily to see what's happening
-            TempData["DebugInfo"] = $"RadnikId: {recenzija.RadnikId} | KlijentId: {recenzija.KlijentId} | ModelState.IsValid: {ModelState.IsValid}";
-
-            if (!ModelState.IsValid)
+            // Verify payment for clients
+            if (!User.IsInRole("Admin"))
             {
-                var errors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                TempData["DebugErrors"] = $"Errors: {errors}";
+                // TEMPORARY - REMOVE IN PRODUCTION: Allow all requests for debugging
+                bool bypassVerification = false; // Set to true to bypass verification temporarily
+
+                if (!bypassVerification)
+                {
+                    // Get verification data from session
+                    var verifiedOglasId = HttpContext.Session.GetInt32("VerifiedOglasId");
+                    var verifiedRadnikId = HttpContext.Session.GetString("VerifiedRadnikId");
+                    var paymentVerified = HttpContext.Session.GetString("PaymentVerified");
+
+                    TempData["Debug_SessionValues"] = $"Session values - verifiedOglasId: {verifiedOglasId}, " +
+                                       $"verifiedRadnikId: {verifiedRadnikId}, " +
+                                       $"paymentToken: {(paymentVerified != null ? "exists" : "missing")}";
+
+                    // Validate that this submission matches verified payment data
+                    if (verifiedOglasId == null ||
+                        verifiedOglasId != oglasId ||
+                        string.IsNullOrEmpty(verifiedRadnikId) ||
+                        verifiedRadnikId != recenzija.RadnikId ||
+                        string.IsNullOrEmpty(paymentVerified))
+                    {
+                        TempData["ErrorMessage"] = "Plaćanje nije potvrđeno za ovaj oglas.";
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    // Clear the verification after use
+                    HttpContext.Session.Remove("PaymentVerified");
+                    HttpContext.Session.Remove("VerifiedOglasId");
+                    HttpContext.Session.Remove("VerifiedRadnikId");
+                }
             }
 
-            // FIXED: Remove the contradictory logic - check if ModelState is valid, not invalid
+            ModelState.Remove("KlijentId");
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Add(recenzija);
                     await _context.SaveChangesAsync();
+
+                    // Add success message
+                    TempData["SuccessMessage"] = "Recenzija je uspješno dodana.";
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
                 {
-                    // Log the exception or handle it appropriately
+                    TempData["Debug_Error"] = $"Error: {ex.Message}";
                     ModelState.AddModelError("", "Dogodila se greška prilikom spremanja recenzije.");
                     return View(recenzija);
                 }
             }
+            else
+            {
+                var errors = string.Join(" | ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                TempData["Debug_ModelErrors"] = errors;
+            }
 
-            // If we get here, ModelState is not valid - show validation errors
             return View(recenzija);
         }
-
-
 
         // GET: Recenzija/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -113,10 +186,6 @@ namespace NaPoso.Controllers
             }
             return View(recenzija);
         }
-
-        // POST: Recenzija/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 
         // GET: Recenzija/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -155,6 +224,7 @@ namespace NaPoso.Controllers
         {
             return _context.Recenzija.Any(e => e.Id == id);
         }
+
         [Authorize(Roles = "Radnik")]
         public async Task<IActionResult> MojeRecenzije()
         {

@@ -6,6 +6,8 @@ using NaPoso.Data;
 using NaPoso.Services;
 using NaPoso.Models;
 using Stripe;
+using System;
+using Microsoft.AspNetCore.Http; // Added for sessions
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,11 +41,18 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<StripeService>();
 
+// Add session support
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 async Task CreateRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = new[] { "Klijent", "Radnik","Admin" };
+    string[] roles = new[] { "Klijent", "Radnik", "Admin" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
@@ -115,6 +124,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession(); // Add session middleware to the pipeline
 
 app.MapControllerRoute(
     name: "default",

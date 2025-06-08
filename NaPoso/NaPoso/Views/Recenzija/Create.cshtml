@@ -1,55 +1,51 @@
 ﻿@model NaPoso.Models.Recenzija
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Ostavi recenziju";
 }
-@if (TempData["DebugInfo"] != null)
-{
-    <div style="background: yellow; padding: 10px; margin: 10px 0;">
-        <strong>DEBUG:</strong> @TempData["DebugInfo"]
-    </div>
-}
-@if (TempData["DebugErrors"] != null)
-{
-    <div style="background: red; color: white; padding: 10px; margin: 10px 0;">
-        <strong>ERRORS:</strong> @TempData["DebugErrors"]
-    </div>
-}
-<h1>Create</h1>
 
-<h4>Recenzija</h4>
+<h1>Ostavi recenziju</h1>
+
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Ocjena" class="control-label"></label>
-                <input asp-for="Ocjena" class="form-control" />
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+
+            <div class="form-group mb-3">
+                <label asp-for="Ocjena" class="control-label">Ocjena (1-5)</label>
+                <input asp-for="Ocjena" class="form-control" min="1" max="5" />
                 <span asp-validation-for="Ocjena" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Sadrzaj" class="control-label"></label>
-                <input asp-for="Sadrzaj" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="Sadrzaj" class="control-label">Vaš komentar</label>
+                <textarea asp-for="Sadrzaj" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Sadrzaj" class="text-danger"></span>
             </div>
 
-            <input type="hidden" asp-for="RadnikId" /> <!-- VAŽNO: skriveno polje -->
-            @Html.HiddenFor(m => m.KlijentId)
+            <input type="hidden" asp-for="RadnikId" />
+
+            @if (Context.Request.Query.ContainsKey("oglasId"))
+            {
+                <input type="hidden" name="oglasId" value="@Context.Request.Query["oglasId"]" />
+            }
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Pošalji recenziju" class="btn btn-primary" />
+                <a href="javascript:history.back()" class="btn btn-secondary">Odustani</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
