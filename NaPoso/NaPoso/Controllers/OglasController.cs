@@ -29,6 +29,7 @@ namespace NaPoso.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Oglas
         public async Task<IActionResult> Index()
         {
@@ -36,6 +37,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Oglas/Details/5
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -54,6 +56,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Oglas/Create
+        [Authorize(Roles = "Admin,Klijent")]
         public IActionResult Create()
         {
             return View();
@@ -64,6 +67,7 @@ namespace NaPoso.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Create([Bind("Opis,Lokacija,TipPosla,CijenaPosla,Naslov")] Oglas oglas)
         {
             if (!ModelState.IsValid)
@@ -95,6 +99,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Oglas/Edit/5
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -115,6 +120,7 @@ namespace NaPoso.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Opis,Lokacija,TipPosla,CijenaPosla,Naslov,Status")] Oglas oglas)
         {
             if (id != oglas.Id)
@@ -159,6 +165,7 @@ namespace NaPoso.Controllers
 
 
         // GET: Oglas/Delete/5
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -179,6 +186,7 @@ namespace NaPoso.Controllers
         // POST: Oglas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var oglas = await _context.Oglas.FindAsync(id);
@@ -233,7 +241,7 @@ namespace NaPoso.Controllers
 
             return View(await oglasi.ToListAsync());
         }
-        [Authorize(Roles = "Klijent")]
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> OglasiKlijenta()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -243,7 +251,7 @@ namespace NaPoso.Controllers
 
             return View(oglasi);
         }
-        [Authorize(Roles = "Klijent")]
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> PrijavljeniRadnici(int oglasId)
         {
             // Prvo dohvatimo oglas i proverimo da li klijent koji gleda je vlasnik oglasa
@@ -357,7 +365,7 @@ namespace NaPoso.Controllers
         }
 
 
-        [Authorize(Roles = "Klijent")]
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Prihvati(int id)
         {
             var prijava = await _context.OglasKorisnik
@@ -381,7 +389,7 @@ namespace NaPoso.Controllers
 
             return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId }); 
         }
-        [Authorize(Roles = "Klijent")]
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Odbij(int id)
         {
             var prijava = await _context.OglasKorisnik
@@ -436,5 +444,43 @@ namespace NaPoso.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult KreirajPosao()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> KreirajPosao(AdminOglasView model)
+        {
+            if (ModelState.IsValid)
+            {
+                var klijent = await _userManager.FindByEmailAsync(model.KlijentEmail);
+                if (klijent == null)
+                {
+                    ModelState.AddModelError("KlijentEmail", "Klijent s tim emailom ne postoji.");
+                    return View(model);
+                }
+
+                var oglas = new Oglas
+                {
+                    Naslov = model.Naslov,
+                    Opis = model.Opis,
+                    Lokacija = model.Lokacija,
+                    TipPosla = model.TipPosla,
+                    CijenaPosla = model.CijenaPosla,
+                    KlijentId = klijent.Id,
+                    Status = Status.Aktivan // ili default status koji koristiš
+                };
+
+                _context.Add(oglas);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(model);
+        }
     }
 }

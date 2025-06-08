@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Obavijest
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Obavijest.ToListAsync());
@@ -66,18 +68,17 @@ namespace NaPoso.Controllers
         }
 
         // GET: Obavijest/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var obavijest = await _context.Obavijest.FindAsync(id);
+            var obavijest = _context.Obavijest.Find(id);
             if (obavijest == null)
-            {
                 return NotFound();
-            }
+
+            // Kreiraj SelectList od enum Obavjestenje
+            ViewData["TipList"] = new SelectList(Enum.GetValues(typeof(Enums.Enums.Obavjestenje))
+                .Cast<Enums.Enums.Obavjestenje>()
+                .Select(t => new { Value = t, Text = t.ToString() }), "Value", "Text", obavijest.Tip);
+
             return View(obavijest);
         }
 
