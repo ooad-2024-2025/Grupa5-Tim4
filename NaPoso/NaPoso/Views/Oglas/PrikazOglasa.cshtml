@@ -1,10 +1,64 @@
 ﻿@model IEnumerable<NaPoso.Models.Oglas>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 
 @{
     ViewData["Title"] = "Oglasi za radnike";
 }
 
 <h2>Aktivni oglasi</h2>
+@{
+    // Dohvati vrijednosti query parametara da zadržiš unos u poljima
+    var searchValue = (string)ViewContext.HttpContext.Request.Query["search"];
+}
+<div style="max-width: 500px; margin-bottom: 15px;">
+    <form id="searchForm" method="get" asp-action="PrikazOglasa">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Pretraga po naslovu/opisu" value="@searchValue" />
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Pretraži</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<button id="toggleFiltersBtn" class="btn btn-secondary mb-3">Filteri</button>
+<form id = "filterForm" method="get" asp-action="PrikazOglasa" class="mb-4" style="display:none;>
+    <div class="form-row">
+      
+        <input type="text" name="lokacija" class="form-control mb-2 mr-sm-2" placeholder="Lokacija"
+               value="@HttpContextAccessor.HttpContext.Request.Query["lokacija"]" />
+
+        <input type="number" name="minCijena" class="form-control mb-2 mr-sm-2" placeholder="Min cijena" step="1"
+               value="@HttpContextAccessor.HttpContext.Request.Query["minCijena"]" />
+
+        <input type="number" name="maxCijena" class="form-control mb-2 mr-sm-2" placeholder="Max cijena" step="1"
+               value="@HttpContextAccessor.HttpContext.Request.Query["maxCijena"]" />
+
+        <select name="sort" class="form-control mb-2 mr-sm-2">
+            <option value="">Sortiraj po</option>
+            <option value="cijena_asc">Cijena - Rastuće</option>
+            <option value="cijena_desc">Cijena - Opadajuće</option>
+        </select>
+        <button type="submit" class="btn btn-primary mb-2">Filtriraj</button>
+    </div>
+</form>
+
+<script>
+    document.getElementById("toggleFiltersBtn").addEventListener("click", function() {
+        const form = document.getElementById("filterForm");
+        if (form.style.display === "none") {
+            form.style.display = "block";
+        } else {
+            form.style.display = "none";
+        }
+    });
+</script>
+
+
+
 
 <table class="table">
     <thead>

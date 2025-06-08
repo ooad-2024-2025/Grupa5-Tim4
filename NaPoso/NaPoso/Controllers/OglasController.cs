@@ -192,12 +192,36 @@ namespace NaPoso.Controllers
             return _context.Oglas.Any(e => e.Id == id);
         }
         [Authorize(Roles = "Radnik")]
-        public async Task<IActionResult> PrikazOglasa()
+        [Authorize(Roles = "Radnik")]
+        [Authorize(Roles = "Radnik")]
+        public async Task<IActionResult> PrikazOglasa(string search, string lokacija, string tipPosla, string sort, int? minCijena, int? maxCijena)
         {
-            var oglasi = await _context.Oglas
-                .Where(o => o.Status == Status.Aktivan && o.RadnikId == null)
-                .ToListAsync();
-            return View(oglasi);
+            var oglasi = _context.Oglas
+                .Where(o => o.Status == Status.Aktivan && o.RadnikId == null);
+
+            if (!string.IsNullOrEmpty(search))
+                oglasi = oglasi.Where(o => o.Naslov.Contains(search) || o.Opis.Contains(search));
+
+            if (!string.IsNullOrEmpty(lokacija))
+                oglasi = oglasi.Where(o => o.Lokacija.Contains(lokacija));
+
+            if (!string.IsNullOrEmpty(tipPosla))
+                oglasi = oglasi.Where(o => o.TipPosla == tipPosla);
+
+            if (minCijena.HasValue)
+                oglasi = oglasi.Where(o => o.CijenaPosla >= minCijena.Value);
+
+            if (maxCijena.HasValue)
+                oglasi = oglasi.Where(o => o.CijenaPosla <= maxCijena.Value);
+
+            oglasi = sort switch
+            {
+                "cijena_asc" => oglasi.OrderBy(o => o.CijenaPosla),
+                "cijena_desc" => oglasi.OrderByDescending(o => o.CijenaPosla),
+                _ => oglasi.OrderBy(o => o.Naslov)
+            };
+
+            return View(await oglasi.ToListAsync());
         }
         [Authorize(Roles = "Klijent")]
         public async Task<IActionResult> OglasiKlijenta()
