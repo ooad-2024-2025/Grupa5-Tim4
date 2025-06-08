@@ -85,6 +85,15 @@ namespace NaPoso.Controllers
                 System.IO.File.Delete(path);
             }
 
+            // Obrisi zapis o odobrenom dokumentu iz baze (ako postoji)
+            var odobreniDokument = _context.OdobreniDokumenti.FirstOrDefault(d => d.FileName == fileName);
+            if (odobreniDokument != null)
+            {
+                _context.OdobreniDokumenti.Remove(odobreniDokument);
+                _context.SaveChanges();
+            }
+
+
             return RedirectToAction("Documents");
         }
 
@@ -92,6 +101,16 @@ namespace NaPoso.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult ApproveDocument(string fileName)
         {
+            var userId = fileName.Split('_')[0];  // pretpostavljam da je userId dio imena fajla
+
+            var korisnik = _userManager.FindByIdAsync(userId).Result;
+            if (korisnik != null)
+            {
+                korisnik.Verified = true; // postavi verifikaciju korisniku
+                var result = _userManager.UpdateAsync(korisnik).Result; // update u bazi
+            }
+
+            // Dodaj i odobreni dokument u bazu ako želiš
             if (!_context.OdobreniDokumenti.Any(a => a.FileName == fileName))
             {
                 _context.OdobreniDokumenti.Add(new OdobreniDokumenti
@@ -100,6 +119,7 @@ namespace NaPoso.Controllers
                 });
                 _context.SaveChanges();
             }
+
             return RedirectToAction("Documents");
         }
     }

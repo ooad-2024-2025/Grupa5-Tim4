@@ -13,16 +13,20 @@ using NaPoso.Data;
 using NaPoso.Models;
 using SQLitePCL;
 using static NaPoso.Enums.Enums;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace NaPoso.Controllers
 {
     public class OglasController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public OglasController(ApplicationDbContext context)
+        private readonly UserManager<Korisnik> _userManager;
+        public OglasController(UserManager<Korisnik> userManager, ApplicationDbContext context)
         {
             _context = context;
+            _userManager = userManager;
+
         }
 
         // GET: Oglas
@@ -191,34 +195,40 @@ namespace NaPoso.Controllers
         {
             return _context.Oglas.Any(e => e.Id == id);
         }
-        [Authorize(Roles = "Radnik")]
-        [Authorize(Roles = "Radnik")]
+        
         [Authorize(Roles = "Radnik")]
         public async Task<IActionResult> PrikazOglasa(string search, string lokacija, string tipPosla, string sort, int? minCijena, int? maxCijena)
         {
-            var oglasi = _context.Oglas
-                .Where(o => o.Status == Status.Aktivan && o.RadnikId == null);
+
+            var oglasi = from o in _context.Oglas
+                        join k in _context.Users on o.KlijentId equals k.Id
+                        where o.Status == Status.Aktivan && o.RadnikId == null
+                        select new VerifikovanView
+                        {
+                            Oglas = o,
+                            Verifikovan = k.Verified
+                        };
 
             if (!string.IsNullOrEmpty(search))
-                oglasi = oglasi.Where(o => o.Naslov.Contains(search) || o.Opis.Contains(search));
+                oglasi = oglasi.Where(o => o.Oglas.Naslov.Contains(search) || o.Oglas.Opis.Contains(search));
 
             if (!string.IsNullOrEmpty(lokacija))
-                oglasi = oglasi.Where(o => o.Lokacija.Contains(lokacija));
+                oglasi = oglasi.Where(o => o.Oglas.Lokacija.Contains(lokacija));
 
             if (!string.IsNullOrEmpty(tipPosla))
-                oglasi = oglasi.Where(o => o.TipPosla == tipPosla);
+                oglasi = oglasi.Where(o => o.Oglas.TipPosla == tipPosla);
 
             if (minCijena.HasValue)
-                oglasi = oglasi.Where(o => o.CijenaPosla >= minCijena.Value);
+                oglasi = oglasi.Where(o => o.Oglas.CijenaPosla >= minCijena.Value);
 
             if (maxCijena.HasValue)
-                oglasi = oglasi.Where(o => o.CijenaPosla <= maxCijena.Value);
+                oglasi = oglasi.Where(o => o.Oglas.CijenaPosla <= maxCijena.Value);
 
             oglasi = sort switch
             {
-                "cijena_asc" => oglasi.OrderBy(o => o.CijenaPosla),
-                "cijena_desc" => oglasi.OrderByDescending(o => o.CijenaPosla),
-                _ => oglasi.OrderBy(o => o.Naslov)
+                "cijena_asc" => oglasi.OrderBy(o => o.Oglas.CijenaPosla),
+                "cijena_desc" => oglasi.OrderByDescending(o => o.Oglas.CijenaPosla),
+                _ => oglasi.OrderBy(o => o.Oglas.Naslov)
             };
 
             return View(await oglasi.ToListAsync());

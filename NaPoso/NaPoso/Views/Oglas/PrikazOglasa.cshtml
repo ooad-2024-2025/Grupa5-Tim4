@@ -1,17 +1,14 @@
-﻿@model IEnumerable<NaPoso.Models.Oglas>
+﻿@model IEnumerable<NaPoso.Models.VerifikovanView>
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 
-
 @{
     ViewData["Title"] = "Oglasi za radnike";
+    var searchValue = (string)ViewContext.HttpContext.Request.Query["search"];
 }
 
 <h2>Aktivni oglasi</h2>
-@{
-    // Dohvati vrijednosti query parametara da zadržiš unos u poljima
-    var searchValue = (string)ViewContext.HttpContext.Request.Query["search"];
-}
+
 <div style="max-width: 500px; margin-bottom: 15px;">
     <form id="searchForm" method="get" asp-action="PrikazOglasa">
         <div class="input-group">
@@ -23,11 +20,10 @@
     </form>
 </div>
 
-
 <button id="toggleFiltersBtn" class="btn btn-secondary mb-3">Filteri</button>
-<form id = "filterForm" method="get" asp-action="PrikazOglasa" class="mb-4" style="display:none;>
+
+<form id="filterForm" method="get" asp-action="PrikazOglasa" class="mb-4" style="display:none;">
     <div class="form-row">
-      
         <input type="text" name="lokacija" class="form-control mb-2 mr-sm-2" placeholder="Lokacija"
                value="@HttpContextAccessor.HttpContext.Request.Query["lokacija"]" />
 
@@ -47,18 +43,11 @@
 </form>
 
 <script>
-    document.getElementById("toggleFiltersBtn").addEventListener("click", function() {
+    document.getElementById("toggleFiltersBtn").addEventListener("click", function () {
         const form = document.getElementById("filterForm");
-        if (form.style.display === "none") {
-            form.style.display = "block";
-        } else {
-            form.style.display = "none";
-        }
+        form.style.display = (form.style.display === "none") ? "block" : "none";
     });
 </script>
-
-
-
 
 <table class="table">
     <thead>
@@ -67,20 +56,24 @@
             <th>Opis</th>
             <th>Lokacija</th>
             <th>Cijena</th>
+            <th>Verifikovan klijent</th>
+            <th>Akcija</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var oglas in Model)
         {
             <tr>
-                <td>@oglas.Naslov</td>
-                <td>@oglas.Opis</td>
-                <td>@oglas.Lokacija</td>
-                <td>@oglas.CijenaPosla</td>
-				<td>
-                    <a asp-controller="Oglas" asp-action="PrijaviRadnikaNaOglas" asp-route-oglasId="@oglas.Id" class="btn btn-success">
+                <td>@oglas.Oglas.Naslov</td>
+                <td>@oglas.Oglas.Opis</td>
+                <td>@oglas.Oglas.Lokacija</td>
+                <td>@oglas.Oglas.CijenaPosla KM</td>
+                <td>@(oglas.Verifikovan ? "Da" : "Ne")</td>
+                <td>
+                    <a asp-controller="Oglas" asp-action="PrijaviRadnikaNaOglas" asp-route-oglasId="@oglas.Oglas.Id" class="btn btn-success">
                         Prijavi se
                     </a>
+                </td>
             </tr>
         }
     </tbody>

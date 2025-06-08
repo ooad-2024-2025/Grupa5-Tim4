@@ -1,4 +1,6 @@
-﻿namespace NaPoso.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace NaPoso.Models
 {
     public class OdobreniDokumenti
     {

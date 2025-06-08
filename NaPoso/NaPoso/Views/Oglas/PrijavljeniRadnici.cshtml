@@ -9,6 +9,7 @@
             <th>Ime</th>
 			<th>Prezime</th>
             <th>Email</th>
+			<th>Verifikovan</th>
             <th>Datum prijave</th>
 			<th>Status</th>
         </tr>
@@ -20,6 +21,9 @@
 				<td>@prijava.Korisnik.Ime</td>
 				<td>@prijava.Korisnik.Prezime</td>
                 <td>@prijava.Korisnik.Email</td>
+                <td>
+                    @(prijava.Korisnik.Verified ? "Da" : "Ne")
+                </td>
                 <td>@prijava.DatumPrijave.ToString("dd.MM.yyyy")</td>
                 <td>@prijava.Oglas.Status</td>
                 <td>

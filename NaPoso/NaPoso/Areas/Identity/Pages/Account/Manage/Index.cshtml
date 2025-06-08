@@ -22,6 +22,7 @@
                 <input asp-for="Input.Prezime" class="form-control" readonly />
                 <label asp-for="Input.Prezime" class="form-label"></label>
             </div>
+
             <div class="form-floating mb-3">
                 <input asp-for="Username" class="form-control" readonly />
                 <label asp-for="Username" class="form-label"></label>
@@ -29,6 +30,10 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Unesite svoj broj telefona." />
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Verifikovan:</label>
+                <input class="form-control" value="@(Model.Input.Verified ? "Da" : "Ne")" readonly />
             </div>
 
             <div class="mb-3">

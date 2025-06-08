@@ -10,5 +10,6 @@ namespace NaPoso.Models
         public string? Prezime { get; set; }
         [Display(Name = "Broj telefona")]
         public string? BrojTelefona;
+        public bool Verified { get; set; } = false;
     }
 }

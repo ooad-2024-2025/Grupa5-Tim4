@@ -38,6 +38,7 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Broj telefona")]
             public string PhoneNumber { get; set; }
+            public bool Verified { get; set; } = false;
         }
 
         private async Task LoadAsync(Korisnik user)
@@ -52,7 +53,8 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
             {
                 PhoneNumber = phoneNumber,
                 Ime = user.Ime,
-                Prezime = user.Prezime
+                Prezime = user.Prezime,
+                Verified = user.Verified
             };
         }
 
