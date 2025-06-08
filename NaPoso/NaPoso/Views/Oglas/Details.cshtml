@@ -49,7 +49,17 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Izmjeni</a> |
-    <a asp-action="OglasiKlijenta">Nazad</a>
-</div>
+
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Izmjeni</a> |
+
+        @if (User.IsInRole("Klijent"))
+        {
+            <a asp-action="OglasiKlijenta">Nazad</a>
+        }
+        else if (User.IsInRole("Admin"))
+        {
+            <a asp-controller="Home" asp-action="Index">Nazad</a>
+        }
+    </div>
+

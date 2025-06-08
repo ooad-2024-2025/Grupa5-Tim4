@@ -1,0 +1,30 @@
+﻿@model IEnumerable<NaPoso.Models.Recenzija>
+
+<h3>Moje recenzije</h3>
+
+@if (!Model.Any())
+{
+    <p>Nema recenzija za prikaz.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Klijent</th>
+                <th>Ocjena</th>
+                <th>Recenzija</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var recenzija in Model)
+            {
+                <tr>
+                    <td>@recenzija.KlijentId</td>
+                    <td>@recenzija.Ocjena / 5</td>
+                    <td>@recenzija.Sadrzaj</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

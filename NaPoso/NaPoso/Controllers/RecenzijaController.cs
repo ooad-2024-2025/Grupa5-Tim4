@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,26 +47,56 @@ namespace NaPoso.Controllers
         }
 
         // GET: Recenzija/Create
-        public IActionResult Create()
+        [Authorize(Roles = "Klijent,Admin")] // Fixed: removed space after comma
+        public IActionResult Create(string radnikId)
         {
-            return View();
+            var recenzija = new Recenzija { RadnikId = radnikId };
+            return View(recenzija);
         }
 
         // POST: Recenzija/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Ocjena,Sadrzaj")] Recenzija recenzija)
+        [Authorize(Roles = "Klijent,Admin")] // Fixed: removed space after comma
+        public async Task<IActionResult> Create([Bind("Ocjena,Sadrzaj,RadnikId")] Recenzija recenzija)
         {
+            // Set the client ID from the current user
+            recenzija.KlijentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // FIXED: Remove KlijentId from ModelState validation since we set it manually
+            ModelState.Remove("KlijentId");
+
+            // DEBUG: Add this temporarily to see what's happening
+            TempData["DebugInfo"] = $"RadnikId: {recenzija.RadnikId} | KlijentId: {recenzija.KlijentId} | ModelState.IsValid: {ModelState.IsValid}";
+
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                TempData["DebugErrors"] = $"Errors: {errors}";
+            }
+
+            // FIXED: Remove the contradictory logic - check if ModelState is valid, not invalid
             if (ModelState.IsValid)
             {
-                _context.Add(recenzija);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(recenzija);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception or handle it appropriately
+                    ModelState.AddModelError("", "Dogodila se greška prilikom spremanja recenzije.");
+                    return View(recenzija);
+                }
             }
+
+            // If we get here, ModelState is not valid - show validation errors
             return View(recenzija);
         }
+
+
 
         // GET: Recenzija/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -86,37 +117,6 @@ namespace NaPoso.Controllers
         // POST: Recenzija/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Ocjena,Sadrzaj")] Recenzija recenzija)
-        {
-            if (id != recenzija.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(recenzija);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RecenzijaExists(recenzija.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(recenzija);
-        }
 
         // GET: Recenzija/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -154,6 +154,17 @@ namespace NaPoso.Controllers
         private bool RecenzijaExists(int id)
         {
             return _context.Recenzija.Any(e => e.Id == id);
+        }
+        [Authorize(Roles = "Radnik")]
+        public async Task<IActionResult> MojeRecenzije()
+        {
+            var radnikId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Trenutni korisnik (Radnik)
+
+            var recenzije = await _context.Recenzija
+                                          .Where(r => r.RadnikId == radnikId)
+                                          .ToListAsync();
+
+            return View(recenzije);
         }
     }
 }

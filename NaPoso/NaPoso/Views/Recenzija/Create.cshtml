@@ -3,25 +3,42 @@
 @{
     ViewData["Title"] = "Create";
 }
-
+@if (TempData["DebugInfo"] != null)
+{
+    <div style="background: yellow; padding: 10px; margin: 10px 0;">
+        <strong>DEBUG:</strong> @TempData["DebugInfo"]
+    </div>
+}
+@if (TempData["DebugErrors"] != null)
+{
+    <div style="background: red; color: white; padding: 10px; margin: 10px 0;">
+        <strong>ERRORS:</strong> @TempData["DebugErrors"]
+    </div>
+}
 <h1>Create</h1>
 
 <h4>Recenzija</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="Ocjena" class="control-label"></label>
                 <input asp-for="Ocjena" class="form-control" />
                 <span asp-validation-for="Ocjena" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Sadrzaj" class="control-label"></label>
                 <input asp-for="Sadrzaj" class="form-control" />
                 <span asp-validation-for="Sadrzaj" class="text-danger"></span>
             </div>
+
+            <input type="hidden" asp-for="RadnikId" /> <!-- VAŽNO: skriveno polje -->
+            @Html.HiddenFor(m => m.KlijentId)
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
