@@ -285,10 +285,19 @@ namespace NaPoso.Controllers
                         DatumPrijave = DateTime.Now,
                         Status = Status.Aktivan
                     };
-
+                    var obavijest = new Obavijest
+                    {
+                        KorisnikId = oglas.KlijentId, // ID klijenta
+                        Sadrzaj = $"Novi radnik se prijavio na vaš oglas: {oglas.Naslov}",
+                        VrijemeSlanja = DateTime.Now,
+                        Tip = Obavjestenje.DrugaObavjestenja
+                    };
                     _context.OglasKorisnik.Add(prijava);
+                    _context.Obavijest.Add(obavijest);
                     await _context.SaveChangesAsync();
                 }
+               
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction("UspjesnaPrijava");
             }
@@ -349,6 +358,15 @@ namespace NaPoso.Controllers
                 return NotFound();
 
             prijava.Status = Status.Prihvacen;
+            var obavijest = new Obavijest
+            {
+                KorisnikId = prijava.KorisnikId,
+                Sadrzaj = $"Vaša prijava na oglas '{prijava.Oglas.Naslov}' je prihvaćena.",
+                VrijemeSlanja = DateTime.Now,
+                Tip = Obavjestenje.DrugaObavjestenja
+            };
+            _context.Obavijest.Add(obavijest);
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId }); 
@@ -367,7 +385,14 @@ namespace NaPoso.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (prijava.Oglas.KlijentId != userId)
                 return Forbid();
-
+            var obavijest = new Obavijest
+            {
+                KorisnikId = prijava.KorisnikId,
+                Sadrzaj = $"Vaša prijava na oglas '{prijava.Oglas.Naslov}' je odbijena.",
+                VrijemeSlanja = DateTime.Now,
+                Tip = Obavjestenje.DrugaObavjestenja
+            };
+            _context.Obavijest.Add(obavijest);
             prijava.Status = Status.Odbijen;
             await _context.SaveChangesAsync();
 
