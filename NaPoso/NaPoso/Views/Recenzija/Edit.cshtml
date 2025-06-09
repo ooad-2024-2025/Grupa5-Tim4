@@ -13,6 +13,9 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="RadnikId" />
+            <input type="hidden" asp-for="KlijentId" />
+
             <div class="form-group">
                 <label asp-for="Ocjena" class="control-label"></label>
                 <input asp-for="Ocjena" class="form-control" />
@@ -35,5 +38,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

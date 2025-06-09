@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NaPoso")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e627db03ec5fac95695727be83faef07dfe1472")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d1199f95a1388980ec6b667b67874bfe59ea13e")]
 [assembly: System.Reflection.AssemblyProductAttribute("NaPoso")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NaPoso")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

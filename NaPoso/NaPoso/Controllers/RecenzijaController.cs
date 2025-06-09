@@ -172,6 +172,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Recenzija/Edit/5
+        [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -183,6 +184,40 @@ namespace NaPoso.Controllers
             if (recenzija == null)
             {
                 return NotFound();
+            }
+
+            return View(recenzija);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Ocjena,Sadrzaj,RadnikId,KlijentId")] Recenzija recenzija)
+        {
+            if (id != recenzija.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(recenzija);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Recenzija.Any(e => e.Id == recenzija.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index)); // ili gdje god želiš redirect
             }
             return View(recenzija);
         }
