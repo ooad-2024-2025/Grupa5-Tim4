@@ -17,8 +17,8 @@ namespace NaPoso.Data
         public DbSet<ObavijestKorisniku> ObavijestKorisniku { get; set; }
         public DbSet<OglasKorisnik> OglasKorisnik { get; set; }
         public DbSet<OdobreniDokumenti> OdobreniDokumenti { get; set; }
-        //public DbSet<Chat> Chat { get; set; }
-        //public DbSet<Message> Message { get; set; }
+        public DbSet<Chat> Chat { get; set; }
+        public DbSet<Poruka> Poruka { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,24 +31,38 @@ namespace NaPoso.Data
             modelBuilder.Entity<ObavijestKorisniku>().ToTable("ObavijestKorisniku");
             modelBuilder.Entity<OglasKorisnik>().ToTable("OglasKorisnik");
             modelBuilder.Entity<OdobreniDokumenti>().ToTable("OdobreniDokumenti");
-            /*
             modelBuilder.Entity<Chat>().ToTable("Chat");
-            modelBuilder.Entity<Message>().ToTable("Message");
-            
+            modelBuilder.Entity<Poruka>().ToTable("Poruka");
 
-            // Configure Message relationships to avoid multiple cascade paths
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Chat)
-                .WithMany()
-                .HasForeignKey(m => m.ChatId)
+            modelBuilder.Entity<Poruka>()
+                .HasOne(p => p.Chat)
+                .WithMany(c => c.Poruke)
+                .HasForeignKey(p => p.ChatId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Posiljaoc)
+            modelBuilder.Entity<Poruka>()
+                .HasOne(p => p.Posiljaoc)
                 .WithMany()
-                .HasForeignKey(m => m.PosiljaocId)
-                .OnDelete(DeleteBehavior.Restrict); // Prevents multiple cascade paths
-            */
+                .HasForeignKey(p => p.PosiljaocId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Chat>()
+                .HasOne(c => c.Korisnik1)
+                .WithMany()
+                .HasForeignKey(c => c.Korisnik1Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Chat>()
+                .HasOne(c => c.Korisnik2)
+                .WithMany()
+                .HasForeignKey(c => c.Korisnik2Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Chat>()
+                .HasOne(c => c.Oglas)
+                .WithMany()
+                .HasForeignKey(c => c.OglasId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

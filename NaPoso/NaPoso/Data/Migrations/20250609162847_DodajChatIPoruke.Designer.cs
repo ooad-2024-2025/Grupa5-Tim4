@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NaPoso.Data;
 
@@ -11,9 +12,11 @@ using NaPoso.Data;
 namespace NaPoso.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250609162847_DodajChatIPoruke")]
+    partial class DodajChatIPoruke
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,39 +156,6 @@ namespace NaPoso.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("NaPoso.Models.Chat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Korisnik1Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Korisnik2Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("OglasId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Korisnik1Id");
-
-                    b.HasIndex("Korisnik2Id");
-
-                    b.HasIndex("OglasId");
-
-                    b.ToTable("Chat", (string)null);
                 });
 
             modelBuilder.Entity("NaPoso.Models.Korisnik", b =>
@@ -405,37 +375,6 @@ namespace NaPoso.Migrations
                     b.ToTable("OglasKorisnik", (string)null);
                 });
 
-            modelBuilder.Entity("NaPoso.Models.Poruka", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PosiljaocId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("PoslanoAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Tekst")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.HasIndex("PosiljaocId");
-
-                    b.ToTable("Poruka", (string)null);
-                });
-
             modelBuilder.Entity("NaPoso.Models.Recenzija", b =>
                 {
                     b.Property<int>("Id")
@@ -515,33 +454,6 @@ namespace NaPoso.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("NaPoso.Models.Chat", b =>
-                {
-                    b.HasOne("NaPoso.Models.Korisnik", "Korisnik1")
-                        .WithMany()
-                        .HasForeignKey("Korisnik1Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("NaPoso.Models.Korisnik", "Korisnik2")
-                        .WithMany()
-                        .HasForeignKey("Korisnik2Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("NaPoso.Models.Oglas", "Oglas")
-                        .WithMany()
-                        .HasForeignKey("OglasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Korisnik1");
-
-                    b.Navigation("Korisnik2");
-
-                    b.Navigation("Oglas");
-                });
-
             modelBuilder.Entity("NaPoso.Models.ObavijestKorisniku", b =>
                 {
                     b.HasOne("NaPoso.Models.Obavijest", "obavijest")
@@ -577,30 +489,6 @@ namespace NaPoso.Migrations
                     b.Navigation("Korisnik");
 
                     b.Navigation("Oglas");
-                });
-
-            modelBuilder.Entity("NaPoso.Models.Poruka", b =>
-                {
-                    b.HasOne("NaPoso.Models.Chat", "Chat")
-                        .WithMany("Poruke")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("NaPoso.Models.Korisnik", "Posiljaoc")
-                        .WithMany()
-                        .HasForeignKey("PosiljaocId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-
-                    b.Navigation("Posiljaoc");
-                });
-
-            modelBuilder.Entity("NaPoso.Models.Chat", b =>
-                {
-                    b.Navigation("Poruke");
                 });
 #pragma warning restore 612, 618
         }

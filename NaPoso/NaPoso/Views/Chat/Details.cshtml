@@ -1,0 +1,27 @@
+﻿@model NaPoso.Models.Chat
+@using Microsoft.AspNetCore.Identity
+
+<h2>Razgovor - Oglas: @Model.Oglas.Naslov</h2>
+<p>
+    <strong>@Model.Korisnik1.Ime @Model.Korisnik1.Prezime</strong> ↔
+    <strong>@Model.Korisnik2.Ime @Model.Korisnik2.Prezime</strong>
+</p>
+
+<div class="chat-messages" style="max-height:400px; overflow-y:auto; border:1px solid #ccc; padding:10px;">
+    @foreach (var poruka in Model.Poruke.OrderBy(p => p.PoslanoAt))
+    {
+        <div>
+            <b>@poruka.Posiljaoc.Ime:</b> @poruka.Tekst <small class="text-muted">(@poruka.PoslanoAt.ToString("g"))</small>
+        </div>
+    }
+</div>
+
+<form method="post" asp-action="SendMessage">
+    <input type="hidden" name="chatId" value="@Model.Id" />
+    <div class="form-group mt-2">
+        <textarea name="tekst" class="form-control" placeholder="Unesi poruku..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Pošalji</button>
+</form>
+
+<a asp-action="Index" asp-controller="Chat" class="btn btn-secondary mt-3">Nazad na Razgovore</a>

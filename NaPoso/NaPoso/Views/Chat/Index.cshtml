@@ -1,0 +1,40 @@
+﻿@model List<NaPoso.Models.Chat>
+@using Microsoft.AspNetCore.Identity
+@using NaPoso.Models
+@inject UserManager<Korisnik> UserManager // Inject UserManager
+
+@{
+    ViewData["Title"] = "Razgovori";
+    var currentUserId = UserManager.GetUserId(User); // Dobij ID trenutnog korisnika
+}
+
+<h2>Razgovori</h2>
+
+@if (!Model.Any())
+{
+    <p>Nemate započetih razgovora.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var chat in Model)
+        {
+            var drugiKorisnik = chat.Korisnik1Id == currentUserId ? chat.Korisnik2 : chat.Korisnik1;
+
+            if (drugiKorisnik != null && chat.Oglas != null)
+            {
+                <li class="list-group-item">
+                    <a asp-action="Poruke" asp-route-id="@chat.Id">
+                        <strong>@drugiKorisnik.Ime @drugiKorisnik.Prezime</strong> - Oglas: @chat.Oglas.Naslov
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="list-group-item text-muted">
+                    Razgovor sa nepoznatim korisnikom ili oglasom (ID: @chat.Id)
+                </li>
+            }
+        }
+    </ul>
+}

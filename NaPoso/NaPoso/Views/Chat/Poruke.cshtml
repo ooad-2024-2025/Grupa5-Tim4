@@ -1,0 +1,66 @@
+﻿@model NaPoso.Models.Chat
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Korisnik> UserManager
+@{
+    ViewData["Title"] = "Poruke";
+    var currentUserId = UserManager.GetUserId(User);
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h2>Razgovor - Oglas: @Model.Oglas.Naslov</h2>
+<p>
+    <strong>@Model.Korisnik1.Ime @Model.Korisnik1.Prezime</strong> ↔
+    <strong>@Model.Korisnik2.Ime @Model.Korisnik2.Prezime</strong>
+</p>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="chat-messages" style="max-height:400px; overflow-y:auto; border:1px solid #ccc; padding:10px; margin-bottom: 15px;">
+    @if (!Model.Poruke.Any())
+    {
+        <p>Nema još poruka u ovom razgovoru.</p>
+    }
+    else
+    {
+        @foreach (var poruka in Model.Poruke.OrderBy(p => p.PoslanoAt))
+        {
+            var isCurrentUser = poruka.PosiljaocId == currentUserId;
+            var messageClass = isCurrentUser ? "text-right" : "text-left"; // Za poruke koje idu lijevo/desno
+            var messageStyle = isCurrentUser ? "background-color: #dcf8c6; padding: 5px; border-radius: 5px; margin-left: auto; width: fit-content;" : "background-color: #f1f0f0; padding: 5px; border-radius: 5px; margin-right: auto; width: fit-content;";
+
+            <div class="d-flex @(isCurrentUser ? "justify-content-end" : "justify-content-start") mb-2">
+                <div style="@messageStyle">
+                    <b>@(isCurrentUser ? "Ti" : poruka.Posiljaoc.Ime):</b> @poruka.Tekst <br />
+                    <small class="text-muted" style="font-size: 0.75em;">@poruka.PoslanoAt.ToString("HH:mm dd.MM.yyyy")</small>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<form method="post" asp-action="PosaljiPoruku">
+    <input type="hidden" name="chatId" value="@Model.Id" />
+    <div class="input-group">
+        <textarea name="tekst" class="form-control" placeholder="Unesi poruku..." required rows="1"></textarea>
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Pošalji</button>
+        </div>
+    </div>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary mt-3">Nazad na Razgovore</a>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var chatMessages = $(".chat-messages");
+            chatMessages.scrollTop(chatMessages[0].scrollHeight);
+        });
+    </script>
+}
