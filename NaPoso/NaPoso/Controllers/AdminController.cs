@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NaPoso.Data;
 using NaPoso.Models;
+using NaPoso.Services;
 using static NaPoso.Enums.Enums;
 
 namespace NaPoso.Controllers
@@ -12,12 +13,14 @@ namespace NaPoso.Controllers
     {
         private const string V = "Neaktivan";
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<Korisnik> _userManager; // Added UserManager for user role management  
+        private readonly UserManager<Korisnik> _userManager;
+        private readonly IEmailService _emailService; // Add email service
 
-        public AdminController(ApplicationDbContext context, UserManager<Korisnik> userManager)
+        public AdminController(ApplicationDbContext context, UserManager<Korisnik> userManager, IEmailService emailService)
         {
             _context = context;
-            _userManager = userManager; // Initialize UserManager  
+            _userManager = userManager;
+            _emailService = emailService;
         }
         public IActionResult Documents()
         {
@@ -52,9 +55,9 @@ namespace NaPoso.Controllers
 
             return View(dokumenti);
         }
+
         public IActionResult Index()
         {
-
             var totalUsers = _context.Users.Count();
             var totalJobs = _context.Oglas.Count();
             var finishedJobs = _context.Oglas.Count(o => o.Status == Status.Neaktivan);
@@ -70,14 +73,14 @@ namespace NaPoso.Controllers
                 BrojKlijenata = totalClients,
                 BrojRadnika = totalWorkers,
                 BrojZavrsenihPoslova = finishedJobs
-
             };
 
             return View("~/Views/Admin/Index.cshtml", model);
         }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult DeleteDocument(string fileName)
+        public async Task<IActionResult> DeleteDocument(string fileName)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "documents", fileName);
             if (System.IO.File.Exists(path))
@@ -93,21 +96,37 @@ namespace NaPoso.Controllers
                 _context.SaveChanges();
             }
 
+            // Send rejection email
+            var userId = fileName.Split('_')[0];
+            var korisnik = await _userManager.FindByIdAsync(userId);
+            if (korisnik != null)
+            {
+                await _emailService.SendDocumentRejectionEmail(
+                    korisnik.Email,
+                    $"{korisnik.Ime} {korisnik.Prezime}"
+                );
+            }
 
             return RedirectToAction("Documents");
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult ApproveDocument(string fileName)
+        public async Task<IActionResult> ApproveDocument(string fileName)
         {
             var userId = fileName.Split('_')[0];  // pretpostavljam da je userId dio imena fajla
 
-            var korisnik = _userManager.FindByIdAsync(userId).Result;
+            var korisnik = await _userManager.FindByIdAsync(userId);
             if (korisnik != null)
             {
                 korisnik.Verified = true; // postavi verifikaciju korisniku
-                var result = _userManager.UpdateAsync(korisnik).Result; // update u bazi
+                var result = await _userManager.UpdateAsync(korisnik); // update u bazi
+
+                // Send approval email
+                await _emailService.SendDocumentApprovalEmail(
+                    korisnik.Email,
+                    $"{korisnik.Ime} {korisnik.Prezime}"
+                );
             }
 
             // Dodaj i odobreni dokument u bazu ako želiš

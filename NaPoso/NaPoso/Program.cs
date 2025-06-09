@@ -12,6 +12,16 @@ using Microsoft.AspNetCore.Http; // Added for sessions
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
+// Add the new email service for document approval notifications
+builder.Services.AddSingleton<IEmailService>(provider =>
+    new EmailService(
+        "smtp.gmail.com",
+        587,
+        "hajmonaposo@gmail.com",
+        "lbur etet cmts ebia"
+    )
+);
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));

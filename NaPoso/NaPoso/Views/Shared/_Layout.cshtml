@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NaPoso.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 @using Microsoft.AspNetCore.Identity
 @using NaPoso.Data
@@ -22,7 +23,7 @@
     {
         var userId = UserManager.GetUserId(User);
         obavijesti = Db.Obavijest
-            .Where(x => x.KorisnikId.ToString() == userId)
+            .Where(x => x.KorisnikId.ToString() == userId && (x.IsRead == null || x.IsRead == false))
             .OrderByDescending(x => x.VrijemeSlanja)
             .Take(5)
             .ToList();
@@ -63,27 +64,37 @@
                             </li>
                         }
                         @if (User.IsInRole("Radnik")){
-                            <div class="dropdown me-2">
+                            <div class="dropdown me-2" id="notificationDropdown">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    Obavijesti
-                                </button>
-                                <div class="dropdown-menu">
-                                    @if (!obavijesti.Any())
+                                    <i class="bi bi-bell"></i> Obavijesti
+                                    @if (obavijesti.Any())
                                     {
-                                        <span class="dropdown-item">Nema obavijesti</span>
+                                        <span class="badge bg-danger notification-count">@obavijesti.Count</span>
                                     }
                                     else
                                     {
-                                        foreach (var o in obavijesti)
-                                        {
-                                            <a class="dropdown-item">
-                                                @o.Sadrzaj <br />
-                                                <small>@o.VrijemeSlanja.ToString("g")</small>
-                                            </a>
-                                        }
+                                        <span class="badge bg-danger notification-count d-none">0</span>
                                     }
+                                </button>
+                                <div class="dropdown-menu">
+                                    <div class="notification-container">
+                                        @if (!obavijesti.Any())
+                                        {
+                                            <span class="dropdown-item no-notifications">Nema novih obavijesti</span>
+                                        }
+                                        else
+                                        {
+                                            foreach (var o in obavijesti)
+                                            {
+                                                <a class="dropdown-item notification-item" data-id="@o.Id">
+                                                    @o.Sadrzaj <br />
+                                                    <small>@o.VrijemeSlanja.ToString("g")</small>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-center" href="/Obavijest/Moje">Prikaži sve</a>
+                                    <a class="dropdown-item text-center" asp-controller="ObavijestKorisniku" asp-action="MyNotifications">Prikaži sve</a>
                                 </div>
                             </div>
                             <li class="nav-item">
@@ -98,27 +109,37 @@
                         }
                         @if (User.IsInRole("Klijent"))
                         {
-                            <div class="dropdown me-2">
+                            <div class="dropdown me-2" id="notificationDropdown">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    Obavijesti
-                                </button>
-                                <div class="dropdown-menu">
-                                    @if (!obavijesti.Any())
+                                    <i class="bi bi-bell"></i> Obavijesti
+                                    @if (obavijesti.Any())
                                     {
-                                        <span class="dropdown-item">Nema obavijesti</span>
+                                        <span class="badge bg-danger notification-count">@obavijesti.Count</span>
                                     }
                                     else
                                     {
-                                        foreach (var o in obavijesti)
-                                        {
-                                            <a class="dropdown-item">
-                                                @o.Sadrzaj <br />
-                                                <small>@o.VrijemeSlanja.ToString("g")</small>
-                                            </a>
-                                        }
+                                        <span class="badge bg-danger notification-count d-none">0</span>
                                     }
+                                </button>
+                                <div class="dropdown-menu">
+                                    <div class="notification-container">
+                                        @if (!obavijesti.Any())
+                                        {
+                                            <span class="dropdown-item no-notifications">Nema novih obavijesti</span>
+                                        }
+                                        else
+                                        {
+                                            foreach (var o in obavijesti)
+                                            {
+                                                <a class="dropdown-item notification-item" data-id="@o.Id">
+                                                    @o.Sadrzaj <br />
+                                                    <small>@o.VrijemeSlanja.ToString("g")</small>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-center" href="/Obavijest/Moje">Prikaži sve</a>
+                                    <a class="dropdown-item text-center" asp-controller="ObavijestKorisniku" asp-action="MyNotifications">Prikaži sve</a>
                                 </div>
                             </div>
                             <li class="nav-item">
@@ -144,6 +165,46 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Handle notification clicks
+            $('.notification-item').on('click', function(e) {
+                e.preventDefault();
+                const notificationId = $(this).data('id');
+                const $this = $(this);
+                
+                // Send AJAX request to mark notification as read
+                $.ajax({
+                    url: '/ObavijestKorisniku/MarkAsReadAjax',
+                    type: 'POST',
+                    data: { id: notificationId },
+                    headers: {
+                        "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function() {
+                        // Remove the notification from the dropdown
+                        $this.slideUp(200, function() {
+                            $(this).remove();
+                            
+                            // Update count
+                            let count = parseInt($('.notification-count').text()) - 1;
+                            if (count <= 0) {
+                                // If no more notifications, show "no notifications" message
+                                $('.notification-count').addClass('d-none').text('0');
+                                if ($('.notification-item').length === 0) {
+                                    $('.notification-container').html('<span class="dropdown-item no-notifications">Nema novih obavijesti</span>');
+                                }
+                            } else {
+                                $('.notification-count').text(count);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
