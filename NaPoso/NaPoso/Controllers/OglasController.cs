@@ -417,39 +417,6 @@ namespace NaPoso.Controllers
             return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId });
         }
 
-        /*[Authorize(Roles = "Klijent")]
-        public async Task<IActionResult> InitiatePayment(int oglasId)
-        {
-            var oglas = await _context.Oglas.FirstOrDefaultAsync(o => o.Id == oglasId);
-            if (oglas == null)
-            {
-                return NotFound();
-            }
-
-            TempData["OglasId"] = oglasId;
-
-            // Issue: RadnikId might be null! Only store if it has a value
-            if (!string.IsNullOrEmpty(oglas.RadnikId))
-            {
-                TempData["RadnikId"] = oglas.RadnikId;
-                TempData["Debug_HasRadnik"] = "RadnikId found: " + oglas.RadnikId;
-            }
-            else
-            {
-                // Critical error: No worker assigned yet
-                TempData["Debug_NoRadnik"] = "No worker (RadnikId) is assigned to this job!";
-                // Assign a RadnikId for testing purposes only
-                // Remove this in production
-                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                TempData["RadnikId"] = userId; // Temporary workaround
-            }
-
-            long amountInCents = (long)(oglas.CijenaPosla * 100);
-
-            var checkoutUrl = $"/Identity/Payment/Checkout?amount={amountInCents}&productName={Uri.EscapeDataString($"Plaćanje za oglas: {oglas.Naslov}")}";
-
-            return Redirect(checkoutUrl);
-        }*/
         [Authorize(Roles = "Klijent")]
         public async Task<IActionResult> InitiatePayment(int oglasId, string radnikId)
         {
