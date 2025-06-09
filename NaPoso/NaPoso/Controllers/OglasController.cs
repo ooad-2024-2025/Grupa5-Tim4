@@ -417,7 +417,7 @@ namespace NaPoso.Controllers
             return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId });
         }
 
-        [Authorize(Roles = "Klijent")]
+        /*[Authorize(Roles = "Klijent")]
         public async Task<IActionResult> InitiatePayment(int oglasId)
         {
             var oglas = await _context.Oglas.FirstOrDefaultAsync(o => o.Id == oglasId);
@@ -443,6 +443,24 @@ namespace NaPoso.Controllers
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 TempData["RadnikId"] = userId; // Temporary workaround
             }
+
+            long amountInCents = (long)(oglas.CijenaPosla * 100);
+
+            var checkoutUrl = $"/Identity/Payment/Checkout?amount={amountInCents}&productName={Uri.EscapeDataString($"Plaćanje za oglas: {oglas.Naslov}")}";
+
+            return Redirect(checkoutUrl);
+        }*/
+        [Authorize(Roles = "Klijent")]
+        public async Task<IActionResult> InitiatePayment(int oglasId, string radnikId)
+        {
+            var oglas = await _context.Oglas.FirstOrDefaultAsync(o => o.Id == oglasId);
+            if (oglas == null)
+            {
+                return NotFound();
+            }
+
+            TempData["OglasId"] = oglasId;
+            TempData["RadnikId"] = radnikId;
 
             long amountInCents = (long)(oglas.CijenaPosla * 100);
 

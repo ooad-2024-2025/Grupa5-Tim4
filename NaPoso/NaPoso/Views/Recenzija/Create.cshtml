@@ -1,41 +1,39 @@
 ﻿@model NaPoso.Models.Recenzija
-
 @{
     ViewData["Title"] = "Ostavi recenziju";
 }
 
-<h1>Ostavi recenziju</h1>
 
+
+<h1>Ostavi recenziju</h1>
 <hr />
 <div class="row">
     <div class="col-md-6">
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             @if (TempData["ErrorMessage"] != null)
             {
                 <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
             }
+
+            <!-- ✅ KLJUČNO: Hidden field za RadnikId -->
+            <input type="hidden" asp-for="RadnikId" />
 
             <div class="form-group mb-3">
                 <label asp-for="Ocjena" class="control-label">Ocjena (1-5)</label>
                 <input asp-for="Ocjena" class="form-control" min="1" max="5" />
                 <span asp-validation-for="Ocjena" class="text-danger"></span>
             </div>
-
             <div class="form-group mb-3">
                 <label asp-for="Sadrzaj" class="control-label">Vaš komentar</label>
                 <textarea asp-for="Sadrzaj" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Sadrzaj" class="text-danger"></span>
             </div>
 
-            <input type="hidden" asp-for="RadnikId" />
-
             @if (Context.Request.Query.ContainsKey("oglasId"))
             {
                 <input type="hidden" name="oglasId" value="@Context.Request.Query["oglasId"]" />
             }
-
             <div class="form-group">
                 <input type="submit" value="Pošalji recenziju" class="btn btn-primary" />
                 <a href="javascript:history.back()" class="btn btn-secondary">Odustani</a>

@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Plaćanje uspješno";
 }
-
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8 text-center">
@@ -18,21 +17,18 @@
                     {
                         <p>Email: @Model.CustomerEmail</p>
                     }
-
                     @if (TempData.ContainsKey("DebugMissing"))
                     {
                         <div class="alert alert-warning">
                             <strong>Debug:</strong> @TempData["DebugMissing"]
                         </div>
                     }
-
                     @if (TempData.ContainsKey("DebugToken"))
                     {
                         <div class="alert alert-info">
                             <strong>Token:</strong> @TempData["DebugToken"]
                         </div>
                     }
-
                     @if (Model.OglasId.HasValue && !string.IsNullOrEmpty(Model.RadnikId))
                     {
                         <a asp-controller="Recenzija" asp-action="Create"
@@ -46,7 +42,6 @@
                             Nedostaju podaci za recenziju. OglasId: @Model.OglasId, RadnikId: @Model.RadnikId
                         </div>
                     }
-
                     <a asp-page="/Index" class="btn btn-primary mt-3">Povratak na početnu</a>
                 </div>
             </div>

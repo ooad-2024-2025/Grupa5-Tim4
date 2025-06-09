@@ -51,10 +51,8 @@ namespace NaPoso.Controllers
         [Authorize(Roles = "Klijent,Admin")]
         public IActionResult Create(string radnikId, int? oglasId)
         {
-            // Create debug data to see what's happening
             ViewBag.Debug_RouteParams = $"radnikId: {radnikId}, oglasId: {oglasId}";
 
-            // Session values 
             var verifiedOglasId = HttpContext.Session.GetInt32("VerifiedOglasId");
             var verifiedRadnikId = HttpContext.Session.GetString("VerifiedRadnikId");
             var paymentVerified = HttpContext.Session.GetString("PaymentVerified");
@@ -63,20 +61,16 @@ namespace NaPoso.Controllers
                                    $"verifiedRadnikId: {verifiedRadnikId}, " +
                                    $"paymentToken: {(paymentVerified != null ? "exists" : "missing")}";
 
-            // Admin can bypass verification
             if (!User.IsInRole("Admin"))
             {
-                // Check if this is coming from a verified payment
                 if (!oglasId.HasValue)
                 {
                     TempData["ErrorMessage"] = "Nedostaje ID oglasa.";
                     return RedirectToAction("Index", "Home");
                 }
 
-                // TEMPORARY - REMOVE IN PRODUCTION: Allow all requests for debugging
-                bool bypassVerification = false; // Set to true to bypass verification temporarily
+                bool bypassVerification = false;
 
-                // Validate that this request matches verified payment data
                 if (!bypassVerification && (
                     verifiedOglasId == null ||
                     verifiedOglasId != oglasId ||
@@ -87,6 +81,10 @@ namespace NaPoso.Controllers
                     TempData["ErrorMessage"] = "Plaćanje nije potvrđeno za ovaj oglas.";
                     return RedirectToAction("Index", "Home");
                 }
+
+                // ✅ Spremi ID-ove u sesiju
+                HttpContext.Session.SetInt32("VerifiedOglasId", oglasId.Value);
+                HttpContext.Session.SetString("VerifiedRadnikId", radnikId);
             }
 
             var recenzija = new Recenzija { RadnikId = radnikId };
@@ -94,53 +92,65 @@ namespace NaPoso.Controllers
         }
 
         // POST: Recenzija/Create
+        // POST: Recenzija/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Klijent,Admin")]
         public async Task<IActionResult> Create([Bind("Ocjena,Sadrzaj,RadnikId")] Recenzija recenzija, int? oglasId)
         {
-            // Set the client ID from the current user
+            // Postavi KlijentId iz logovanog korisnika
             recenzija.KlijentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Ukloni validaciju za KlijentId (ručno postavljeno)
+            ModelState.Remove("KlijentId");
 
             // Debug info
             TempData["Debug_PostParams"] = $"KlijentId: {recenzija.KlijentId}, RadnikId: {recenzija.RadnikId}, OglasId: {oglasId}";
 
-            // Verify payment for clients
             if (!User.IsInRole("Admin"))
             {
-                // TEMPORARY - REMOVE IN PRODUCTION: Allow all requests for debugging
-                bool bypassVerification = false; // Set to true to bypass verification temporarily
+                bool bypassVerification = false;
 
                 if (!bypassVerification)
                 {
-                    // Get verification data from session
                     var verifiedOglasId = HttpContext.Session.GetInt32("VerifiedOglasId");
                     var verifiedRadnikId = HttpContext.Session.GetString("VerifiedRadnikId");
                     var paymentVerified = HttpContext.Session.GetString("PaymentVerified");
 
                     TempData["Debug_SessionValues"] = $"Session values - verifiedOglasId: {verifiedOglasId}, " +
-                                       $"verifiedRadnikId: {verifiedRadnikId}, " +
-                                       $"paymentToken: {(paymentVerified != null ? "exists" : "missing")}";
+                                           $"verifiedRadnikId: {verifiedRadnikId}, " +
+                                           $"paymentToken: {(paymentVerified != null ? "exists" : "missing")}";
 
-                    // Validate that this submission matches verified payment data
                     if (verifiedOglasId == null ||
                         verifiedOglasId != oglasId ||
                         string.IsNullOrEmpty(verifiedRadnikId) ||
-                        verifiedRadnikId != recenzija.RadnikId ||
                         string.IsNullOrEmpty(paymentVerified))
                     {
                         TempData["ErrorMessage"] = "Plaćanje nije potvrđeno za ovaj oglas.";
                         return RedirectToAction("Index", "Home");
                     }
 
-                    // Clear the verification after use
+                    // ✅ Provjeri da li se RadnikId iz forme podudara sa sesijom
+                    if (recenzija.RadnikId != verifiedRadnikId)
+                    {
+                        TempData["ErrorMessage"] = "Neispravni podaci za radnika.";
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    // Očisti sesiju nakon validacije
                     HttpContext.Session.Remove("PaymentVerified");
                     HttpContext.Session.Remove("VerifiedOglasId");
                     HttpContext.Session.Remove("VerifiedRadnikId");
                 }
             }
-
-            ModelState.Remove("KlijentId");
+            else
+            {
+                // Admin mora ručno unijeti RadnikId kroz formu
+                if (string.IsNullOrEmpty(recenzija.RadnikId))
+                {
+                    ModelState.AddModelError("RadnikId", "Radnik nije definisan.");
+                }
+            }
 
             if (ModelState.IsValid)
             {
@@ -149,22 +159,18 @@ namespace NaPoso.Controllers
                     _context.Add(recenzija);
                     await _context.SaveChangesAsync();
 
-                    // Add success message
                     TempData["SuccessMessage"] = "Recenzija je uspješno dodana.";
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
                 {
                     TempData["Debug_Error"] = $"Error: {ex.Message}";
-                    ModelState.AddModelError("", "Dogodila se greška prilikom spremanja recenzije.");
-                    return View(recenzija);
+                    ModelState.AddModelError("", "Greška prilikom spremanja recenzije.");
                 }
             }
             else
             {
-                var errors = string.Join(" | ", ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage));
+                var errors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
                 TempData["Debug_ModelErrors"] = errors;
             }
 
