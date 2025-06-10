@@ -193,10 +193,20 @@ namespace NaPoso.Controllers
             if (oglas != null)
             {
                 _context.Oglas.Remove(oglas);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(OglasiKlijenta));
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else if (User.IsInRole("Klijent"))
+            {
+                return RedirectToAction("OglasiKlijenta");
+            }
+
+            // default fallback
+            return RedirectToAction(nameof(Index));
         }
 
         private bool OglasExists(int id)
