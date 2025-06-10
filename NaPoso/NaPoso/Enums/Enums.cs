@@ -17,7 +17,8 @@ namespace NaPoso.Enums
             Aktivan = 1,
             Neaktivan = 0,
             Prihvacen = 2,
-            Odbijen = 3
+            Odbijen = 3,
+            Placen = 4
 
         }
 

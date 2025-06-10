@@ -28,68 +28,49 @@ namespace NaPoso.Areas.Identity.Pages.Payment
         {
             try
             {
-                // Set payment status
                 PaymentStatus = "Plaćanje uspješno";
-
-                // Get customer email from user if authenticated
                 CustomerEmail = User.Identity?.Name;
 
-                // Safely get OglasId from TempData
-                if (TempData.ContainsKey("OglasId") && TempData["OglasId"] != null)
+                if (TempData.ContainsKey("OglasId") && TempData["OglasId"] != null &&
+                    TempData.ContainsKey("RadnikId") && TempData["RadnikId"] != null)
                 {
-                    try
-                    {
-                        OglasId = Convert.ToInt32(TempData["OglasId"]);
-                        TempData.Keep("OglasId");
-
-                        // Update Oglas status to Neaktivan after successful payment
-                        if (OglasId.HasValue)
-                        {
-                            var oglas = await _context.Oglas.FindAsync(OglasId.Value);
-                            if (oglas != null)
-                            {
-                                oglas.Status = Status.Neaktivan; // Change status to inactive
-                                await _context.SaveChangesAsync();
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        DebugInfo = $"Failed to update Oglas status: {ex.Message}";
-                    }
-                }
-
-                // Safely get RadnikId from TempData
-                if (TempData.ContainsKey("RadnikId") && TempData["RadnikId"] != null)
-                {
+                    OglasId = Convert.ToInt32(TempData["OglasId"]);
                     RadnikId = TempData["RadnikId"].ToString();
-                    TempData.Keep("RadnikId");
-                }
 
-                // Only store session data if we have both values
-                if (OglasId.HasValue && !string.IsNullOrEmpty(RadnikId))
+                    TempData.Keep("OglasId");
+                    TempData.Keep("RadnikId");
+
+                    // Pronađi prijavu tog korisnika na oglas
+                    var prijava = await _context.OglasKorisnik
+                        .FirstOrDefaultAsync(ok => ok.OglasId == OglasId && ok.KorisnikId == RadnikId);
+
+                    if (prijava != null)
+                    {
+                        prijava.Status = Status.Placen; // postavi status na placen
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        DebugInfo = "Prijava korisnika za oglas nije pronađena.";
+                    }
+
+                    // Postavi sesiju ako je potrebno
+                    HttpContext.Session.SetString("PaymentVerified", "true");
+                    HttpContext.Session.SetInt32("VerifiedOglasId", OglasId.Value);
+                    HttpContext.Session.SetString("VerifiedRadnikId", RadnikId);
+                }
+                else
                 {
-                    try
-                    {
-                        // Simple token to verify the payment was completed
-                        HttpContext.Session.SetString("PaymentVerified", "true");
-                        HttpContext.Session.SetInt32("VerifiedOglasId", OglasId.Value);
-                        HttpContext.Session.SetString("VerifiedRadnikId", RadnikId);
-                    }
-                    catch (Exception ex)
-                    {
-                        // If session fails, log the error but don't crash
-                        DebugInfo = $"Error setting session: {ex.Message}";
-                    }
+                    DebugInfo = "Nedostaju podaci za OglasId ili RadnikId.";
                 }
             }
             catch (Exception ex)
             {
-                // Catch all errors to prevent crashes
-                DebugInfo = $"Unexpected error: {ex.Message}";
+                DebugInfo = $"Greška: {ex.Message}";
             }
 
             return Page();
         }
+
     }
 }

@@ -238,7 +238,13 @@ namespace NaPoso.Controllers
                 "cijena_desc" => oglasi.OrderByDescending(o => o.Oglas.CijenaPosla),
                 _ => oglasi.OrderBy(o => o.Oglas.Naslov)
             };
+            var korisnikId = _userManager.GetUserId(User);
+            var prijavljeniOglasi = _context.OglasKorisnik
+                .Where(x => x.KorisnikId == korisnikId)
+                .Select(x => x.OglasId)
+                .ToList();
 
+            ViewBag.PrijavljeniOglasiId = prijavljeniOglasi;
             return View(await oglasi.ToListAsync());
         }
         [Authorize(Roles = "Admin,Klijent")]

@@ -6,7 +6,9 @@
     ViewData["Title"] = "Oglasi za radnike";
     var searchValue = (string)ViewContext.HttpContext.Request.Query["search"];
 }
-
+@{
+    var prijavljeni = ViewBag.PrijavljeniOglasiId as List<int>;
+}
 <h2>Aktivni oglasi</h2>
 
 <div style="max-width: 500px; margin-bottom: 15px;">
@@ -70,9 +72,16 @@
                 <td>@oglas.Oglas.CijenaPosla KM</td>
                 <td>@(oglas.Verifikovan ? "Da" : "Ne")</td>
                 <td>
-                    <a asp-controller="Oglas" asp-action="PrijaviRadnikaNaOglas" asp-route-oglasId="@oglas.Oglas.Id" class="btn btn-success">
-                        Prijavi se
-                    </a>
+                    @if (prijavljeni != null && prijavljeni.Contains(oglas.Oglas.Id))
+                    {
+                        <span class="text-success">Već prijavljen</span>
+                    }
+                    else
+                    {
+                        <a asp-controller="Oglas" asp-action="PrijaviRadnikaNaOglas" asp-route-oglasId="@oglas.Oglas.Id" class="btn btn-success">
+                            Prijavi se
+                        </a>
+                    }
                 </td>
             </tr>
         }

@@ -33,18 +33,22 @@
                         <a asp-action="Prihvati" asp-route-id="@prijava.Id" class="btn btn-success">Prihvati</a>
                         <a asp-action="Odbij" asp-route-id="@prijava.Id" class="btn btn-danger">Odbij</a>
                     }
+                    else if (prijava.Status == Status.Placen)
+                    {
+                        <span class="text-success">Plaćeno</span>
+                    }
                     else if (prijava.Status == Status.Prihvacen)
                     {
                         <a asp-action="InitiatePayment"
                            asp-route-oglasId="@prijava.OglasId"
                            asp-route-radnikId="@prijava.KorisnikId"
                            class="btn btn-primary">Plati</a>
-                    
-                        <a asp-controller="Chat" asp-action="StartChat" 
-                           asp-route-oglasId="@prijava.OglasId" 
-                           asp-route-korisnik2Id="@prijava.KorisnikId" 
+
+                        <a asp-controller="Chat" asp-action="StartChat"
+                           asp-route-oglasId="@prijava.OglasId"
+                           asp-route-korisnik2Id="@prijava.KorisnikId"
                            class="btn btn-info ml-2">
-                           Razgovor
+                            Razgovor
                         </a>
                     }
                     else if (prijava.Status == Status.Odbijen)
@@ -52,6 +56,7 @@
                         <span class="text-danger">Odbijeno</span>
                     }
                 </td>
+
             </tr>
             
         }
