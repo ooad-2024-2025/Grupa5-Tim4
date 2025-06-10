@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace NaPoso.Controllers
     public class ObavijestController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+        private readonly UserManager<Korisnik> _userManager;
         public ObavijestController(ApplicationDbContext context)
         {
             _context = context;
@@ -154,5 +155,6 @@ namespace NaPoso.Controllers
         {
             return _context.Obavijest.Any(e => e.Id == id);
         }
+        
     }
 }

@@ -269,13 +269,31 @@ namespace NaPoso.Controllers
         [Authorize(Roles = "Radnik")]
         public async Task<IActionResult> MojeRecenzije()
         {
-            var radnikId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Trenutni korisnik (Radnik)
+            var radnikId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
 
             var recenzije = await _context.Recenzija
                                           .Where(r => r.RadnikId == radnikId)
                                           .ToListAsync();
+            var klijentiIds = recenzije.Select(r => r.KlijentId).Distinct().ToList();
 
-            return View(recenzije);
+            var klijenti = await _context.Korisnik
+                                         .Where(u => klijentiIds.Contains(u.Id))
+                                         .Select(u => new { u.Id, u.Email })
+                                         .ToListAsync();
+
+            var recenzijeSaEmailom = recenzije.Select(r => new {
+                Recenzija = r,
+                KlijentEmail = klijenti.FirstOrDefault(k => k.Id == r.KlijentId)?.Email ?? "Nepoznat"
+            }).ToList();
+            var model = recenzije.Select(r => new RecenzijaViewModel
+            {
+                KlijentEmail = klijenti.FirstOrDefault(k => k.Id == r.KlijentId)?.Email ?? "Nepoznat",
+                Ocjena = r.Ocjena,
+                Sadrzaj = r.Sadrzaj
+            }).ToList();
+
+
+            return View(model);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NaPoso.Models.Recenzija>
+﻿@model IEnumerable<NaPoso.Models.RecenzijaViewModel>
 
 <h3>Moje recenzije</h3>
 
@@ -20,7 +20,7 @@ else
             @foreach (var recenzija in Model)
             {
                 <tr>
-                    <td>@recenzija.KlijentId</td>
+                    <td>@recenzija.KlijentEmail</td>
                     <td>@recenzija.Ocjena / 5</td>
                     <td>@recenzija.Sadrzaj</td>
                 </tr>
