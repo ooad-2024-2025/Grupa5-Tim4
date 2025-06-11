@@ -16,21 +16,22 @@ namespace NaPoso.Controllers
             _userManager = userManager;
             _logger = logger;
         }
-        public async Task<IActionResult> Index()
-        {
-            if (User.Identity.IsAuthenticated)
+            public async Task<IActionResult> Index()
             {
-                var user = await _userManager.GetUserAsync(User);
-                var roles = await _userManager.GetRolesAsync(user);
+                /*if (User.Identity.IsAuthenticated)
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    var roles = await _userManager.GetRolesAsync(user);
 
-                if (roles.Contains("Radnik"))
-                    return RedirectToAction("Radnik");
-                else if (roles.Contains("Klijent"))
-                    return RedirectToAction("Klijent");
+                    if (roles.Contains("Radnik"))
+                        return RedirectToAction("Radnik");
+                    else if (roles.Contains("Klijent"))
+                        return RedirectToAction("Klijent");
             }
+            */
 
-            return View(); // ako nije logovan, pokaži home stranicu
-        }
+                return View(); // ako nije logovan, pokaži home stranicu
+            }
         [Authorize(Roles = "Admin")]
         public IActionResult Admin()
         {

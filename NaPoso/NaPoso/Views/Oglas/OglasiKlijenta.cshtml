@@ -34,6 +34,8 @@
         }
     </tbody>
 </table>
-        
-        <a asp-controller="Home" asp-action="Index">Nazad</a>
+<form method="get" action="@Url.Action("Create", "Oglas")">
+    <button type="submit" class="btn btn-primary">Objavi oglas</button>
+</form>
+<a asp-controller="Home" asp-action="Index">Nazad</a>
     
