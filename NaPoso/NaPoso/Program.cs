@@ -7,7 +7,9 @@ using NaPoso.Services;
 using NaPoso.Models;
 using Stripe;
 using System;
-using Microsoft.AspNetCore.Http; // Added for sessions
+using Microsoft.AspNetCore.Http;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization; // Added for sessions
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,6 +111,7 @@ async Task CreateAdminUser(IServiceProvider serviceProvider)
 }
 
 var app = builder.Build();
+
 
 using (var scope = app.Services.CreateScope())
 {

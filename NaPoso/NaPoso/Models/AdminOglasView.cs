@@ -4,30 +4,31 @@ namespace NaPoso.Models
 {
     public class AdminOglasView
     {
-        [Required, EmailAddress]
         [Display(Name = "Email klijenta")]
+        [Required(ErrorMessage = "Ovo polje je obavezno.")]
+        [EmailAddress(ErrorMessage = "Email mora sadržavati @ i biti u ispravnom formatu.")]
         public string KlijentEmail { get; set; }
 
-        [Required]
-        [StringLength(100, MinimumLength = 3)]
-        public string Naslov { get; set; }
+        [Required(ErrorMessage = "Ovo polje je obavezno.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "Naslov mora imati između 3 i 100 znakova.")]
+        public string? Naslov { get; set; }
 
-        [Required]
-        [StringLength(100, MinimumLength = 3)]
-        public string Opis { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 1)]
-        public string Lokacija { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 3)]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "Opis mora imati između 3 i 100 znakova.")]
+        [Required(ErrorMessage = "Ovo polje je obavezno.")]
+        public string? Opis { get; set; }
+        [Required(ErrorMessage = "Ovo polje je obavezno.")]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Lokacija mora imati između 1 i 100 znakova.")]
+        [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "Lokacija mora sadržavati samo slova.")]
+        public string? Lokacija { get; set; }
         [Display(Name = "Tip posla")]
-        public string TipPosla { get; set; }
-
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Cijena mora biti veća od 0")]
+        [Required(ErrorMessage = "Ovo polje je obavezno.")]
+        [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "Tip posla mora sadržavati samo slova.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "Tip posla mora imati između 3 i 100 znakova.")]
+        public string? TipPosla { get; set; }
         [Display(Name = "Cijena posla")]
+        [Required(ErrorMessage = "Ovo polje je obavezno.")]
+        [Range(0.01, 9999999, ErrorMessage = "Cijena mora biti veća od 0.")]
+        [RegularExpression(@"^-?\d+(\.\d{1,2})?$", ErrorMessage = "Unesite broj sa najviše dvije decimale (tačka kao decimalni separator).")]
         public double CijenaPosla { get; set; }
     }
 }
