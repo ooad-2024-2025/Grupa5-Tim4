@@ -77,13 +77,15 @@ namespace NaPoso.Areas.Identity.Pages.Account
             /// </summary>
             [Required(ErrorMessage = "Ovo polje je obavezno.")]
             [StringLength(50, ErrorMessage = "Ime mora sadržavati maksimalno {1} znakova i minimalno {2} znakova.", MinimumLength = 2)]
+            [RegularExpression(@"^[A-Za-z]*$", ErrorMessage="Dozvoljena su samo slova.")]
             public string Ime { get; set; }
             [Required(ErrorMessage = "Ovo polje je obavezno.")]
             [StringLength(50, ErrorMessage = "Prezime mora sadržavati maksimalno {1} znakova i minimalno {2} znakova.", MinimumLength = 2)]
+            [RegularExpression(@"^[A-Za-z]*$", ErrorMessage = "Dozvoljena su samo slova.")]
             public string Prezime { get; set; }
             [Display(Name = "Broj telefona")]
             [Required(ErrorMessage = "Broj telefona je obavezan.")]
-            [RegularExpression(@"^\+\d{6,15}$", ErrorMessage = "Broj telefona mora počinjati sa +387 i sadržavati samo brojeve.")]
+            [RegularExpression(@"^\+387\d{6,15}$", ErrorMessage = "Broj telefona mora počinjati sa +387 i sadržavati samo brojeve.")]
             public string BrojTelefona { get; set; }
 
             [Required(ErrorMessage ="Ovo polje je obavezno.")]
