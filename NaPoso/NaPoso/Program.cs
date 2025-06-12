@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Localization; // Added for sessions
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
-// Add the new email service for document approval notifications
 builder.Services.AddSingleton<IEmailService>(provider =>
     new EmailService(
         "smtp.gmail.com",
@@ -53,7 +52,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<StripeService>();
 
-// Add session support
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -137,7 +136,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession(); // Add session middleware to the pipeline
+app.UseSession(); 
 
 app.MapControllerRoute(
     name: "default",
