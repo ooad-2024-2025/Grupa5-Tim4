@@ -14,6 +14,8 @@ using NaPoso.Models;
 using SQLitePCL;
 using static NaPoso.Enums.Enums;
 using Microsoft.AspNetCore.Identity;
+using NaPoso.Migrations;
+using Korisnik = NaPoso.Models.Korisnik;
 
 
 namespace NaPoso.Controllers
@@ -47,6 +49,11 @@ namespace NaPoso.Controllers
 
             var oglas = await _context.Oglas
                 .FirstOrDefaultAsync(m => m.Id == id);
+            var korisnikId = _userManager.GetUserId(User);
+            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
             if (oglas == null)
             {
                 return NotFound();
@@ -108,6 +115,11 @@ namespace NaPoso.Controllers
             }
 
             var oglas = await _context.Oglas.FindAsync(id);
+            var korisnikId = _userManager.GetUserId(User);
+            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
             if (oglas == null)
             {
                 return NotFound();
@@ -123,6 +135,11 @@ namespace NaPoso.Controllers
         [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Opis,Lokacija,TipPosla,CijenaPosla,Naslov,Status")] Oglas oglas)
         {
+            var korisnikId = _userManager.GetUserId(User);
+            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
             if (id != oglas.Id)
             {
                 return NotFound();
@@ -173,23 +190,34 @@ namespace NaPoso.Controllers
                 return NotFound();
             }
 
-            var oglas = await _context.Oglas
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var oglas = await _context.Oglas.FirstOrDefaultAsync(m => m.Id == id);
+
             if (oglas == null)
             {
                 return NotFound();
             }
 
+            var korisnikId = _userManager.GetUserId(User);
+            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+
             return View(oglas);
         }
-
         // POST: Oglas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
             var oglas = await _context.Oglas.FindAsync(id);
+            var korisnikId = _userManager.GetUserId(User);
+
+            if (oglas.KlijentId != korisnikId)
+                return Forbid();
+
             if (oglas != null)
             {
                 _context.Oglas.Remove(oglas);

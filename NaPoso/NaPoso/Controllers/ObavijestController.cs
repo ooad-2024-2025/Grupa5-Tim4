@@ -29,6 +29,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Obavijest/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -69,6 +70,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Obavijest/Edit/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
             var obavijest = _context.Obavijest.Find(id);
@@ -88,6 +90,7 @@ namespace NaPoso.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,KorisnikId,Sadrzaj,VrijemeSlanja,Tip")] Obavijest obavijest)
         {
             if (id != obavijest.Id)
@@ -119,6 +122,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Obavijest/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,6 +142,7 @@ namespace NaPoso.Controllers
 
         // POST: Obavijest/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
