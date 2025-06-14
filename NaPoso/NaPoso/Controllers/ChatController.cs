@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System;
 namespace NaPoso.Controllers
 {
-    [Authorize]
+ 
     public class ChatController : Controller
     {
         private readonly ApplicationDbContext _context;

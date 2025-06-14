@@ -12,6 +12,7 @@ using NaPoso.Models;
 
 namespace NaPoso.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ObavijestKorisnikuController : Controller
     {
         private readonly ApplicationDbContext _context;

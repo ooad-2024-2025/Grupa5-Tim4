@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,10 @@ using NaPoso.Models;
 
 namespace NaPoso.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class OglasKorisnikController : Controller
     {
+        
         private readonly ApplicationDbContext _context;
 
         public OglasKorisnikController(ApplicationDbContext context)
