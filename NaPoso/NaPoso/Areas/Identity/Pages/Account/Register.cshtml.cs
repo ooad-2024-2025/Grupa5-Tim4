@@ -89,7 +89,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
             public string BrojTelefona { get; set; }
 
             [Required(ErrorMessage ="Ovo polje je obavezno.")]
-            [EmailAddress(ErrorMessage = "Email mora sadržavati @ i biti u ispravnom formatu.")]
+            [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Email mora biti u ispravnom formatu (npr. korisnik@example.com).")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 

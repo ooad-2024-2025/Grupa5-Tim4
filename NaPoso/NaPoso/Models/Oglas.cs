@@ -28,7 +28,7 @@ namespace NaPoso.Models
         public string? TipPosla {  get; set; }
         [Display(Name = "Cijena posla")]
         [Required(ErrorMessage = "Ovo polje je obavezno.")]
-        [Range(0.01, 9999999, ErrorMessage = "Cijena mora biti veća od 0.")]
+        [Range(0.5, 9999999, ErrorMessage = "Cijena može biti najmanje 0.50KM i najviše 9999999KM.")]
         [RegularExpression(@"^-?\d+(\.\d{1,2})?$", ErrorMessage = "Unesite broj sa najviše dvije decimale (tačka kao decimalni separator).")]
         public double CijenaPosla { get; set; }
         public Recenzija? Recenzija {  get; set; }  

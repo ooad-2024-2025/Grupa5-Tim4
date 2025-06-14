@@ -66,7 +66,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage ="Ovo polje je obavezno.")]
-            [EmailAddress(ErrorMessage = "Email mora sadržavati @ i biti u ispravnom formatu.")]
+            [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Email mora biti u ispravnom formatu (npr. korisnik@example.com).")]
             public string Email { get; set; }
 
             /// <summary>

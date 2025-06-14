@@ -82,7 +82,7 @@ namespace NaPoso.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                // ✅ Spremi ID-ove u sesiju
+
                 HttpContext.Session.SetInt32("VerifiedOglasId", oglasId.Value);
                 HttpContext.Session.SetString("VerifiedRadnikId", radnikId);
             }

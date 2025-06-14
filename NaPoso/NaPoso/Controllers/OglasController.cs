@@ -217,6 +217,12 @@ namespace NaPoso.Controllers
         [Authorize(Roles = "Radnik")]
         public async Task<IActionResult> PrikazOglasa(string search, string lokacija, string tipPosla, string sort, int? minCijena, int? maxCijena)
         {
+            if (minCijena.HasValue && (minCijena < 0 || minCijena > 9999999999999))
+                ModelState.AddModelError("minCijena", "Minimalna cijena mora biti između 0 i 9999999999999.");
+
+            if (maxCijena.HasValue && (maxCijena < 0 || maxCijena > 9999999999999))
+                ModelState.AddModelError("maxCijena", "Maksimalna cijena mora biti između 0 i 9999999999999.");
+
 
             var oglasi = from o in _context.Oglas
                         join k in _context.Users on o.KlijentId equals k.Id

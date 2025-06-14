@@ -6,7 +6,7 @@ namespace NaPoso.Models
     {
         [Display(Name = "Email klijenta")]
         [Required(ErrorMessage = "Ovo polje je obavezno.")]
-        [EmailAddress(ErrorMessage = "Email mora sadržavati @ i biti u ispravnom formatu.")]
+        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Email mora biti u ispravnom formatu (npr. korisnik@example.com).")]
         public string KlijentEmail { get; set; }
 
         [Required(ErrorMessage = "Ovo polje je obavezno.")]
@@ -27,7 +27,7 @@ namespace NaPoso.Models
         public string? TipPosla { get; set; }
         [Display(Name = "Cijena posla")]
         [Required(ErrorMessage = "Ovo polje je obavezno.")]
-        [Range(0.01, 9999999, ErrorMessage = "Cijena mora biti veća od 0.")]
+        [Range(0.5, 9999999, ErrorMessage = "Cijena može biti najmanje 0.50KM i najviše 9999999KM.")]
         [RegularExpression(@"^-?\d+(\.\d{1,2})?$", ErrorMessage = "Unesite broj sa najviše dvije decimale (tačka kao decimalni separator).")]
         public double CijenaPosla { get; set; }
     }

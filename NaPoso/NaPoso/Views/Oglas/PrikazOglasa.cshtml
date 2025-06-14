@@ -12,7 +12,7 @@
 <h2>Aktivni oglasi</h2>
 
 <div style="max-width: 500px; margin-bottom: 15px;">
-    <form id="searchForm" method="get" asp-action="PrikazOglasa">
+    <form method="get" asp-action="PrikazOglasa">
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Pretraga po naslovu/opisu" value="@searchValue" />
             <div class="input-group-append">
@@ -27,13 +27,14 @@
 <form id="filterForm" method="get" asp-action="PrikazOglasa" class="mb-4" style="display:none;">
     <div class="form-row">
         <input type="text" name="lokacija" class="form-control mb-2 mr-sm-2" placeholder="Lokacija"
-               value="@HttpContextAccessor.HttpContext.Request.Query["lokacija"]" />
+               value="@HttpContextAccessor.HttpContext.Request.Query["lokacija"]"
+               id="lokacijaInput" />
 
-        <input type="number" name="minCijena" class="form-control mb-2 mr-sm-2" placeholder="Min cijena" step="1"
-               value="@HttpContextAccessor.HttpContext.Request.Query["minCijena"]" />
+        <input type="text" id="minCijenaInput" name="minCijena" class="form-control mb-2 mr-sm-2" placeholder="Min cijena" value="@HttpContextAccessor.HttpContext.Request.Query["minCijena"]" />
+        <span class="text-danger">@ViewData.ModelState["minCijena"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
 
-        <input type="number" name="maxCijena" class="form-control mb-2 mr-sm-2" placeholder="Max cijena" step="1"
-               value="@HttpContextAccessor.HttpContext.Request.Query["maxCijena"]" />
+        <input type="text" id="maxCijenaInput" name="maxCijena" class="form-control mb-2 mr-sm-2" placeholder="Max cijena" value="@HttpContextAccessor.HttpContext.Request.Query["maxCijena"]" />
+        <span class="text-danger">@ViewData.ModelState["maxCijena"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
 
         <select name="sort" class="form-control mb-2 mr-sm-2">
             <option value="">Sortiraj po</option>
@@ -43,7 +44,41 @@
         <button type="submit" class="btn btn-primary mb-2">Filtriraj</button>
     </div>
 </form>
+<script>
+    const minInput = document.getElementById("minCijenaInput");
+    const maxInput = document.getElementById("maxCijenaInput");
 
+    function sanitizeInput(e) {
+        const input = e.target;
+        let cursorPos = input.selectionStart;
+        const oldValue = input.value;
+
+        // Dozvoli samo cifre (0-9)
+        let newValue = oldValue.replace(/[^0-9]/g, '');
+
+        // Ako prvi znak je 0 i ima još znakova, izbriši prvi znak
+        if (newValue.length > 1 && newValue.startsWith('0')) {
+            newValue = newValue.slice(1);
+            if (cursorPos > 0) cursorPos--;
+        }
+
+        if (newValue !== oldValue) {
+            input.value = newValue;
+            if (cursorPos < 0) cursorPos = 0;
+            input.setSelectionRange(cursorPos, cursorPos);
+        }
+    }
+
+    minInput.addEventListener("input", sanitizeInput);
+    maxInput.addEventListener("input", sanitizeInput);
+</script>
+
+<script>
+    const lokacijaInput = document.getElementById("lokacijaInput");
+    lokacijaInput.addEventListener("input", function () {
+        this.value = this.value.replace(/[^A-Za-zšđčćžŠĐČĆŽ\s]/g, '');
+    });
+</script>
 <script>
     document.getElementById("toggleFiltersBtn").addEventListener("click", function () {
         const form = document.getElementById("filterForm");

@@ -18,9 +18,10 @@
 
             <div class="form-group">
                 <label asp-for="Ocjena" class="control-label"></label>
-                <input asp-for="Ocjena" class="form-control" />
+                <input asp-for="Ocjena" class="form-control" type="number" min="1" max="5" onkeydown="return false;" />
                 <span asp-validation-for="Ocjena" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Sadrzaj" class="control-label"></label>
                 <input asp-for="Sadrzaj" class="form-control" />
