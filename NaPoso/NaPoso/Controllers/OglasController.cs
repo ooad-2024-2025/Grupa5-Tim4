@@ -135,11 +135,18 @@ namespace NaPoso.Controllers
         [Authorize(Roles = "Admin,Klijent")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Opis,Lokacija,TipPosla,CijenaPosla,Naslov,Status")] Oglas oglas)
         {
+            var oglasIzBaze = await _context.Oglas.FindAsync(id);
+            if (oglasIzBaze == null)
+            {
+                return NotFound();
+            }
+
             var korisnikId = _userManager.GetUserId(User);
-            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            if (oglasIzBaze.KlijentId != korisnikId && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
+
             if (id != oglas.Id)
             {
                 return NotFound();
@@ -149,13 +156,7 @@ namespace NaPoso.Controllers
             {
                 try
                 {
-                    var oglasIzBaze = await _context.Oglas.FindAsync(id);
-                    if (oglasIzBaze == null)
-                    {
-                        return NotFound();
-                    }
-
-                    // Ažuriraj samo potrebna polja
+                    // Ažuriraj samo polja
                     oglasIzBaze.Opis = oglas.Opis;
                     oglasIzBaze.Lokacija = oglas.Lokacija;
                     oglasIzBaze.TipPosla = oglas.TipPosla;
@@ -283,10 +284,10 @@ namespace NaPoso.Controllers
                 _ => oglasi.OrderBy(o => o.Oglas.Naslov)
             };
             var korisnikId = _userManager.GetUserId(User);
-            var prijavljeniOglasi = _context.OglasKorisnik
+            var prijavljeniOglasi = await _context.OglasKorisnik
                 .Where(x => x.KorisnikId == korisnikId)
                 .Select(x => x.OglasId)
-                .ToList();
+                .ToListAsync();
 
             ViewBag.PrijavljeniOglasiId = prijavljeniOglasi;
             return View(await oglasi.ToListAsync());

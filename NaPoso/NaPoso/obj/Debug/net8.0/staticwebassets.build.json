@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "ivUNXJnYPDoHUHXD2pEtI6vOJ6GYyyVObri8XZbQOGg=",
+  "Hash": "Bseah9Z2zFcXJFu8379I6kHVRrcF/GBDjxETCa0apWk=",
   "Source": "NaPoso",
   "BasePath": "_content/NaPoso",
   "Mode": "Default",
@@ -1359,6 +1359,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\documents\\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.jpg",
+      "SourceId": "NaPoso",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\",
+      "BasePath": "_content/NaPoso",
+      "RelativePath": "documents/a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "rg2mhfzdwo",
+      "Integrity": "+3KbtfBhS/IlyMczMzM3GuVzLoJqClDf7wQTyz1gqpE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\documents\\a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.jpg"
     },
     {
       "Identity": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\favicon.ico",
@@ -2758,6 +2779,88 @@
         {
           "Name": "label",
           "Value": "documents/18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-+3KbtfBhS/IlyMczMzM3GuVzLoJqClDf7wQTyz1gqpE="
+        }
+      ]
+    },
+    {
+      "Route": "documents/a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.jpg",
+      "AssetFile": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "538050"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+3KbtfBhS/IlyMczMzM3GuVzLoJqClDf7wQTyz1gqpE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Jun 2025 09:29:33 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-+3KbtfBhS/IlyMczMzM3GuVzLoJqClDf7wQTyz1gqpE="
+        }
+      ]
+    },
+    {
+      "Route": "documents/a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.rg2mhfzdwo.jpg",
+      "AssetFile": "C:\\Users\\Korisnik\\Documents\\GitHub\\Grupa5-Tim4\\NaPoso\\NaPoso\\wwwroot\\documents\\a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "538050"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+3KbtfBhS/IlyMczMzM3GuVzLoJqClDf7wQTyz1gqpE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Jun 2025 09:29:33 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rg2mhfzdwo"
+        },
+        {
+          "Name": "label",
+          "Value": "documents/a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.jpg"
         },
         {
           "Name": "integrity",

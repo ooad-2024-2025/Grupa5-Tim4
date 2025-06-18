@@ -1,5 +1,6 @@
 wwwroot\css\site.css
 wwwroot\documents\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg
+wwwroot\documents\a0cbe8e9-5e4f-43ef-a342-7192dd1a038f_document.jpg
 wwwroot\favicon.ico
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css
