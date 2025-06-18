@@ -9,7 +9,7 @@ using Stripe;
 using System;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
-using Microsoft.AspNetCore.Localization; // Added for sessions
+using Microsoft.AspNetCore.Localization; 
 
 var builder = WebApplication.CreateBuilder(args);
 

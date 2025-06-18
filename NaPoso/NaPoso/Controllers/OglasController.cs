@@ -215,7 +215,7 @@ namespace NaPoso.Controllers
             var oglas = await _context.Oglas.FindAsync(id);
             var korisnikId = _userManager.GetUserId(User);
 
-            if (oglas.KlijentId != korisnikId)
+            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
                 return Forbid();
 
             if (oglas != null)
@@ -233,7 +233,7 @@ namespace NaPoso.Controllers
                 return RedirectToAction("OglasiKlijenta");
             }
 
-            // default fallback
+           
             return RedirectToAction(nameof(Index));
         }
 

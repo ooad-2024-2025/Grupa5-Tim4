@@ -1,15 +1,5 @@
 wwwroot\css\site.css
 wwwroot\documents\18021d6e-e400-47d2-acb4-2e74eb145c92_document.jpg
-wwwroot\documents\2f5d0e52-5d82-4807-bfd9-e166fdf4996a_document.jpg
-wwwroot\documents\313f6b99-8132-4c78-98eb-b79ebf3a923d_document.jpg
-wwwroot\documents\31aaa842-102c-486c-a9be-7029ef3efc09_document.jpg
-wwwroot\documents\4a0ecaf6-229e-4fdd-be84-a75586c5f72d_document.jpg
-wwwroot\documents\5ecb9b30-3102-444e-bcf8-e36cf62f4285_document.jpg
-wwwroot\documents\7a78f630-5404-4e1c-87d6-1b7bd84d40ba_document.jpg
-wwwroot\documents\97ab1713-ed40-4db8-ad52-c8957bddfbc6_document.jpg
-wwwroot\documents\ab5ae6b2-b5d3-4aba-ae7d-2e35ac99ea40_document.jpg
-wwwroot\documents\b200ccfb-7a34-42cd-8718-698dea465e7f_document.jpg
-wwwroot\documents\df1df2c8-19e1-4597-9ba8-604398a993e1_document.jpg
 wwwroot\favicon.ico
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css

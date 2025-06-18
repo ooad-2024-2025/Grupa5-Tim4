@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NaPoso.Models;
 
@@ -89,7 +90,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
             public string BrojTelefona { get; set; }
 
             [Required(ErrorMessage ="Ovo polje je obavezno.")]
-            [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Email mora biti u ispravnom formatu (npr. korisnik@example.com).")]
+            [RegularExpression(@"^[^@\s]+@[^@\s]+\.[a-zA-Z]+$", ErrorMessage = "Email mora biti u ispravnom formatu (npr. korisnik@example.com).")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -133,6 +134,14 @@ namespace NaPoso.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                var existingUserWithPhone = await _userManager.Users
+    .FirstOrDefaultAsync(u => u.PhoneNumber == Input.BrojTelefona);
+
+                if (existingUserWithPhone != null)
+                {
+                    ModelState.AddModelError("Input.BrojTelefona", "Broj telefona je već u upotrebi.");
+                    return Page();
+                }
                 var user = CreateUser();
 
                 // Postavi email i broj telefona
@@ -173,7 +182,14 @@ namespace NaPoso.Areas.Identity.Pages.Account
                 }
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    if (error.Code == "DuplicateUserName" || error.Code == "DuplicateEmail")
+                    {
+                        ModelState.AddModelError("Input.Email", "Email adresa je već u upotrebi.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description); // originalni tekst
+                    }
                 }
             }
 
@@ -182,6 +198,8 @@ namespace NaPoso.Areas.Identity.Pages.Account
         }
 
         private Korisnik CreateUser()
+
+
         {
             try
             {

@@ -39,7 +39,6 @@ namespace NaPoso.Controllers
             {
                 var fileName = Path.GetFileName(file);
 
-                // Preskoči fajlove koje je admin već prihvatio
                 if (approvedFiles.Contains(fileName))
                     continue;
 
@@ -49,9 +48,11 @@ namespace NaPoso.Controllers
                 dokumenti.Add(new DokumentiKorisnika
                 {
                     FileName = fileName,
-                    Korisnik = korisnik
+                    Korisnik = korisnik,
+                    DocumentPath = $"/documents/{fileName}"  // putanja za view
                 });
-            }
+            
+        }
 
             return View(dokumenti);
         }

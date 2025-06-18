@@ -8,7 +8,7 @@ namespace NaPoso.Models
     {
         public int Id { get; set; }
 
-        public int OglasId { get; set; }
+        public int? OglasId { get; set; }
         public Oglas Oglas { get; set; }
 
         public string? KorisnikId { get; set; }
