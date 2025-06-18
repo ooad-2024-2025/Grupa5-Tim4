@@ -92,7 +92,9 @@
                     }
                 }
             });
-
+                    $.extend($.validator.messages, {
+            number: "Unesite ispravan broj, samo cifre su dozvoljene."
+        });
             $("input[name='Amount']").rules("add", {
                 min: 50,
                 messages: {
