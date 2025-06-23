@@ -4,6 +4,9 @@ Konekcijski string: "DefaultConnection": "Data Source=SQL6031.site4now.net;Initi
 
 Link: http://zinedin1-001-site1.mtempurl.com/
 
+User Name: 11246256
+Password: 60-dayfreetrial
+
 Login Admin:
 Email: admin@mail.com  
 Password: Kompjuter123
