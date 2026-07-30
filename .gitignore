@@ -42,3 +42,4 @@ pgdata/
 # AI agent configs — never commit
 .mimocode/
 .agents/
+agent-notes/
