@@ -1,65 +1,72 @@
-﻿@model NaPoso.Models.Oglas
+@model NaPoso.Models.Oglas
+@using NaPoso.Helpers
 
 @{
-    ViewData["Title"] = "Detalji";
+    ViewData["Title"] = "Detalji oglasa";
 }
 
-<h1>Detalji</h1>
-
-<div>
-    <h4>Oglas</h4>
-    <hr />
-    <dl class="row">
-       
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Opis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Opis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Lokacija)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Lokacija)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipPosla)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipPosla)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CijenaPosla)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CijenaPosla)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Naslov)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Naslov)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-    </dl>
+<div class="page-header">
+    <h1><i class="bi bi-info-circle me-2"></i>@Model.Naslov</h1>
 </div>
 
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Uredi</a> |
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="content-card">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2 class="h3 mb-2" style="font-family: var(--font-heading);">@Model.Naslov</h2>
+                    <div class="d-flex gap-3 text-muted" style="font-size: var(--text-small);">
+                        <span><i class="bi bi-geo-alt me-1"></i>@LokacijaHelper.UGradu(Model.Lokacija)</span>
+                        <span><i class="bi bi-briefcase me-1"></i>@Model.TipPosla</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="text-accent fs-3 fw-bold">@Model.CijenaPosla KM</div>
+                    <span class="badge @(Model.Status == NaPoso.Enums.Enums.Status.Zavrsen ? "bg-secondary" : "bg-success") mt-2">
+                        @OglasStatusHelper.GetLabel(Model.Status)
+                    </span>
+                </div>
+            </div>
+            
+            <hr style="border-color: var(--color-border);" />
+            
+            <div class="mt-4">
+                <h4 class="mb-3 text-muted text-uppercase" style="font-size: var(--text-caption); letter-spacing: 0.05em; font-weight: var(--weight-bold);">Opis posla</h4>
+                <p style="line-height: var(--leading-relaxed); font-size: var(--text-body);">@Model.Opis</p>
+            </div>
+        </div>
 
-        @if (User.IsInRole("Klijent"))
-        {
-            <a asp-action="OglasiKlijenta">Nazad</a>
-        }
-        else if (User.IsInRole("Admin"))
-        {
-            <a asp-action="Index">Nazad</a>
-        }
+        <div class="d-flex gap-3 mt-4 justify-content-center">
+            @if (User.IsInRole("Klijent"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil me-1"></i>Uredi</a>
+                <a asp-action="OglasiKlijenta" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+            }
+            else if (User.IsInRole("Radnik") && Model.Status == NaPoso.Enums.Enums.Status.Aktivan)
+            {
+                if (ViewBag.VecPrijavljen == true)
+                {
+                    <div class="d-flex align-items-center me-3">
+                        <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check-circle-fill me-2"></i>Prijavljeni ste</span>
+                    </div>
+                }
+                else
+                {
+                    <form asp-controller="Oglas" asp-action="PrijaviRadnikaNaOglas" method="post" class="d-inline">
+                        <input type="hidden" name="oglasId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-box-arrow-in-right me-1"></i>Prijavi se na oglas</button>
+                    </form>
+                }
+                <a asp-controller="Oglas" asp-action="PrikazOglasa" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad na listu oglasa</a>
+            }
+            else
+            {
+                <a asp-controller="Oglas" asp-action="PrikazOglasa" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad na listu oglasa</a>
+            }
+        </div>
     </div>
-
+</div>

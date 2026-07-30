@@ -1,0 +1,87 @@
+@using static NaPoso.Enums.Enums
+@model IEnumerable<NaPoso.Models.Oglas>
+
+@{
+    ViewData["Title"] = "Svi oglasi";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><i class="bi bi-megaphone me-2"></i>Svi oglasi</h1>
+        <p class="lead">Pregled i pretraga svih oglasa na platformi</p>
+    </div>
+</div>
+
+<form method="get" asp-action="Oglasi" class="mb-4 bg-dark p-3 rounded-3 shadow-sm border border-secondary">
+    <div class="row g-3">
+        <div class="col-md-5">
+            <input type="text" name="search" class="form-control" placeholder="Pretraži po naslovu ili opisu..." value="@Context.Request.Query["search"]" />
+        </div>
+        <div class="col-md-4">
+            <select name="statusFilter" class="form-select">
+                <option value="">Svi statusi</option>
+                <option value="Aktivan" selected="@(Context.Request.Query["statusFilter"] == "Aktivan")">Aktivan</option>
+                <option value="Zavrsen" selected="@(Context.Request.Query["statusFilter"] == "Zavrsen")">Završen</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100 fw-bold"><i class="bi bi-search me-2"></i>Filtriraj listu</button>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+        <h3>Nema oglasa</h3>
+        <p>Ne postoje oglasi koji odgovaraju zadatim kriterijumima.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Naslov</th>
+                    <th>Lokacija</th>
+                    <th>Tip posla</th>
+                    <th>Cijena</th>
+                    <th>Status</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var oglas in Model)
+                {
+                    <tr>
+                        <td>@oglas.Id</td>
+                        <td>
+                            <div class="fw-semibold">@oglas.Naslov</div>
+                            <div class="text-muted small">@oglas.Opis</div>
+                        </td>
+                        <td>@LokacijaHelper.UGradu(oglas.Lokacija)</td>
+                        <td>@oglas.TipPosla</td>
+                        <td>@oglas.CijenaPosla KM</td>
+                        <td>
+                            <span class="badge @(oglas.Status == Status.Aktivan ? "bg-success" : oglas.Status == Status.Placen ? "bg-primary" : oglas.Status == Status.Zavrsen ? "bg-secondary" : "bg-warning")">
+                                @oglas.Status
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-controller="Oglas" asp-action="Details" asp-route-id="@oglas.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i>Detalji
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad na statistiku</a>
+</div>

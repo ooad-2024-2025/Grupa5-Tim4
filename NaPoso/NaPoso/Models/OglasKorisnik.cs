@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using NaPoso.Enums;
 using static NaPoso.Enums.Enums;
 
@@ -16,7 +16,7 @@ namespace NaPoso.Models
 
         public Status Status { get; set; } = Status.Aktivan;
 
-        public DateTime DatumPrijave { get; set; } = DateTime.Now;
+        public DateTime DatumPrijave { get; set; } = DateTime.UtcNow;
 
 
     }

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NaPoso.Constants;
 using NaPoso.Data;
 using NaPoso.Models;
 using System.Security.Claims;
@@ -9,7 +10,8 @@ using System.Threading.Tasks;
 using System;
 namespace NaPoso.Controllers
 {
- 
+    [Authorize(Roles = RoleConstants.Klijent + "," + RoleConstants.Radnik + "," + RoleConstants.Admin)]
+    [ApiVersion("1.0")]
     public class ChatController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -36,6 +38,8 @@ namespace NaPoso.Controllers
             return View(chats);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> StartChat(int oglasId, string korisnik2Id)
         {
             var korisnik1Id = _userManager.GetUserId(User);
@@ -63,7 +67,7 @@ namespace NaPoso.Controllers
                     Korisnik1Id = korisnik1Id,
                     Korisnik2Id = korisnik2Id,
                     OglasId = oglasId,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 };
                 _context.Chat.Add(chat);
                 await _context.SaveChangesAsync();
@@ -72,13 +76,13 @@ namespace NaPoso.Controllers
             return RedirectToAction("Poruke", new { id = chat.Id });
         }
 
-        public async Task<IActionResult> Poruke(int id)
+        public async Task<IActionResult> Poruke(int id, int page = 1, int pageSize = 50)
         {
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
             var userId = _userManager.GetUserId(User);
 
             var chat = await _context.Chat
-                .Include(c => c.Poruke.OrderBy(p => p.PoslanoAt))
-                .ThenInclude(p => p.Posiljaoc)
                 .Include(c => c.Korisnik1)
                 .Include(c => c.Korisnik2)
                 .Include(c => c.Oglas)
@@ -90,6 +94,22 @@ namespace NaPoso.Controllers
             if (chat.Korisnik1Id != userId && chat.Korisnik2Id != userId)
                 return Forbid();
 
+            var totalMessages = await _context.Poruka
+                .CountAsync(p => p.ChatId == id);
+
+            var poruke = await _context.Poruka
+                .Include(p => p.Posiljaoc)
+                .Where(p => p.ChatId == id)
+                .OrderBy(p => p.PoslanoAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.TotalMessages = totalMessages;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalMessages / pageSize);
+
+            chat.Poruke = poruke;
             return View(chat);
         }
 
@@ -116,7 +136,7 @@ namespace NaPoso.Controllers
                 ChatId = chatId,
                 PosiljaocId = userId,
                 Tekst = tekst.Trim(),
-                PoslanoAt = DateTime.Now
+                PoslanoAt = DateTime.UtcNow
             };
 
             _context.Poruka.Add(poruka);

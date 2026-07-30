@@ -1,15 +1,183 @@
-﻿@model NaPoso.Models.Statistika
+@model NaPoso.Models.Statistika
 
 @{
-    ViewData["Title"] = "Admin statistika";
+    ViewData["Title"] = "Statistika";
+    var aktivni = Model.AktivniPoslovi;
+    var zavrseni = Model.BrojZavrsenihPoslova;
 }
 
-<h1>Admin statistika</h1>
+<div class="page-header">
+    <h1><i class="bi bi-bar-chart-line me-2"></i>Statistika</h1>
+    <p class="lead">Pregled ključnih metrika platforme</p>
+</div>
 
-<ul>
-    <li>Broj korisnika: @Model.BrojKorisnika</li>
-    <li>Broj poslova: @Model.BrojPoslova</li>
-    <li>Broj klijenata: @Model.BrojKlijenata</li>
-    <li>Broj radnika: @Model.BrojRadnika</li>
-    <li>Broj završenih poslova: @Model.BrojZavrsenihPoslova</li>
-</ul>
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="stat-card stat-card-primary">
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+            <div class="stat-value">@Model.BrojKorisnika</div>
+            <div class="stat-label fw-bold">Ukupno korisnika</div>
+            <div class="stat-detail">
+                <span class="stat-detail-item"><i class="bi bi-person me-1"></i>@Model.BrojKlijenata klijenata</span>
+                <span class="stat-detail-item"><i class="bi bi-tools me-1"></i>@Model.BrojRadnika radnika</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-briefcase"></i></div>
+            <div class="stat-value">@Model.BrojPoslova</div>
+            <div class="stat-label fw-bold">Ukupno poslova</div>
+            <div class="stat-detail flex-wrap" style="gap:0.5rem 1rem;">
+                <span class="stat-detail-item"><i class="bi bi-clock me-1"></i>@aktivni aktivnih</span>
+                <span class="stat-detail-item"><i class="bi bi-check-circle me-1"></i>@zavrseni završenih</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mt-2">
+    <div class="col-md-6">
+        <div class="content-card">
+            <h4 class="mb-4">Uloge korisnika</h4>
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="usersChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="content-card">
+            <h4 class="mb-4">Status poslova (svi)</h4>
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="jobsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function cssVar(name, fallback) {
+            var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            return v || fallback;
+        }
+        function hexToRgba(hex, alpha) {
+            var h = hex.replace('#', '');
+            if (h.length === 3) h = h.split('').map(function(c){ return c+c; }).join('');
+            var r = parseInt(h.substring(0,2),16);
+            var g = parseInt(h.substring(2,4),16);
+            var b = parseInt(h.substring(4,6),16);
+            return 'rgba('+r+','+g+','+b+','+alpha+')';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var accent = cssVar('--brand-accent', '#FF3D68');
+            var accent2 = cssVar('--brand-accent-2', '#00E0B8');
+            var primary = cssVar('--brand-primary', '#0E3B36');
+            var textPrimary = cssVar('--text-primary', '#14181A');
+            var textSecondary = cssVar('--text-secondary', '#546a7b');
+            var borderColor = cssVar('--color-border', '#d3d8e0');
+
+            var ctxUsers = document.getElementById('usersChart').getContext('2d');
+            var usersChart = new Chart(ctxUsers, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Klijenti', 'Radnici'],
+                    datasets: [{
+                        data: [@Model.BrojKlijenata, @Model.BrojRadnika],
+                        backgroundColor: [accent, accent2],
+                        hoverOffset: 8,
+                        borderWidth: 0,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '62%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textPrimary,
+                                padding: 18,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                boxWidth: 10,
+                                font: { size: 13, weight: 500 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: primary,
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            cornerRadius: 8,
+                            padding: 12,
+                            boxPadding: 6
+                        }
+                    },
+                    animation: { animateRotate: true, animateScale: true, duration: 900 }
+                }
+            });
+
+            var ctxJobs = document.getElementById('jobsChart').getContext('2d');
+            var jobsChart = new Chart(ctxJobs, {
+                type: 'bar',
+                data: {
+                    labels: ['Aktivni', 'Završeni'],
+                    datasets: [{
+                        label: 'Broj oglasa',
+                        data: [@aktivni, @zavrseni],
+                        backgroundColor: [accent2, primary],
+                        hoverBackgroundColor: [hexToRgba(accent2.replace(' ',''), 0.82), hexToRgba(primary.replace(' ',''), 0.88)],
+                        borderRadius: 10,
+                        borderSkipped: false,
+                        barThickness: 52
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: primary,
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            cornerRadius: 8,
+                            padding: 12,
+                            boxPadding: 6
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: textPrimary,
+                                font: { size: 13, weight: 600 }
+                            },
+                            border: { color: 'transparent' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: textSecondary,
+                                font: { size: 12 },
+                                padding: 8
+                            },
+                            grid: {
+                                color: hexToRgba(borderColor.replace(' ','') || '#d3d8e0', 0.7),
+                                drawBorder: false
+                            },
+                            border: { display: false }
+                        }
+                    },
+                    animation: { duration: 900, easing: 'easeOutQuart' }
+                }
+            });
+        });
+    </script>
+}

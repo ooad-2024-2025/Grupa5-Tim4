@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -49,8 +49,8 @@ namespace NaPoso.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Ovo polje je obavezno.")]
+            [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje {2} i najviše {1} karaktera.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -59,8 +59,8 @@ namespace NaPoso.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Potvrdi lozinku")]
+            [Compare("Password", ErrorMessage = "Lozinke se ne podudaraju.")]
             public string ConfirmPassword { get; set; }
 
             /// <summary>
@@ -72,7 +72,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
 
         }
 
-        public IActionResult OnGet(string code = null)
+        public IActionResult OnGet(string code = null, string email = null)
         {
             if (code == null)
             {
@@ -82,7 +82,8 @@ namespace NaPoso.Areas.Identity.Pages.Account
             {
                 Input = new InputModel
                 {
-                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code)),
+                    Email = email ?? string.Empty
                 };
                 return Page();
             }

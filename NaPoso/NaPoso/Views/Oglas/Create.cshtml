@@ -1,52 +1,67 @@
-﻿@model NaPoso.Models.Oglas
+@model NaPoso.Models.Oglas
 
 @{
-    ViewData["Title"] = "Kreiraj";
+    ViewData["Title"] = "Kreiraj oglas";
 }
 
-<h1>Kreiraj oglas</h1>
-
-<h4>Oglas</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Naslov" class="control-label"></label>
-                <input asp-for="Naslov" class="form-control" />
-                <span asp-validation-for="Naslov" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Opis" class="control-label"></label>
-                <input asp-for="Opis" class="form-control" />
-                <span asp-validation-for="Opis" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Lokacija" class="control-label"></label>
-                <input asp-for="Lokacija" class="form-control" />
-                <span asp-validation-for="Lokacija" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipPosla" class="control-label"></label>
-                <input asp-for="TipPosla" class="form-control" />
-                <span asp-validation-for="TipPosla" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CijenaPosla" class="control-label"></label>
-                <input asp-for="CijenaPosla" class="form-control" />
-                <span asp-validation-for="CijenaPosla" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Objavi" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div class="page-header">
+    <h1><i class="bi bi-plus-circle me-2"></i>Kreiraj oglas</h1>
+    <p class="lead">Objavite novi oglas za posao</p>
 </div>
 
-<div>
-    <a asp-controller ="Home" asp-action="Index">Nazad</a>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="form-group">
+                    <label asp-for="Naslov" class="form-label"></label>
+                    <input asp-for="Naslov" class="form-control" placeholder="npr. Popravka krova" />
+                    <span asp-validation-for="Naslov" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Opis" class="form-label"></label>
+                    <input asp-for="Opis" class="form-control" placeholder="Kratki opis posla" />
+                    <span asp-validation-for="Opis" class="text-danger"></span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Lokacija" class="form-label"></label>
+                            <input asp-for="Lokacija" class="form-control" placeholder="npr. Sarajevo" />
+                            <span asp-validation-for="Lokacija" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TipPosla" class="form-label"></label>
+                            <input asp-for="TipPosla" class="form-control" placeholder="npr. Građevinarstvo" />
+                            <span asp-validation-for="TipPosla" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CijenaPosla" class="form-label"></label>
+                    <input asp-for="CijenaPosla" class="form-control" placeholder="npr. 150.00" />
+                    <span asp-validation-for="CijenaPosla" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>Objavi
+                    </button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Nazad
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static NaPoso.Enums.Enums;
 
@@ -10,6 +10,11 @@ namespace NaPoso.Models
     
         public string? KlijentId { get; set; }
         public string? RadnikId { get; set; }
+
+        // SOFT DELETE - Da se oglasi sa recenzijama / transakcijama ne mogu hard-deletati
+        // (zbog FOREIGN KEY povezanosti)
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
         [Required(ErrorMessage = "Ovo polje je obavezno.")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Naslov mora imati između 3 i 100 znakova.")]
         public string? Naslov { get; set; }

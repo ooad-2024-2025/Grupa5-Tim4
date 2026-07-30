@@ -1,50 +1,41 @@
-﻿@page
+@page
 @model NaPoso.Areas.Identity.Pages.Payment.SuccessModel
 @{
     ViewData["Title"] = "Plaćanje uspješno";
 }
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h1 class="card-title text-success">
-                        <i class="fas fa-check-circle"></i> Uplata Uspješna!
-                    </h1>
-                    <p class="lead">Uspješno smo Vam ukrali pare hvala Vam što ste unijeli podatke Vaše kartice 😊</p>
-                    <p>Status: @Model.PaymentStatus</p>
-                    @if (!string.IsNullOrEmpty(Model.CustomerEmail))
-                    {
-                        <p>Email: @Model.CustomerEmail</p>
-                    }
-                    @if (TempData.ContainsKey("DebugMissing"))
-                    {
-                        <div class="alert alert-warning">
-                            <strong>Debug:</strong> @TempData["DebugMissing"]
-                        </div>
-                    }
-                    @if (TempData.ContainsKey("DebugToken"))
-                    {
-                        <div class="alert alert-info">
-                            <strong>Token:</strong> @TempData["DebugToken"]
-                        </div>
-                    }
-                    @if (Model.OglasId.HasValue && !string.IsNullOrEmpty(Model.RadnikId))
-                    {
-                        <a asp-controller="Recenzija" asp-action="Create"
-                           asp-route-radnikId="@Model.RadnikId"
-                           asp-route-oglasId="@Model.OglasId"
-                           class="btn btn-success mt-3">Ostavi recenziju</a>
-                    }
-                    else
-                    {
-                        <div class="alert alert-warning mt-3">
-                            Nedostaju podaci za recenziju. OglasId: @Model.OglasId, RadnikId: @Model.RadnikId
-                        </div>
-                    }
-                    <a asp-page="/Index" class="btn btn-primary mt-3">Povratak na početnu</a>
-                </div>
-            </div>
+
+<div class="auth-container">
+    <div class="auth-card text-center" style="padding: 3rem 2rem;">
+        <h1 class="auth-icon" style="color: var(--color-success); font-size: 4rem; margin-bottom: 1rem;"><i class="bi bi-check-circle-fill"></i></h1>
+        <h1 style="color: var(--color-success); margin-bottom: 1rem;">Uplata uspješna!</h1>
+        <p class="lead mb-4">Vaša uplata je uspješno procesuirana.</p>
+
+        <div class="content-card mb-4 mx-auto" style="text-align: left; max-width: 400px; padding: 1.5rem;">
+            <dl class="row mb-0">
+                <dt class="col-sm-4 text-muted">Status</dt>
+                <dd class="col-sm-8 text-end"><span class="badge bg-success">@Model.PaymentStatus</span></dd>
+
+                @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                {
+                    <dt class="col-sm-4 text-muted mt-3">Email</dt>
+                    <dd class="col-sm-8 text-end mt-3 fw-medium">@Model.CustomerEmail</dd>
+                }
+            </dl>
+        </div>
+
+        @if (TempData.ContainsKey("DebugMissing"))
+        {
+            <div class="alert alert-warning mt-4"><strong>Debug:</strong> @TempData["DebugMissing"]</div>
+        }
+
+        <div class="d-flex gap-3 justify-content-center mt-6">
+            @if (Model.OglasId.HasValue && !string.IsNullOrEmpty(Model.RadnikId))
+            {
+                <a asp-controller="Recenzija" asp-action="Create" asp-route-radnikId="@Model.RadnikId" asp-route-oglasId="@Model.OglasId" class="btn btn-primary">
+                    <i class="bi bi-star me-1"></i>Ostavi recenziju
+                </a>
+            }
+            <a asp-page="/Index" class="btn btn-secondary"><i class="bi bi-house me-1"></i>Početna</a>
         </div>
     </div>
 </div>

@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: naposo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=naposo;Username=postgres;Password=postgres
+      - Stripe__SecretKey=${STRIPE_SECRET_KEY:-}
+      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY:-}
+      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET:-}
+      - Email__Provider=${EMAIL_PROVIDER:-console}
+      - Email__Brevo__ApiKey=${EMAIL_BREVO_API_KEY:-}
+      - Email__Brevo__BaseUrl=${EMAIL_BREVO_BASE_URL:-https://api.brevo.com/v3}
+      - Email__From=${EMAIL_FROM:-noreply@naposo.example.com}
+      - Admin__Email=${ADMIN_EMAIL:-admin@mail.com}
+      - Admin__Password=${ADMIN_PASSWORD:-Admin123!}
+      - Seed__RadnikPassword=${SEED_RADNIK_PASSWORD:-Test123!}
+      - Seed__KlijentPassword=${SEED_KLIJENT_PASSWORD:-Test123!}
+
+volumes:
+  pgdata:

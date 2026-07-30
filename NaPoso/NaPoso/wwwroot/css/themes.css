@@ -1,0 +1,37 @@
+/* ============================================
+   NaPoso Theme Overrides
+   ============================================ */
+
+/* --- Dark Mode: Navbar --- */
+[data-theme="dark"] .navbar-naPoso {
+  background: var(--color-bg-frosted);
+}
+
+/* --- Dark Mode: Alerts --- */
+[data-theme="dark"] .alert-warning { color: var(--color-warning); }
+
+/* --- Dark Mode: Autofill --- */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-text);
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-surface) inset;
+}
+
+/* --- Notification badge (light + dark) --- */
+.notification-count {
+  background: var(--status-danger) !important;
+  color: #fff !important;
+}
+
+/* --- Logout u dropdown meniju --- */
+button.dropdown-item.text-danger,
+.dropdown-item.text-danger {
+  color: var(--status-danger) !important;
+}
+button.dropdown-item.text-danger:hover,
+.dropdown-item.text-danger:hover {
+  color: var(--status-danger) !important;
+  background: var(--color-danger-light);
+}
+

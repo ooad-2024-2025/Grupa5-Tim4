@@ -1,24 +1,33 @@
-﻿@page
+@page
 @model ResetAuthenticatorModel
 @{
-    ViewData["Title"] = "Reset authenticator key";
+    ViewData["Title"] = "Resetuj ključ autentikatora";
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
+<div class="page-header">
+    <h1><i class="bi bi-arrow-clockwise me-2" style="color: var(--color-danger);"></i>@ViewData["Title"]</h1>
+</div>
+
 <partial name="_StatusMessage" for="StatusMessage" />
-<h3>@ViewData["Title"]</h3>
-<div class="alert alert-warning" role="alert">
-    <p>
-        <span class="glyphicon glyphicon-warning-sign"></span>
-        <strong>If you reset your authenticator key your authenticator app will not work until you reconfigure it.</strong>
-    </p>
-    <p>
-        This process disables 2FA until you verify your authenticator app.
-        If you do not complete your authenticator app configuration you may lose access to your account.
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Ako resetujete ključ autentikatora, vaša autentikaciona aplikacija neće raditi dok je ponovo ne podesite.</strong>
+    <p style="margin-top: var(--space-2); margin-bottom: 0;">
+        Ovaj proces onemogućuje 2FA dok ponovo ne potvrdite svoju autentikacionu aplikaciju.
+        Ako ne završite podešavanje, možete izgubiti pristup svom računu.
     </p>
 </div>
-<div>
-    <form id="reset-authenticator-form" method="post">
-        <button id="reset-authenticator-button" class="btn btn-danger" type="submit">Reset authenticator key</button>
-    </form>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <form id="reset-authenticator-form" method="post">
+                <button id="reset-authenticator-button" class="btn btn-danger" type="submit">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Resetuj ključ autentikatora
+                </button>
+            </form>
+        </div>
+    </div>
 </div>

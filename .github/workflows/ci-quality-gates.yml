@@ -1,0 +1,91 @@
+name: CI Quality Gates
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: naposo_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: NaPoso
+      
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+        working-directory: NaPoso
+      
+      - name: Run tests with coverage
+        run: |
+          dotnet test --configuration Release \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage \
+            --verbosity normal
+        working-directory: NaPoso
+      
+      - name: Check coverage threshold
+        run: |
+          # Parse coverage report and check minimum threshold
+          COVERAGE=$(find ./coverage -name "coverage.cobertura.xml" -exec grep -oP 'line-rate="\K[0-9.]+' {} \; | head -1)
+          echo "Line coverage: $COVERAGE"
+          THRESHOLD=0.35
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "Coverage $COVERAGE is below threshold $THRESHOLD"
+            exit 1
+          fi
+          echo "Coverage $COVERAGE meets threshold $THRESHOLD"
+        working-directory: NaPoso
+      
+      - name: Check for known vulnerabilities
+        run: |
+          echo "Checking for known vulnerabilities..."
+          dotnet list package --vulnerable --include-transitive 2>/dev/null | tee vulnerability-report.txt || true
+          VULN_COUNT=$(grep -c "has the following vulnerable packages" vulnerability-report.txt 2>/dev/null || echo "0")
+          echo "Vulnerable package groups found: $VULN_COUNT"
+          # Warning only - don't fail the build for now
+          if [ "$VULN_COUNT" -gt "0" ]; then
+            echo "::warning::Found vulnerable packages - review vulnerability-report.txt"
+          fi
+        working-directory: NaPoso
+      
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: NaPoso/coverage/
+          retention-days: 30
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: NaPoso/TestResults/
+          retention-days: 30

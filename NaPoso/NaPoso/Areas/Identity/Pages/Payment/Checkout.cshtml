@@ -1,116 +1,405 @@
-﻿@page
+@page
 @model NaPoso.Areas.Identity.Pages.Payment.CheckoutModel
 @{
-    ViewData["Title"] = "Checkout";
+    ViewData["Title"] = "Plaćanje";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="card-title">Checkout</h2>
-                </div>
-                <div class="card-body">
-                    <form method="post" id="checkoutForm" novalidate>
-                        <div asp-validation-summary="All" class="text-danger"></div>
+<!-- Kartica za plaćanje - SVJETLA + TAMNA varijanta putem klasa i themes.css -->
+<div class="auth-container checkout-root" style="max-width: 900px; margin: 0 auto;">
+    <div class="auth-card checkout-card p-4 p-lg-5 rounded-4 border shadow-lg">
+        <h1 class="auth-icon mb-3 checkout-hero-icon"><i class="bi bi-credit-card-2-front-fill"></i></h1>
+        <h1 class="mb-2 text-center checkout-title" style="font-weight: var(--weight-black); letter-spacing: -0.02em;">Plaćanje</h1>
+        <p class="lead text-center mb-4 checkout-subtitle">Sigurno plaćanje preko Stripe platforme</p>
 
-                        <div class="mb-3">
-                            <label asp-for="ProductName" class="form-label">Naziv Proizvoda / Usluge</label>
-                            <input asp-for="ProductName" class="form-control" readonly>
-                            <span asp-validation-for="ProductName" class="text-danger"></span>
+        <!-- 1. SEGMENT: PREGLED IZNOSA - posebne klase za light i dark -->
+        <div class="checkout-summary rounded-4 p-4 p-lg-5 mb-4 shadow-sm border-0 position-relative overflow-hidden">
+            <!-- Pozadinska dekoracija (oblacic) - sa klasama za oba moda -->
+            <div class="position-absolute pointer-events-none checkout-summary-bg-deco">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="position-relative" style="z-index: 2;">
+                <div class="d-flex flex-column align-items-start mb-4">
+                    <span class="small fw-bold text-uppercase tracking-widest mb-3 checkout-summary-label">
+                        <i class="bi bi-receipt-cutoff me-2"></i> Pregled iznosa
+                    </span>
+
+                    <div class="w-100 mb-3">
+                        <div class="d-flex justify-content-between align-items-center py-3 border-bottom checkout-summary-row">
+                            <span class="fw-semibold fs-5 checkout-summary-text">
+                                <i class="bi bi-briefcase me-2 checkout-summary-icon-muted"></i> Osnovna cijena posla
+                            </span>
+                            <span class="fw-black fs-4 checkout-summary-amount" style="font-family: 'Segoe UI', Tahoma, sans-serif;">@Model.CijenaOglasaKm</span>
                         </div>
-                        <div class="mb-3">
-                            <label asp-for="Amount" class="form-label">Iznos</label>
-                            <input asp-for="Amount" class="form-control"
-                                   value="0"
-                                   required type="number"
-                                   min="50"
-                                   max="999999999999"
-                                   data-val="true"
-                                   data-val-required="Iznos je obavezan"
-                                   data-val-min="Iznos mora biti izmedju 50 i 9,999,999,999.99"
-                                   data-val-min-min="50"
-                                   data-val-range="Iznos mora biti izmedju 50 i 9,999,999,999.99"
-                                   data-val-range-min="50"
-                                   data-val-range-max="999999999999">
-                            <span asp-validation-for="Amount" class="text-danger"></span>
-                            <div class="form-text">Unesite iznos u centima (npr, 2000 za 20.00 KM). Minimalan iznos: 50 feninga.</div>
+                        <div class="d-flex justify-content-between align-items-center py-3 border-bottom checkout-summary-row" id="baksisRow">
+                            <span class="fw-semibold fs-5 checkout-summary-text">
+                                <i class="bi bi-star-fill me-2" style="color: #fbbf24;"></i> Nagrada za radnika (Baksis)
+                            </span>
+                            <span class="fw-black fs-4 checkout-summary-baksis" id="baksisKm" style="font-family: 'Segoe UI', Tahoma, sans-serif;">@Model.BaksisKm</span>
                         </div>
-                        <button type="submit" class="btn btn-primary">Nastavite s plaćanjem</button>
-                    </form>
+                    </div>
+
+                    <div class="w-100 d-flex flex-column flex-lg-row justify-content-between align-items-lg-end align-items-start mt-4 pt-4 gap-3 checkout-summary-total-border">
+                        <div>
+                            <span class="small fw-bold text-uppercase tracking-widest checkout-summary-label">
+                                UKUPNO ZA PLAĆANJE
+                            </span>
+                            <div class="d-flex align-items-center mt-2 gap-2">
+                                <i class="bi bi-shield-lock-fill fs-3" style="color: #4ade80;"></i>
+                                <small class="fw-semibold checkout-summary-mute">SSL/SCA sigurnost uključena</small>
+                            </div>
+                        </div>
+                        <div class="text-lg-end">
+                            <div class="display-4 fw-black mb-0 checkout-summary-total" id="ukupnoKm">
+                                @Model.UkupnoKm
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- FORMA -->
+        <form method="post" id="checkoutForm" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger shadow-sm rounded-3 border border-danger border-opacity-25 mb-4" role="alert"></div>
+
+            <div class="d-none">
+                <label asp-for="ProductName" class="form-label">Naziv usluge</label>
+                <input asp-for="ProductName" class="form-control" readonly />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+                <input asp-for="Amount" id="amountFeninga" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+                <input asp-for="BaksisFeninga" id="baksisFeningaHidden" />
+            </div>
+
+            <input type="hidden" id="cijenaOglasaFeningaHidden" value="@Model.CijenaOglasaFeninga" />
+            <input type="hidden" id="cijenaOglasaKmHidden" value="@Model.CijenaOglasaKm.Replace(" KM", "")" />
+
+            <!-- 2. SEGMENT: BAKSIS - klase za light i dark -->
+            <div class="checkout-baksis rounded-4 p-4 p-lg-4 mb-4 shadow-sm border">
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="checkout-baksis-icon rounded-3 p-3 d-flex align-items-center justify-content-center flex-shrink-0">
+                        <i class="bi bi-gift-fill fs-4"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <label class="form-label fw-bold mb-1 checkout-baksis-title" style="font-size: 1.1rem; letter-spacing: -0.01em;">
+                            Nagrada za radnika <span class="fw-semibold checkout-baksis-subtitle">(Baksis)</span>
+                        </label>
+                        <p class="mb-3 checkout-baksis-text" style="font-size: 0.95rem; line-height: 1.5;">
+                            Ako je radnik izvanredno obavio posao, ostavite mu bonus.
+                            <span class="fw-bold" style="color: #FF3D68;">100% iznosa ide direktno radniku.</span>
+                        </p>
+                        <div class="input-group input-group-lg rounded-3 overflow-hidden checkout-baksis-input">
+                            <span class="input-group-text fw-black px-4 border-0 checkout-baksis-km" style="letter-spacing: 0.1em;">
+                                KM
+                            </span>
+                            <input type="number" id="baksisInputKm" min="0" step="0.01" value="0"
+                                   placeholder="Unesite iznos bonusa npr. 15.00 ili 25.00"
+                                   class="form-control border-0 px-4 py-3 fw-bold fs-5 checkout-baksis-input-field" />
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold suggestTip checkout-tip-btn" data-tip="5">5 KM 👍</button>
+                            <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold suggestTip checkout-tip-btn" data-tip="10">10 KM ⭐</button>
+                            <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold suggestTip checkout-tip-btn checkout-tip-btn-primary" data-tip="20">20 KM 💖</button>
+                            <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold suggestTip checkout-tip-btn checkout-tip-btn-accent" data-tip="50">50 KM 🏆</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. SEGMENT: CTA PLATI BUTTON - branded gradient -->
+            <button type="submit" id="platiBtn"
+                    class="btn w-100 py-4 rounded-4 fw-black shadow-lg hover-lift border-0 text-white fs-5 mb-2 checkout-cta">
+                <i class="bi bi-shield-lock-fill me-2 fs-4"></i>
+                Završi plaćanje: <span id="platiBtnText" class="fs-3 fw-black">@Model.UkupnoKm</span>
+            </button>
+            <p class="text-center small mb-0 checkout-footer-note">
+                <i class="bi bi-shield-lock me-1"></i> SSL enkripcija uključena • Vaši podaci ostaju privatni
+            </p>
+        </form>
     </div>
 </div>
+
+<!-- INLINE CSS + THEMES: Light (default) + Dark preko [data-theme="dark"] -->
+<style>
+/* ================ DEFAULT = LIGHT MODE ================ */
+.checkout-card {
+    border-color: rgba(255, 61, 104, 0.15) !important;
+    background:
+        radial-gradient(circle at top right, rgba(255, 61, 104, 0.08) 0%, transparent 55%),
+        radial-gradient(circle at bottom left, rgba(0, 224, 184, 0.06) 0%, transparent 55%),
+        linear-gradient(180deg, #ffffff 0%, #fef6f8 40%, #f9fafc 100%) !important;
+    color: #14181A;
+}
+.checkout-hero-icon { color: #FF3D68 !important; }
+.checkout-title { color: #14181A !important; }
+.checkout-subtitle { color: #546a7b !important; }
+
+/* === Light mode: PREGLED IZNOSA — SVIJETLA varijanta (nema crnog!) === */
+.checkout-summary {
+    background:
+        radial-gradient(circle at 92% 50%, rgba(0, 224, 184, 0.14) 0%, transparent 45%),
+        linear-gradient(135deg, #FF3D68 0%, #e11d48 45%, #8b5cf6 100%) !important;
+    color: #ffffff;
+    box-shadow: 0 12px 36px rgba(255, 61, 104, 0.22) !important;
+    border: 1px solid rgba(255,255,255,0.18) !important;
+}
+.checkout-summary-bg-deco {
+    font-size: 140px; top: 50%; right: 5%; transform: translateY(-50%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(0, 224, 184, 0.18) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    opacity: 0.9;
+}
+.checkout-summary-label { color: rgba(255,255,255,0.85) !important; }
+.checkout-summary-row { border-color: rgba(255,255,255,0.18) !important; }
+.checkout-summary-text { color: #ffffff !important; }
+.checkout-summary-icon-muted { color: rgba(255,255,255,0.75) !important; }
+.checkout-summary-amount { color: #ffffff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.checkout-summary-baksis { color: #ffe97a !important; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.checkout-summary-total-border { border-top: 2px dashed rgba(255,255,255,0.25) !important; }
+.checkout-summary-total {
+    background: linear-gradient(135deg, #ffffff 0%, #fff7cc 50%, #ffe97a 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important;
+    letter-spacing: -0.03em;
+}
+.checkout-summary-mute { color: rgba(255,255,255,0.85) !important; }
+
+/* === Light mode: BAKSIS kartica === */
+.checkout-baksis {
+    border: 2px solid rgba(255, 61, 104, 0.18) !important;
+    background: linear-gradient(135deg, #fff5f7 0%, #f0fdfa 100%) !important;
+    box-shadow: 0 4px 16px rgba(255, 61, 104, 0.05), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+}
+.checkout-baksis-icon {
+    background: linear-gradient(135deg, #FF3D68 0%, #00E0B8 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(255, 61, 104, 0.25);
+}
+.checkout-baksis-title { color: #14181A !important; }
+.checkout-baksis-subtitle { color: #546a7b !important; }
+.checkout-baksis-text { color: #546a7b !important; }
+.checkout-baksis-input {
+    border: 2px solid #14181A !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+.checkout-baksis-km {
+    background: linear-gradient(135deg, #14181A 0%, #2a3134 100%) !important;
+    color: #FF3D68 !important;
+}
+.checkout-baksis-input-field {
+    background: #ffffff !important;
+    color: #14181A !important;
+}
+.checkout-tip-btn {
+    background: #fff1f4 !important;
+    color: #9f1239 !important;
+    border: 1.5px solid #FFB7C6 !important;
+}
+.checkout-tip-btn-primary {
+    background: #ffe4ec !important;
+    color: #881337 !important;
+    border: 1.5px solid #FF3D68 !important;
+}
+.checkout-tip-btn-accent {
+    background: #ecfdf5 !important;
+    color: #064e3b !important;
+    border: 1.5px solid #00E0B8 !important;
+}
+
+/* === Light mode: CTA === */
+.checkout-cta {
+    background: linear-gradient(135deg, #FF3D68 0%, #ff5d80 40%, #ec4899 70%, #00E0B8 100%) !important;
+    box-shadow: 0 10px 30px rgba(255, 61, 104, 0.22), 0 0 0 1px rgba(255,61,104,0.15) !important;
+}
+.checkout-footer-note { color: #7A8285 !important; }
+
+/* ================ DARK MODE [data-theme="dark"] = INVERZIJA ================ */
+[data-theme="dark"] .checkout-card {
+    border-color: rgba(255, 61, 104, 0.25) !important;
+    background:
+        radial-gradient(circle at top right, rgba(255, 61, 104, 0.10) 0%, transparent 55%),
+        radial-gradient(circle at bottom left, rgba(0, 224, 184, 0.08) 0%, transparent 55%),
+        linear-gradient(180deg, #0f172a 0%, #111827 45%, #1e293b 100%) !important;
+    color: #f8fafc !important;
+}
+[data-theme="dark"] .checkout-hero-icon { color: #FF7A96 !important; }
+[data-theme="dark"] .checkout-title { color: #f8fafc !important; }
+[data-theme="dark"] .checkout-subtitle { color: #cbd5e1 !important; opacity: 0.9 !important; }
+
+/* Dark: PREGLED IZNOSA — premium tamno-plavi sa glowom (za dark je prikladno) */
+[data-theme="dark"] .checkout-summary {
+    background:
+        radial-gradient(circle at 92% 50%, rgba(0, 224, 184, 0.18) 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
+    color: #f8fafc !important;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,61,104,0.25) !important;
+    border: none !important;
+}
+[data-theme="dark"] .checkout-summary-bg-deco {
+    font-size: 140px; top: 50%; right: 5%; transform: translateY(-50%);
+    background: linear-gradient(135deg, rgba(255, 61, 104, 0.20) 0%, rgba(0, 224, 184, 0.14) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    opacity: 1;
+}
+[data-theme="dark"] .checkout-summary-label { color: #94a3b8 !important; }
+[data-theme="dark"] .checkout-summary-row { border-color: rgba(255,255,255,0.12) !important; }
+[data-theme="dark"] .checkout-summary-text { color: #e2e8f0 !important; }
+[data-theme="dark"] .checkout-summary-icon-muted { color: #94a3b8 !important; }
+[data-theme="dark"] .checkout-summary-amount { color: #ffffff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+[data-theme="dark"] .checkout-summary-baksis { color: #fbbf24 !important; }
+[data-theme="dark"] .checkout-summary-total-border { border-top: 2px dashed rgba(255,255,255,0.18) !important; }
+[data-theme="dark"] .checkout-summary-total {
+    background: linear-gradient(135deg, #FF3D68 0%, #ff7a96 40%, #00E0B8 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important;
+    letter-spacing: -0.03em;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+[data-theme="dark"] .checkout-summary-mute { color: #94a3b8 !important; }
+
+/* Dark: BAKSIS kartica — tamna varijantna, ne bijela! */
+[data-theme="dark"] .checkout-baksis {
+    border: 2px solid rgba(255, 61, 104, 0.22) !important;
+    background: linear-gradient(135deg, #1a1020 0%, #0e2421 100%) !important;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+[data-theme="dark"] .checkout-baksis-icon {
+    background: linear-gradient(135deg, #FF3D68 0%, #00E0B8 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(255, 61, 104, 0.35);
+}
+[data-theme="dark"] .checkout-baksis-title { color: #f8fafc !important; }
+[data-theme="dark"] .checkout-baksis-subtitle { color: #cbd5e1 !important; }
+[data-theme="dark"] .checkout-baksis-text { color: #cbd5e1 !important; }
+[data-theme="dark"] .checkout-baksis-input {
+    border: 2px solid #0f172a !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+[data-theme="dark"] .checkout-baksis-km {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    color: #FF3D68 !important;
+}
+[data-theme="dark"] .checkout-baksis-input-field {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+}
+[data-theme="dark"] .checkout-tip-btn {
+    background: #2a1020 !important;
+    color: #fecdd3 !important;
+    border: 1.5px solid #be123c !important;
+}
+[data-theme="dark"] .checkout-tip-btn-primary {
+    background: linear-gradient(135deg, #3b0e1a 0%, #4c1d35 100%) !important;
+    color: #ffe4ec !important;
+    border: 1.5px solid #FF3D68 !important;
+}
+[data-theme="dark"] .checkout-tip-btn-accent {
+    background: linear-gradient(135deg, #022c22 0%, #064e3b 100%) !important;
+    color: #a7f3d0 !important;
+    border: 1.5px solid #00E0B8 !important;
+}
+
+/* Dark: CTA (ostaje brendirana, samo jaca sjena) */
+[data-theme="dark"] .checkout-cta {
+    background: linear-gradient(135deg, #FF3D68 0%, #ff5d80 40%, #ec4899 70%, #00E0B8 100%) !important;
+    box-shadow: 0 10px 36px rgba(255, 61, 104, 0.4), 0 0 0 1px rgba(255,61,104,0.3) !important;
+}
+[data-theme="dark"] .checkout-footer-note { color: #94a3b8 !important; }
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        function formatKm(val) {
+            return (Math.round((val + Number.EPSILON) * 100) / 100).toFixed(2) + " KM";
+        }
+
         $(document).ready(function () {
             $.extend($.validator.messages, {
-                min: "Iznos mora biti izmedju 50 i 9,999,999,999.99",
+                min: "Iznos ne smije biti manji od cijene posla.",
                 required: "Iznos je obavezan"
             });
 
             $.validator.setDefaults({
-                highlight: function (element) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element) {
-                    $(element).removeClass('is-invalid');
-                },
+                highlight: function (element) { $(element).addClass('is-invalid'); },
+                unhighlight: function (element) { $(element).removeClass('is-invalid'); },
                 errorElement: 'span',
                 errorClass: 'text-danger',
                 errorPlacement: function (error, element) {
-                    if (element.parent('.input-group').length) {
-                        error.insertAfter(element.parent());
-                    } else {
-                        error.insertAfter(element);
-                    }
+                    var summary = $('div.asp-validation-summary');
+                    if (summary.length) summary.append(error).show();
+                    else if (element.parent('.input-group').length) error.insertAfter(element.parent());
+                    else error.insertAfter(element);
                 }
             });
 
+            var minFeninga = parseInt($("#cijenaOglasaFeningaHidden").val()) || 50;
+            var bazaCijenaKm = parseFloat($("#cijenaOglasaKmHidden").val()) || 0;
+
+            var amountInput = $("#amountFeninga");
+            var baksisKmInput = $("#baksisInputKm");
+            var baksisFeningaHidden = $("#baksisFeningaHidden");
+            var ukupnoKmLabel = $("#ukupnoKm");
+            var baksisKmLabel = $("#baksisKm");
+            var btnText = $("#platiBtnText");
+
+            function izracunajSve() {
+                var bazaF = minFeninga;
+                var ukupnoF = parseInt(amountInput.val()) || 0;
+                if (ukupnoF < bazaF) ukupnoF = bazaF;
+
+                var baksisF = ukupnoF - bazaF;
+                if (baksisF < 0) baksisF = 0;
+
+                var baksisKm = baksisF / 100.0;
+                var ukupnoKm = ukupnoF / 100.0;
+
+                baksisFeningaHidden.val(baksisF);
+                amountInput.val(ukupnoF);
+
+                // Ažuriraj live prikaz u "Pregled iznosa" kartici
+                baksisKmLabel.text(formatKm(baksisKm));
+                ukupnoKmLabel.text(formatKm(ukupnoKm));
+                btnText.text(formatKm(ukupnoKm));
+
+                // Sinkronizuj Baksis input u KM (ako user mijenja direktno feninge ili suggestion klikne, da se input KM updateuje)
+                var active = document.activeElement;
+                if (!active || active.id !== baksisKmInput[0].id) {
+                    baksisKmInput.val(baksisKm.toFixed(2));
+                }
+            }
+
+            baksisKmInput.on('input change blur', function () {
+                var baksisKmV = parseFloat(baksisKmInput.val()) || 0;
+                if (baksisKmV < 0) baksisKmV = 0;
+                var baksisF = Math.round(baksisKmV * 100);
+                amountInput.val(minFeninga + baksisF);
+                izracunajSve();
+            });
+
+            // Brzi predlosci (suggest tip buttons)
+            $(".suggestTip").on('click', function () {
+                var km = parseFloat($(this).attr('data-tip')) || 0;
+                baksisKmInput.val(km.toFixed(2)).trigger('change');
+            });
+
+            // Validacija forme
             $("#checkoutForm").validate({
                 onkeyup: true,
-                onfocusout: function (element) {
-                    this.element(element);
-                },
+                onfocusout: function (element) { this.element(element); },
                 rules: {
-                    Amount: {
-                        required: true,
-                        min: 50,
-                        max: 999999999999
-                    }
+                    Amount: { required: true, min: minFeninga, max: 999999999999 }
                 },
                 messages: {
                     Amount: {
                         required: "Iznos je obavezan",
-                        min: "Iznos mora biti izmedju 50 i 9,999,999,999.99",
-                        max: "Iznos ne smije prelaziti 9,999,999,999.99"
+                        min: "Iznos ne smije biti manji od cijene posla (" + (minFeninga / 100.0).toFixed(2) + " KM)",
+                        max: "Iznos prevelik"
                     }
                 }
             });
-                    $.extend($.validator.messages, {
-            number: "Unesite ispravan broj, samo cifre su dozvoljene."
-        });
-            $("input[name='Amount']").rules("add", {
-                min: 50,
-                messages: {
-                    min: "Iznos mora biti izmedju 50 i 9,999,999,999.99"
-                }
-            });
 
-            $("input[name='Amount']").focus(function() {
-                if ($(this).val() === "0") {
-                    $(this).val("");
-                }
-            }).blur(function() {
-                if ($(this).val() === "") {
-                    $(this).val("0");
-                }
-            });
+            izracunajSve();
         });
     </script>
 }

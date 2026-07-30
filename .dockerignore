@@ -1,0 +1,21 @@
+.git
+.vs
+*.user
+*.suo
+bin/
+obj/
+**/bin/
+**/obj/
+**/node_modules/
+**/.env
+**/appsettings.Development.json
+NaPoso/NaPoso/wwwroot/documents/
+
+# AI agent configs
+.mimocode/
+.agents/
+
+# Docs and tests (not needed in Docker image)
+docs/
+NaPoso/NaPoso.Tests/
+.github/

@@ -1,30 +1,200 @@
-﻿@model IEnumerable<NaPoso.Models.RecenzijaViewModel>
+@model IEnumerable<NaPoso.Models.RecenzijaViewModel>
 
-<h3>Moje recenzije</h3>
+@{
+    ViewData["Title"] = "Moje recenzije";
+}
+
+<div class="page-header">
+    <h1><i class="bi bi-star me-2"></i>Moje recenzije</h1>
+    <p class="lead">Recenzije koje ste primili</p>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Nema recenzija za prikaz.</p>
+    <div class="empty-state">
+        <svg class="empty-state-svg mb-3" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); opacity: 0.5;">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <h3>Nema recenzija</h3>
+        <p>Recenzije će se pojaviti ovdje kada klijenti ostave ocjenu.</p>
+    </div>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Klijent</th>
-                <th>Ocjena</th>
-                <th>Recenzija</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var recenzija in Model)
-            {
-                <tr>
-                    <td>@recenzija.KlijentEmail</td>
-                    <td>@recenzija.Ocjena / 5</td>
-                    <td>@recenzija.Sadrzaj</td>
-                </tr>
+    <div class="row g-4">
+        @foreach (var recenzija in Model)
+        {
+            <div class="col-md-6">
+                <div class="content-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle">
+                                @(string.IsNullOrEmpty(recenzija.KlijentEmail) ? "?" : recenzija.KlijentEmail.Substring(0, 1).ToUpper())
+                            </div>
+                            <strong>@recenzija.KlijentEmail</strong>
+                        </div>
+                        <div class="text-accent">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= recenzija.Ocjena)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star"></i>
+                                }
+                            }
+                            <span class="ms-1">@recenzija.Ocjena</span>
+                        </div>
+                    </div>
+                    <p class="card-text mb-2">@recenzija.Sadrzaj</p>
+                    
+                    <div class="mt-2 text-center">
+                        <button type="button" class="btn btn-sm btn-ghost text-danger"
+                                onclick="otvoriModalPrijave('reportModal-@recenzija.Id')">
+                            <i class="bi bi-flag"></i> Prijavi
+                        </button>
+                    </div>
+
+                    <!-- Modal for reporting - ISPRAVLJEN: dodan anti-forgery, tabindex, i mogućnost zatvaranja -->
+                    <div class="modal fade report-modal" id="reportModal-@recenzija.Id"
+                         tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle-@recenzija.Id">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content shadow-lg border-0">
+                          <form asp-controller="PrijavaRecenzije" asp-action="Prijavi"
+                                method="post" asp-antiforgery="true" class="report-form">
+                            <div class="modal-header border-bottom pb-3">
+                              <h5 class="modal-title fw-bold" id="reportModalTitle-@recenzija.Id">
+                                <i class="bi bi-flag text-danger me-2"></i>Prijavi recenziju
+                              </h5>
+                              <button type="button" class="btn-close zatvori-modal"
+                                      data-modal-id="reportModal-@recenzija.Id"
+                                      aria-label="Zatvori"></button>
+                            </div>
+                            <div class="modal-body py-4">
+                              <input type="hidden" name="recenzijaId" value="@recenzija.Id" />
+                              <div class="mb-0">
+                                <label for="razlog-@recenzija.Id" class="form-label fw-semibold mb-2">Razlog prijave (obavezno):</label>
+                                <textarea class="form-control razlog-input"
+                                          id="razlog-@recenzija.Id"
+                                          name="razlog" rows="4" required
+                                          placeholder="Napišite zašto prijavljujete ovu recenziju..."></textarea>
+                              </div>
+                            </div>
+                            <div class="modal-footer border-top pt-3">
+                              <button type="button" class="btn btn-secondary zatvori-modal"
+                                      data-modal-id="reportModal-@recenzija.Id">Otkaži</button>
+                              <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-send me-1"></i> Pošalji prijavu
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        /* =========================================================
+           ISPRAVLJEN MODAL ZA PRIJAVU RECENZIJA
+           - Zbog načina na koji je Bootstrap uvožen (na dnu layouta)
+             ručno inicijalizujemo modal i dodajemo event listenere
+           - Svaki gumb za zatvaranje (X + Otkaži) radi, a i ESC
+             i vanjski klik zatvaraju modal
+           - Submit forme provjerava da li je razlog unesen
+           ========================================================= */
+        function otvoriModalPrijave(modalId) {
+            const modalEl = document.getElementById(modalId);
+            if (!modalEl) return;
+
+            // Pokaži modal (inline + klase, fallback za bootstrap koji nije spreman)
+            modalEl.classList.add('show');
+            modalEl.style.display = 'block';
+            modalEl.setAttribute('aria-modal', 'true');
+            modalEl.removeAttribute('aria-hidden');
+            document.body.classList.add('modal-open');
+
+            // Dodaj backdrop ak nije već
+            if (!document.querySelector('.modal-backdrop.report-backdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show report-backdrop';
+                document.body.appendChild(backdrop);
+                backdrop.addEventListener('click', () => zatvoriSveModale());
             }
-        </tbody>
-    </table>
+
+            // Fokusiraj textarea
+            setTimeout(() => {
+                const txt = modalEl.querySelector('textarea.razlog-input');
+                if (txt) txt.focus();
+            }, 80);
+        }
+
+        function zatvoriModalPrijave(modalId) {
+            const modalEl = document.getElementById(modalId);
+            if (!modalEl) return;
+            modalEl.classList.remove('show');
+            modalEl.style.display = 'none';
+            modalEl.removeAttribute('aria-modal');
+            modalEl.setAttribute('aria-hidden', 'true');
+            modalEl.querySelector('textarea.razlog-input').value = ''; // reset forme
+            const remaining = document.querySelectorAll('.report-modal.show');
+            if (remaining.length === 0) {
+                const backdrop = document.querySelector('.modal-backdrop.report-backdrop');
+                if (backdrop) backdrop.remove();
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        function zatvoriSveModale() {
+            document.querySelectorAll('.report-modal').forEach(m => zatvoriModalPrijave(m.id));
+        }
+
+        // Globalni listeneri za sve modalne gumbe zatvaranja (dodani dinamički i statički)
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.zatvori-modal');
+            if (btn) {
+                e.preventDefault();
+                const id = btn.getAttribute('data-modal-id');
+                if (id) zatvoriModalPrijave(id); else zatvoriSveModale();
+            }
+        });
+
+        // ESC tipka zatvara sve modale
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') zatvoriSveModale();
+        });
+
+        // Ako je Bootstrap već učitan, pokušaj koristiti i njegovo Bootstrap.Modal (za bolju integraciju)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.bootstrap && window.bootstrap.Modal) {
+                document.querySelectorAll('.report-modal').forEach(modalEl => {
+                    try {
+                        // Već inicijaliziramo svoj fallback, ali registrujemo i bootstrap instancu
+                        const bsModal = new bootstrap.Modal(modalEl, { backdrop: false, keyboard: false });
+                        modalEl._bsModal = bsModal;
+                    } catch (err) { /* fallback je već postavljen */ }
+                });
+            }
+
+            // Klik na submit forme: obriši backdrop ako uspije (fallback za slučaj da ostane prikazan)
+            document.querySelectorAll('form.report-form').forEach(form => {
+                form.addEventListener('submit', function () {
+                    const textarea = form.querySelector('textarea.razlog-input');
+                    if (textarea && !textarea.value.trim()) {
+                        alert('Razlog prijave je obavezan.');
+                        textarea.focus();
+                        return false;
+                    }
+                    // Očisti modale nakon 50ms dok se forma šalje
+                    setTimeout(() => zatvoriSveModale(), 50);
+                });
+            });
+        });
+    </script>
 }

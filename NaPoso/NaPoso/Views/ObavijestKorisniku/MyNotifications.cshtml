@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NaPoso.Models.Obavijest>
+@model IEnumerable<NaPoso.Models.Obavijest>
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<NaPoso.Models.Korisnik> UserManager
 
@@ -10,117 +10,94 @@
     bool isRadnik = userRoles.Contains("Radnik");
 }
 
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1>Moje obavijesti</h1>
-        </div>
-        <div class="col-md-4 text-end">
-            @if (Model.Any(n => n.IsRead != true))
-            {
-                <form asp-action="MarkAllAsRead" method="post" class="d-inline me-2">
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-all"></i> Označi sve kao pročitano
-                    </button>
-                </form>
-            }
-            @if (Model.Any())
-            {
-                <form asp-action="ClearAllNotifications" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Jeste li sigurni da želite obrisati sve obavijesti?')">
-                        <i class="bi bi-trash"></i> Obriši sve
-                    </button>
-                </form>
-            }
-        </div>
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><i class="bi bi-bell me-2"></i>Moje obavijesti</h1>
+        <p class="lead">Pregled vaših obavijesti</p>
     </div>
+    <div class="d-flex gap-2">
+        @if (Model.Any(n => n.IsRead != true))
+        {
+            <form asp-action="MarkAllAsRead" method="post" class="d-inline">
+                <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-check-all me-1"></i>Označi sve</button>
+            </form>
+        }
+        @if (Model.Any())
+        {
+            <form asp-action="ClearAllNotifications" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Jeste li sigurni?')"><i class="bi bi-trash me-1"></i>Obriši sve</button>
+            </form>
+        }
+    </div>
+</div>
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info">
-            Nemate obavijesti.
-        </div>
-    }
-    else
-    {
-        <div class="list-group notification-list">
-            @foreach (var item in Model)
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-bell"></i></div>
+        <h3>Nema obavijesti</h3>
+        <p>Nemate novih obavijesti.</p>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column gap-3">
+        @foreach (var item in Model)
+        {
+            bool isRead = item.IsRead ?? false;
+            string notificationTitle = item.Tip.ToString();
+
+            if (item.Tip.ToString() == "DrugaObavjestenja")
             {
-                bool isRead = item.IsRead ?? false;
-                string notificationTitle = item.Tip.ToString();
-
-                // Custom title logic based on user role and notification type
-                if (item.Tip.ToString() == "DrugaObavjestenja")
+                if (isRadnik)
                 {
-                    if (isRadnik)
+                    if (item.Sadrzaj.Contains("prihvaćen") || item.Sadrzaj.Contains("prihvacen"))
                     {
-                        if (item.Sadrzaj.Contains("prihvaćen") || item.Sadrzaj.Contains("prihvacen"))
-                        {
-                            notificationTitle = "Prijava prihvaćena";
-                        }
-                        else if (item.Sadrzaj.Contains("odbijen"))
-                        {
-                            notificationTitle = "Prijava odbijena";
-                        }
+                        notificationTitle = "Prijava prihvaćena";
                     }
-                    else if (isKlijent)
+                    else if (item.Sadrzaj.Contains("odbijen"))
                     {
-                        notificationTitle = "Nova prijava";
+                        notificationTitle = "Prijava odbijena";
                     }
                 }
+                else if (isKlijent)
+                {
+                    notificationTitle = "Nova prijava";
+                }
+            }
 
-                <div class="list-group-item list-group-item-action @(isRead ? "read bg-light" : "unread")">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">
+            <div class="content-card @(isRead ? "notification-card-read" : "notification-card")">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="notification-title">
                             @notificationTitle
                             @if (!isRead)
                             {
-                                <span class="badge bg-primary">Nepročitano</span>
+                                <span class="badge bg-primary notification-badge-inline">Nepročitano</span>
                             }
                             else
                             {
-                                <span class="badge bg-secondary">Pročitano</span>
+                                <span class="badge bg-secondary notification-badge-inline">Pročitano</span>
                             }
-                        </h5>
-                        <div>
-                            <small class="text-muted">
-                                @item.VrijemeSlanja.ToString("dd.MM.yyyy HH:mm")
-                            </small>
-                            <div class="btn-group ms-2">
-                                @if (!isRead)
-                                {
-                                    <form asp-action="MarkAsRead" method="post" class="d-inline">
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="Označi kao pročitano">
-                                            <i class="bi bi-check-circle"></i> Označi kao pročitano
-                                        </button>
-                                    </form>
-                                }
-                                <form asp-action="ClearNotification" method="post" class="d-inline ms-1">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                            onclick="return confirm('Jeste li sigurni da želite obrisati ovu obavijest?')"
-                                            title="Obriši">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
                         </div>
+                        <p class="card-text">@item.Sadrzaj</p>
+                        <small class="text-muted">@item.VrijemeSlanja.ToString("dd.MM.yyyy HH:mm")</small>
                     </div>
-                    <p class="mb-1">@item.Sadrzaj</p>
+                    <div class="d-flex gap-1">
+                        @if (!isRead)
+                        {
+                            <form asp-action="MarkAsRead" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-ghost btn-sm" title="Označi kao pročitano"><i class="bi bi-check-circle"></i></button>
+                            </form>
+                        }
+                        <form asp-action="ClearNotification" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-ghost btn-sm text-danger" onclick="return confirm('Obrisati obavijest?')" title="Obriši"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
                 </div>
-            }
-        </div>
-    }
-</div>
-
-<style>
-    .notification-list .list-group-item.read {
-        border-left: 4px solid #6c757d;
-    }
-
-    .notification-list .list-group-item.unread {
-        border-left: 4px solid #007bff;
-        font-weight: 500;
-    }
-</style>
+            </div>
+        }
+    </div>
+}

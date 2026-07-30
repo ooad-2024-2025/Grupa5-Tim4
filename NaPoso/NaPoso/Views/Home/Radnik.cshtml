@@ -1,8 +1,275 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
+    ViewData["Title"] = "Radnički dashboard";
+    var ukupniBaksis = (ViewBag.UkupniBaksis as decimal?) ?? 0m;
+    var osnovicaZarada = (ViewBag.OsnovicaZarada as decimal?) ?? 0m;
+    var ukupnoZaradjeno = (ViewBag.UkupnoZaradjeno as decimal?) ?? 0m;
+    var godisnjaUkupno = (ViewBag.GodišnjaZaradaUkupno as double?) ?? 0.0;
+    var prosjecnaMjesecna = (ViewBag.ProsjecnaMjesecnaZarada as decimal?) ?? 0m;
+    var godisnjaJson = (ViewBag.GodišnjaZaradaJson as string) ?? "[]";
+    var godina = DateTime.Now.Year;
 }
-<div>
-    TI si radnik    
+
+<div class="page-header">
+    <span class="hero-eyebrow mb-3"><i class="bi bi-tools"></i> Radnik</span>
+    <h1>Dobrodošli, radniče!</h1>
+    <p class="lead mt-2">Pregledajte svoju statistiku i upravljajte poslovanjem iz jednog urednog početnog ekrana.</p>
+</div>
+
+<div class="row g-4 mb-5 align-items-stretch">
+    <div class="col-md-4 d-flex">
+        <div class="stat-card w-100">
+            <i class="bi bi-file-earmark-check stat-icon"></i>
+            <div class="stat-value">@ViewBag.Prijavljeni</div>
+            <div class="stat-label">Prijavljeni oglasi</div>
+            <div class="stat-detail">
+                <span class="stat-detail-item">Poslovi na čekanju</span>
+            </div>
+        </div>
     </div>
+    <div class="col-md-4 d-flex">
+        <div class="stat-card w-100">
+            <i class="bi bi-check2-circle stat-icon"></i>
+            <div class="stat-value">@ViewBag.Zavrseni</div>
+            <div class="stat-label">Završeni poslovi</div>
+            <div class="stat-detail">
+                <span class="stat-detail-item">Uspješno obavljeni</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex">
+        <div class="stat-card stat-card-primary w-100">
+            <i class="bi bi-wallet2 stat-icon"></i>
+            <div class="stat-value">@ukupnoZaradjeno KM <span class="badge badge-soft-accent fs-6 align-middle ms-2" style="font-size:0.85rem; vertical-align: middle !important;">Sve vrijeme</span></div>
+            <div class="stat-label">Ukupno zarađeno</div>
+            <div class="stat-detail flex-wrap" style="gap:0.5rem 1rem;">
+                <span class="stat-detail-item">
+                    <i class="bi bi-wallet me-1"></i>Osnovica: @osnovicaZarada KM
+                </span>
+                <span class="stat-detail-item text-success fw-semibold">
+                    <i class="bi bi-gift me-1"></i>Bakšiš: @ukupniBaksis KM
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-card section-gap mb-5">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-8">
+            <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
+                <div>
+                    <span class="hero-eyebrow mb-2 d-block"><i class="bi bi-graph-up"></i> Analiza zarade</span>
+                    <h2 class="h3 mb-0">Zarada tokom @godina. godine</h2>
+                    <p class="text-muted mb-0 mt-1">Prikaz ukupne zarade po mjesecu (osnovica + 100% bakšiša)</p>
+                </div>
+            </div>
+            <div style="position: relative; height: 380px; width: 100%;">
+                <canvas id="godisnjaZaradaChart"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="d-flex flex-column gap-3 h-100">
+                <div class="stat-card h-100 mb-0" style="border-left:4px solid var(--color-accent);">
+                    <i class="bi bi-cash-stack stat-icon" style="color:var(--color-accent);"></i>
+                    <div class="stat-value">@(Math.Round(godisnjaUkupno, 2)) KM</div>
+                    <div class="stat-label">Ukupna zarada @godina.</div>
+                    <div class="stat-detail">
+                        <span class="stat-detail-item">Sve isplate u tekućoj godini</span>
+                    </div>
+                </div>
+                <div class="stat-card h-100 mb-0" style="border-left:4px solid var(--brand-accent);">
+                    <i class="bi bi-calendar3 stat-icon" style="color:var(--brand-accent);"></i>
+                    <div class="stat-value">@prosjecnaMjesecna KM</div>
+                    <div class="stat-label">Prosječna mjesečna zarada</div>
+                    <div class="stat-detail">
+                        <span class="stat-detail-item">
+                            <i class="bi bi-bar-chart-line me-1"></i>
+                            Prosjek za @godina. godinu
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+    <div>
+        <span class="hero-eyebrow mb-2 d-block"><i class="bi bi-grid-3x3-gap-fill"></i> Brzi pristup</span>
+        <h2 class="h3 mb-0">Šta želiš uraditi danas?</h2>
+    </div>
+</div>
+<section class="feature-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+    <a asp-controller="Oglas" asp-action="PrikazOglasa" class="text-decoration-none d-block">
+        <article class="feature-card h-100">
+            <div class="feature-card-icon">
+                <i class="bi bi-search"></i>
+            </div>
+            <h3>Pretraži poslove</h3>
+            <p>Filtrirajte oglase po lokaciji, cijeni i tipu posla da brže dođete do odgovarajuće prilike.</p>
+        </article>
+    </a>
+    <a asp-controller="Oglas" asp-action="MojePrijave" asp-route-filter="Aktivne" class="text-decoration-none d-block">
+        <article class="feature-card h-100">
+            <div class="feature-card-icon" style="background: linear-gradient(135deg, rgba(255,61,104,0.15) 0%, rgba(0,224,184,0.12) 100%); color: var(--color-primary);">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+            <h3>Moje aktivne prijave</h3>
+            <p>Pregledajte na koje poslove ste se trenutno prijavili — status, vlasnik i detalji na jednom mjestu.</p>
+        </article>
+    </a>
+    <a asp-controller="Oglas" asp-action="MojePrijave" class="text-decoration-none d-block">
+        <article class="feature-card h-100">
+            <div class="feature-card-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <h3>Historija poslova</h3>
+            <p>Pratite sve prijave, statuse i završene poslove na jednom preglednom mjestu — uvijek na dohvat ruke.</p>
+        </article>
+    </a>
+    <a asp-controller="Chat" asp-action="Index" class="text-decoration-none d-block">
+        <article class="feature-card h-100">
+            <div class="feature-card-icon">
+                <i class="bi bi-chat-dots"></i>
+            </div>
+            <h3>Razgovori</h3>
+            <p>Ostvarite direktnu komunikaciju sa klijentima i dogovorite detalje bez dodatnih koraka.</p>
+        </article>
+    </a>
+    <a asp-controller="Recenzija" asp-action="MojeRecenzije" class="text-decoration-none d-block">
+        <article class="feature-card h-100">
+            <div class="feature-card-icon">
+                <i class="bi bi-star"></i>
+            </div>
+            <h3>Moje recenzije</h3>
+            <p>Pregledajte ocjene koje ste dobili i pratite kako napreduje vaša reputacija na platformi.</p>
+        </article>
+    </a>
+    <a asp-controller="ObavijestKorisniku" asp-action="MyNotifications" class="text-decoration-none d-block">
+        <article class="feature-card h-100">
+            <div class="feature-card-icon" style="background: linear-gradient(135deg, rgba(255,61,104,0.15) 0%, rgba(0,224,184,0.12) 100%); color: var(--color-primary);">
+                <i class="bi bi-bell"></i>
+            </div>
+            <h3>Obavijesti</h3>
+            <p>Sva važna obavještenja na jednom mjestu — nove prijave, poruke i promjene statusa poslova.</p>
+        </article>
+    </a>
+    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="text-decoration-none d-block">
+        <article class="feature-card h-100">
+            <div class="feature-card-icon">
+                <i class="bi bi-gear"></i>
+            </div>
+            <h3>Postavke profila</h3>
+            <p>Uredite lične podatke, lozinku, sliku profila i verifikaciju — održavajte profil aktuelnim.</p>
+        </article>
+    </a>
+</section>
+
+<section class="content-card section-gap mt-5">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-7">
+            <h2 class="h3 mb-3">Kako najbrže koristiti platformu</h2>
+            <div class="d-grid gap-3">
+                <div class="d-flex gap-3 align-items-start">
+                    <span class="badge badge-soft-primary">1</span>
+                    <div>
+                        <strong>Pretražite oglase koji vam odgovaraju.</strong>
+                        <p class="mb-0">Krenite od filtara i fokusirajte se na poslove koji odgovaraju vašim vještinama i vremenu.</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 align-items-start">
+                    <span class="badge badge-soft-primary">2</span>
+                    <div>
+                        <strong>Otvorite razgovor čim se prijavite.</strong>
+                        <p class="mb-0">Brza komunikacija smanjuje čekanje i olakšava dogovor o detaljima posla.</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 align-items-start">
+                    <span class="badge badge-soft-primary">3</span>
+                    <div>
+                        <strong>Pratite recenzije i gradite profil.</strong>
+                        <p class="mb-0">Svaki završen posao i ocjena pomažu da vaš profil izgleda uvjerljivije i sigurnije.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="hero-side-card">
+                <h3>Brzi pristup</h3>
+                <p class="mb-3">Odavde najčešće kreće radni tok radnika na platformi.</p>
+                <ul class="hero-points">
+                    <li><i class="bi bi-search"></i><span>Traženje novih oglasa</span></li>
+                    <li><i class="bi bi-chat-dots"></i><span>Brza razmjena poruka</span></li>
+                    <li><i class="bi bi-star"></i><span>Praćenje ličnih recenzija</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mjeseci = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+            const podaci = @Html.Raw(godisnjaJson);
+
+            const ctx = document.getElementById('godisnjaZaradaChart').getContext('2d');
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, '#FF3D68');
+            gradient.addColorStop(1, '#00E0B8');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: mjeseci,
+                    datasets: [{
+                        label: 'Zarada (KM)',
+                        data: podaci,
+                        backgroundColor: gradient,
+                        borderRadius: 10,
+                        borderSkipped: false,
+                        borderWidth: 1,
+                        borderColor: '#FF3D68',
+                        hoverBackgroundColor: '#FF3D68',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(14, 59, 54, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#FF3D68',
+                            borderWidth: 2,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (c) => `${Number(c.raw).toFixed(2)} KM`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (v) => v + ' KM',
+                                precision: 0,
+                                font: { weight: '500' }
+                            },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            ticks: { font: { weight: '500' } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

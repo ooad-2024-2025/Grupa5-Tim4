@@ -1,25 +1,36 @@
-﻿@page
+@page
 @model ShowRecoveryCodesModel
 @{
-    ViewData["Title"] = "Recovery codes";
+    ViewData["Title"] = "Oporavni kodovi";
     ViewData["ActivePage"] = "TwoFactorAuthentication";
 }
 
+<div class="page-header">
+    <h1><i class="bi bi-key me-2"></i>@ViewData["Title"]</h1>
+</div>
+
 <partial name="_StatusMessage" for="StatusMessage" />
-<h3>@ViewData["Title"]</h3>
-<div class="alert alert-warning" role="alert">
-    <p>
-        <strong>Put these codes in a safe place.</strong>
-    </p>
-    <p>
-        If you lose your device and don't have the recovery codes you will lose access to your account.
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Spremite ove kodove na sigurno mjesto.</strong>
+    <p style="margin-bottom: 0;">
+        Ako izgubite uređaj i nemate oporavne kodove, izgubit ćete pristup svom računu.
     </p>
 </div>
+
 <div class="row">
-    <div class="col-md-12">
-        @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
-        {
-            <code class="recovery-code">@Model.RecoveryCodes[row]</code><text>&nbsp;</text><code class="recovery-code">@Model.RecoveryCodes[row + 1]</code><br />
-        }
+    <div class="col-lg-6">
+        <div class="content-card">
+            <div class="d-grid gap-2" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
+                {
+                    <div class="d-flex gap-2 align-items-center">
+                        <code style="background: var(--color-surface-hover); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); font-size: var(--text-small);">@Model.RecoveryCodes[row]</code>
+                        <code style="background: var(--color-surface-hover); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); font-size: var(--text-small);">@Model.RecoveryCodes[row + 1]</code>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>

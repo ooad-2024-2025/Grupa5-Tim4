@@ -1,0 +1,91 @@
+@using NaPoso.Helpers
+@model IEnumerable<NaPoso.Models.OglasKorisnik>
+
+@{
+    ViewData["Title"] = "Historija poslova";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><i class="bi bi-clock-history me-2"></i>Historija poslova</h1>
+        <p class="lead">Pregled svih poslova na koje ste se prijavili — od aktivnih prijava do završenih poslova</p>
+    </div>
+    <a asp-action="PrikazOglasa" class="btn btn-primary"><i class="bi bi-search me-1"></i>Pretraži poslove</a>
+</div>
+
+<div class="mb-4 animate-fade-in-up">
+    <form method="get" class="d-flex gap-2 flex-wrap">
+        <input type="text" name="query" class="form-control" style="max-width: 250px;" placeholder="Pretraga po naslovu..." value="@ViewBag.CurrentQuery" />
+        <select name="filter" class="form-select" style="max-width: 150px;">
+            <option value="Sve" selected="@(ViewBag.CurrentFilter == "Sve")">Sve</option>
+            <option value="Aktivne" selected="@(ViewBag.CurrentFilter == "Aktivne")">Aktivne</option>
+            <option value="Zavrsene" selected="@(ViewBag.CurrentFilter == "Zavrsene")">Završene</option>
+        </select>
+        <button type="submit" class="btn btn-secondary"><i class="bi bi-funnel"></i> Filtriraj</button>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+        <h3>Nemate prijava</h3>
+        <p>Pretražite dostupne poslove i prijavite se za one koji vam odgovaraju.</p>
+        <a asp-action="PrikazOglasa" class="btn btn-primary mt-3"><i class="bi bi-search me-1"></i>Pronađi posao</a>
+    </div>
+}
+else
+{
+    <div class="row g-4 animate-fade-in-up">
+        @foreach (var prijava in Model)
+        {
+            if (prijava.Oglas == null) { continue; }
+
+            var badgeClass = PrijavaStatusHelper.GetBadgeClass(prijava.Status);
+            var statusLabel = PrijavaStatusHelper.GetLabel(prijava.Status);
+
+            <div class="col-md-6 col-lg-4">
+                <div class="content-card h-100 d-flex flex-column" style="cursor: pointer;"
+                     onclick="window.location='@Url.Action("Details", new { id = prijava.Oglas.Id })'">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h4 class="mb-0 text-truncate" style="font-family: var(--font-heading); max-width: 70%;" title="@prijava.Oglas.Naslov">@prijava.Oglas.Naslov</h4>
+                        <span class="badge @badgeClass">
+                            @statusLabel
+                        </span>
+                    </div>
+
+                    <div class="text-muted mb-2" style="font-size: var(--text-small);">
+                        <i class="bi bi-geo-alt me-1"></i>@LokacijaHelper.UGradu(prijava.Oglas.Lokacija)
+                    </div>
+                    <div class="text-muted mb-4" style="font-size: var(--text-caption);">
+                        <i class="bi bi-calendar3 me-1"></i>Prijavljen: @prijava.DatumPrijave.ToString("dd.MM.yyyy")
+                    </div>
+
+                    <div class="mt-auto pt-3 border-top d-flex gap-2 justify-content-between align-items-center">
+                        <a asp-action="Details" asp-route-id="@prijava.Oglas.Id" class="btn btn-primary btn-sm flex-grow-1" onclick="event.stopPropagation()">
+                            <i class="bi bi-eye me-1"></i>Detalji
+                        </a>
+                        <div class="text-accent fw-bold fs-5 ms-2 flex-shrink-0" style="font-size: var(--text-caption);">
+                            @prijava.Oglas.CijenaPosla KM
+                        </div>
+                    </div>
+
+                    @if (prijava.Status == NaPoso.Enums.Enums.Status.Prihvacen || prijava.Status == NaPoso.Enums.Enums.Status.Placen)
+                    {
+                        <form asp-controller="Chat" asp-action="StartChat" method="post" class="mt-2" onclick="event.stopPropagation()">
+                            <input type="hidden" name="oglasId" value="@prijava.Oglas.Id" />
+                            <input type="hidden" name="korisnik2Id" value="@prijava.Oglas.KlijentId" />
+                            <button type="submit" class="btn btn-secondary btn-sm w-100">
+                                <i class="bi bi-chat me-1"></i>Razgovor sa klijentom
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="Home" asp-action="Radnik" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad na dashboard</a>
+</div>

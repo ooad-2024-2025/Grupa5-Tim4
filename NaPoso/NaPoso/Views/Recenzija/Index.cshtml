@@ -1,38 +1,57 @@
-﻿@model IEnumerable<NaPoso.Models.Recenzija>
+@model IEnumerable<NaPoso.Models.Recenzija>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Sve recenzije";
 }
 
-<h1>Sve recenzije</h1>
+<div class="page-header">
+    <h1><i class="bi bi-star me-2"></i>Sve recenzije</h1>
+    <p class="lead">Pregled svih recenzija na platformi</p>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Ocjena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sadrzaj)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ocjena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sadrzaj)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-            </td>
-        </tr>
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-star"></i></div>
+        <h3>Nema recenzija</h3>
+        <p>Recenzije će se pojaviti ovdje kada korisniici počnu ostavljati ocjene.</p>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ocjena</th>
+                    <th>Sadržaj</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong class="text-accent">@item.Ocjena</strong>
+                        </td>
+                        <td>@item.Sadrzaj</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                @if (User.IsInRole(NaPoso.Constants.RoleConstants.Admin))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-ghost btn-sm"><i class="bi bi-pencil me-1"></i>Uredi</a>
+                                }
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-ghost btn-sm"><i class="bi bi-eye me-1"></i>Detalji</a>
+                                @if (User.IsInRole(NaPoso.Constants.RoleConstants.Admin))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-ghost btn-sm text-danger"><i class="bi bi-trash me-1"></i>Obriši</a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,77 @@
+@model IEnumerable<NaPoso.Models.PrijavaRecenzije>
+
+@{
+    ViewData["Title"] = "Prijavljene recenzije";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><i class="bi bi-flag-fill text-danger me-2"></i>Prijavljene recenzije</h1>
+        <p class="lead">Upravljanje prijavama korisnika na recenzije</p>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-shield-check text-success"></i></div>
+        <h3>Nema prijava</h3>
+        <p>Trenutno nema prijavljenih recenzija.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-12">
+                <div class="content-card @(item.JeRijeseno ? "border-success opacity-75" : "border-danger")" style="border-left: 4px solid;">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <strong>Prijavio:</strong> @item.PrijavioKorisnik?.Email <br />
+                            <small class="text-muted"><i class="bi bi-calendar me-1"></i>@item.DatumPrijave.ToString("g")</small>
+                        </div>
+                        <span class="badge @(item.JeRijeseno ? "bg-success" : "bg-danger")">
+                            @(item.JeRijeseno ? "Riješeno" : "Otvoreno")
+                        </span>
+                    </div>
+
+                    <div class="mb-3 p-3 bg-light rounded text-dark">
+                        <strong>Razlog prijave:</strong><br />
+                        @item.Razlog
+                    </div>
+
+                    <hr />
+
+                    <div class="mb-3">
+                        @{
+                            var klijentEmail = item.Recenzija != null && item.Recenzija.KlijentId != null && ViewBag.KlijentiEmails.ContainsKey(item.Recenzija.KlijentId)
+                                ? ViewBag.KlijentiEmails[item.Recenzija.KlijentId] 
+                                : "Nepoznat";
+                        }
+                        <small class="text-muted d-block mb-1">Recenzija od korisnika: @klijentEmail (Ocjena: @item.Recenzija?.Ocjena)</small>
+                        <blockquote class="blockquote fs-6 ps-3" style="border-left: 3px solid var(--color-primary);">
+                            @item.Recenzija?.Sadrzaj
+                        </blockquote>
+                    </div>
+
+                    @if (!item.JeRijeseno)
+                    {
+                        <div class="d-flex gap-2 justify-content-end mt-3">
+                            <form asp-action="OdbaciPrijavu" method="post">
+                                <input type="hidden" name="prijavaId" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-secondary"><i class="bi bi-x-circle me-1"></i>Odbaci prijavu</button>
+                            </form>
+                            
+                            <form asp-action="ObrisiRecenziju" method="post" onsubmit="return confirm('Da li ste sigurni da želite obrisati ovu recenziju?');">
+                                <input type="hidden" name="prijavaId" value="@item.Id" />
+                                <input type="hidden" name="recenzijaId" value="@item.RecenzijaId" />
+                                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash me-1"></i>Obriši recenziju</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}

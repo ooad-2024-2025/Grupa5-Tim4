@@ -1,8 +1,18 @@
-﻿@page
+@page
 @model ConfirmEmailModel
 @{
-    ViewData["Title"] = "Confirm email";
+    ViewData["Title"] = "Potvrda emaila";
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="auth-icon"><i class="bi bi-envelope-check"></i></h1>
+        <h1>@ViewData["Title"]</h1>
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
+        <div class="auth-links">
+            <a asp-page="./Login" class="btn btn-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Prijavite se
+            </a>
+        </div>
+    </div>
+</div>

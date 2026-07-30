@@ -1,45 +1,43 @@
-﻿@model NaPoso.Models.Recenzija
+@model NaPoso.Models.Recenzija
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Uredi recenziju";
 }
 
-<h1>Uredi</h1>
+<div class="page-header">
+    <h1><i class="bi bi-pencil me-2"></i>Uredi recenziju</h1>
+</div>
 
-<h4>Recenzija</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="RadnikId" />
-            <input type="hidden" asp-for="KlijentId" />
+    <div class="col-lg-6">
+        <div class="content-card">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="RadnikId" />
+                <input type="hidden" asp-for="KlijentId" />
 
-            <div class="form-group">
-                <label asp-for="Ocjena" class="control-label"></label>
-                <input asp-for="Ocjena" class="form-control" type="number" min="1" max="5" onkeydown="return false;" />
-                <span asp-validation-for="Ocjena" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Ocjena" class="form-label"></label>
+                    <input asp-for="Ocjena" class="form-control" type="number" min="1" max="5" onkeydown="return false;" />
+                    <span asp-validation-for="Ocjena" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Sadrzaj" class="control-label"></label>
-                <input asp-for="Sadrzaj" class="form-control" />
-                <span asp-validation-for="Sadrzaj" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Uredi" class="btn btn-primary" />
-            </div>
-        </form>
+                <div class="form-group">
+                    <label asp-for="Sadrzaj" class="form-label"></label>
+                    <input asp-for="Sadrzaj" class="form-control" />
+                    <span asp-validation-for="Sadrzaj" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Spremi</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Nazad</a>
-</div>
-
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

@@ -1,27 +1,36 @@
-﻿@page
+@page
 @model GenerateRecoveryCodesModel
 @{
-    ViewData["Title"] = "Generate two-factor authentication (2FA) recovery codes";
+    ViewData["Title"] = "Generiši oporavne kodove za 2FA";
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
+<div class="page-header">
+    <h1><i class="bi bi-key me-2"></i>@ViewData["Title"]</h1>
+</div>
+
 <partial name="_StatusMessage" for="StatusMessage" />
-<h3>@ViewData["Title"]</h3>
-<div class="alert alert-warning" role="alert">
-    <p>
-        <span class="glyphicon glyphicon-warning-sign"></span>
-        <strong>Put these codes in a safe place.</strong>
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Spremite ove kodove na sigurno mjesto.</strong>
+    <p style="margin-top: var(--space-2);">
+        Ako izgubite uređaj i nemate oporavne kodove, izgubit ćete pristup svom računu.
     </p>
-    <p>
-        If you lose your device and don't have the recovery codes you will lose access to your account.
-    </p>
-    <p>
-        Generating new recovery codes does not change the keys used in authenticator apps. If you wish to change the key
-        used in an authenticator app you should <a asp-page="./ResetAuthenticator">reset your authenticator keys.</a>
+    <p style="margin-bottom: 0;">
+        Generisanje novih oporavnih kodova ne mijenja ključeve korištene u autentikacionim aplikacijama.
+        Ako želite promijeniti ključ, trebali biste <a asp-page="./ResetAuthenticator">resetovati ključeve autentikatora</a>.
     </p>
 </div>
-<div>
-    <form method="post">
-        <button class="btn btn-danger" type="submit">Generate Recovery Codes</button>
-    </form>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <form method="post">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-key me-1"></i>Generiši oporavne kodove
+                </button>
+            </form>
+        </div>
+    </div>
 </div>

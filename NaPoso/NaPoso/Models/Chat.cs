@@ -1,4 +1,4 @@
-﻿// Models/Chat.cs
+// Models/Chat.cs
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,7 +19,7 @@ namespace NaPoso.Models
         public int OglasId { get; set; }
         public Oglas Oglas { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Poruka> Poruke { get; set; }
     }

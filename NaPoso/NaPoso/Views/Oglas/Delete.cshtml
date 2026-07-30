@@ -1,70 +1,57 @@
-﻿@model NaPoso.Models.Oglas
+@model NaPoso.Models.Oglas
 
 @{
-    ViewData["Title"] = "Obriši";
+    ViewData["Title"] = "Obriši oglas";
 }
 
-<h1>Obriši oglas</h1>
+<div class="page-header page-header-danger text-center">
+    <h1><i class="bi bi-trash me-2"></i>Obriši oglas</h1>
+</div>
 
-<h3>Da li ste sigurni da želite obrisati oglas?</h3>
-<div>
-    <h4>Oglas</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RadnikId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RadnikId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Opis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Opis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Lokacija)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Lokacija)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipPosla)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipPosla)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CijenaPosla)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CijenaPosla)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Naslov)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Naslov)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Obriši" class="btn btn-danger" /> |
-        @if (User.IsInRole("Klijent"))
-        {
-            <a asp-action="OglasiKlijenta">Nazad</a>
-        }
-        else if (User.IsInRole("Admin"))
-        {
-            <a asp-action="Index">Nazad</a>
-        }
-    </form>
+<!-- CENTRIRANI SADRŽAJ (mx-auto + justify-content-center) -->
+<div class="row justify-content-center">
+    <div class="col-lg-7 mx-auto">
+        <div class="alert alert-danger text-center">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Da li ste sigurni da želite obrisati ovaj oglas? Ova radnja se ne može poništiti.
+        </div>
+
+        <div class="content-card">
+            <dl class="row mb-0 align-items-center">
+                <dt class="col-sm-4 text-sm-end">Naslov</dt>
+                <dd class="col-sm-8"><strong>@Model.Naslov</strong></dd>
+
+                <dt class="col-sm-4 text-sm-end">Opis</dt>
+                <dd class="col-sm-8">@Model.Opis</dd>
+
+                <dt class="col-sm-4 text-sm-end">Lokacija</dt>
+                <dd class="col-sm-8">@LokacijaHelper.UGradu(Model.Lokacija)</dd>
+
+                <dt class="col-sm-4 text-sm-end">Tip posla</dt>
+                <dd class="col-sm-8">@Model.TipPosla</dd>
+
+                <dt class="col-sm-4 text-sm-end">Cijena</dt>
+                <dd class="col-sm-8"><strong class="text-accent">@Model.CijenaPosla KM</strong></dd>
+
+                <dt class="col-sm-4 text-sm-end">Status</dt>
+                <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Status</span></dd>
+            </dl>
+        </div>
+
+        <!-- Centrirani form dugmići -->
+        <form asp-action="Delete" class="mt-4">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex gap-3 justify-content-center">
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Obriši</button>
+                @if (User.IsInRole("Klijent"))
+                {
+                    <a asp-action="OglasiKlijenta" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+                }
+                else
+                {
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+                }
+            </div>
+        </form>
+    </div>
 </div>

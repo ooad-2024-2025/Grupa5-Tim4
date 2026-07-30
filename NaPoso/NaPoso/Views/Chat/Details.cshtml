@@ -1,27 +1,66 @@
-﻿@model NaPoso.Models.Chat
+@model NaPoso.Models.Chat
 @using Microsoft.AspNetCore.Identity
+@inject UserManager<Korisnik> UserManager
 
-<h2>Razgovor - Oglas: @Model.Oglas.Naslov</h2>
-<p>
-    <strong>@Model.Korisnik1.Ime @Model.Korisnik1.Prezime</strong> ↔
-    <strong>@Model.Korisnik2.Ime @Model.Korisnik2.Prezime</strong>
-</p>
+@{
+    ViewData["Title"] = "Razgovor";
+    var currentUserId = UserManager.GetUserId(User);
+}
 
-<div class="chat-messages" style="max-height:400px; overflow-y:auto; border:1px solid #ccc; padding:10px;">
-    @foreach (var poruka in Model.Poruke.OrderBy(p => p.PoslanoAt))
-    {
-        <div>
-            <b>@poruka.Posiljaoc.Ime:</b> @poruka.Tekst <small class="text-muted">(@poruka.PoslanoAt.ToString("g"))</small>
-        </div>
-    }
+<div class="page-header">
+    <h1><i class="bi bi-chat-dots me-2"></i>@Model.Oglas.Naslov</h1>
+    <p class="lead">
+        @Model.Korisnik1.Ime @Model.Korisnik1.Prezime &leftrightarrow;
+        @Model.Korisnik2.Ime @Model.Korisnik2.Prezime
+    </p>
 </div>
 
-<form method="post" asp-action="SendMessage">
-    <input type="hidden" name="chatId" value="@Model.Id" />
-    <div class="form-group mt-2">
-        <textarea name="tekst" class="form-control" placeholder="Unesi poruku..." required></textarea>
+<div class="content-card">
+    <div id="chatMessages" class="chat-box">
+        @foreach (var poruka in Model.Poruke.OrderBy(p => p.PoslanoAt))
+        {
+            var isMine = poruka.PosiljaocId == currentUserId;
+            if (isMine)
+            {
+                <div class="chat-row chat-row-mine">
+                    <div class="chat-bubble chat-bubble-mine">
+                        <div class="chat-sender chat-sender-mine">@poruka.Posiljaoc.Ime @poruka.Posiljaoc.Prezime</div>
+                        <div class="chat-text chat-text-mine">@poruka.Tekst</div>
+                        <div class="chat-time chat-time-mine">@poruka.PoslanoAt.ToString("HH:mm · dd.MM.")</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="chat-row chat-row-other">
+                    <div class="chat-bubble chat-bubble-other">
+                        <div class="chat-sender chat-sender-other">@poruka.Posiljaoc.Ime @poruka.Posiljaoc.Prezime</div>
+                        <div class="chat-text chat-text-other">@poruka.Tekst</div>
+                        <div class="chat-time chat-time-other">@poruka.PoslanoAt.ToString("HH:mm · dd.MM.")</div>
+                    </div>
+                </div>
+            }
+        }
     </div>
-    <button type="submit" class="btn btn-primary">Pošalji</button>
-</form>
 
-<a asp-action="Index" asp-controller="Chat" class="btn btn-secondary mt-3">Nazad na Razgovore</a>
+    <form method="post" asp-action="SendMessage" class="mt-4">
+        <input type="hidden" name="chatId" value="@Model.Id" />
+        <div class="d-flex gap-3 align-items-center">
+            <textarea name="tekst" class="form-control" placeholder="Unesi poruku..." required rows="2" style="resize:none;"></textarea>
+            <button type="submit" class="btn btn-primary" style="height: 48px; white-space: nowrap; flex-shrink: 0;">
+                <i class="bi bi-send me-1"></i>Pošalji
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" asp-controller="Chat" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad na razgovore</a>
+</div>
+
+@section Scripts {
+    <script>
+        var chatContainer = document.getElementById('chatMessages');
+        if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+    </script>
+}

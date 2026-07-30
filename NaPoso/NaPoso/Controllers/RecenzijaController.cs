@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -6,30 +6,61 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NaPoso.Constants;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NaPoso.Data;
 using NaPoso.Models;
+using NaPoso.Services;
 
 namespace NaPoso.Controllers
 {
+    [ApiVersion("1.0")]
+    [Authorize]
     public class RecenzijaController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRecenzijaService _recenzijaService;
 
-        public RecenzijaController(ApplicationDbContext context)
+        public RecenzijaController(ApplicationDbContext context, IRecenzijaService recenzijaService)
         {
             _context = context;
+            _recenzijaService = recenzijaService;
         }
 
         // GET: Recenzija
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 20)
         {
-            return View(await _context.Recenzija.ToListAsync());
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            
+            var query = _context.Recenzija.AsQueryable();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Filtriraj logično po ulozi!
+            if (User.IsInRole(RoleConstants.Klijent))
+            {
+                // Klijent vidi samo recenzije koje je on kreirao/ostavio
+                query = query.Where(r => r.KlijentId == userId);
+            }
+            else if (User.IsInRole(RoleConstants.Radnik))
+            {
+                // Radnik vidi samo recenzije koje su klijenti ostavili njemu
+                query = query.Where(r => r.RadnikId == userId);
+            }
+            // Admin vidi sve recenzije (query ostaje nepromijenjen)
+
+            var recenzije = await query
+                .OrderByDescending(r => r.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+                
+            return View(recenzije);
         }
 
         // GET: Recenzija/Details/5
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,8 +68,7 @@ namespace NaPoso.Controllers
                 return NotFound();
             }
 
-            var recenzija = await _context.Recenzija
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recenzija = await _recenzijaService.GetByIdAsync(id.Value);
             if (recenzija == null)
             {
                 return NotFound();
@@ -48,20 +78,14 @@ namespace NaPoso.Controllers
         }
 
         // GET: Recenzija/Create
-        [Authorize(Roles = "Klijent,Admin")]
+        [Authorize(Roles = RoleConstants.Klijent + "," + RoleConstants.Admin)]
         public IActionResult Create(string radnikId, int? oglasId)
         {
-            ViewBag.Debug_RouteParams = $"radnikId: {radnikId}, oglasId: {oglasId}";
-
             var verifiedOglasId = HttpContext.Session.GetInt32("VerifiedOglasId");
             var verifiedRadnikId = HttpContext.Session.GetString("VerifiedRadnikId");
             var paymentVerified = HttpContext.Session.GetString("PaymentVerified");
 
-            ViewBag.Debug_Session = $"Session values - verifiedOglasId: {verifiedOglasId}, " +
-                                   $"verifiedRadnikId: {verifiedRadnikId}, " +
-                                   $"paymentToken: {(paymentVerified != null ? "exists" : "missing")}";
-
-            if (!User.IsInRole("Admin"))
+            if (!User.IsInRole(RoleConstants.Admin))
             {
                 if (!oglasId.HasValue)
                 {
@@ -69,14 +93,11 @@ namespace NaPoso.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                bool bypassVerification = false;
-
-                if (!bypassVerification && (
-                    verifiedOglasId == null ||
+                if (verifiedOglasId == null ||
                     verifiedOglasId != oglasId ||
                     string.IsNullOrEmpty(verifiedRadnikId) ||
                     verifiedRadnikId != radnikId ||
-                    string.IsNullOrEmpty(paymentVerified)))
+                    string.IsNullOrEmpty(paymentVerified))
                 {
                     TempData["ErrorMessage"] = "Plaćanje nije potvrđeno za ovaj oglas.";
                     return RedirectToAction("Index", "Home");
@@ -95,7 +116,7 @@ namespace NaPoso.Controllers
         // POST: Recenzija/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Klijent,Admin")]
+        [Authorize(Roles = RoleConstants.Klijent + "," + RoleConstants.Admin)]
         public async Task<IActionResult> Create([Bind("Ocjena,Sadrzaj,RadnikId")] Recenzija recenzija, int? oglasId)
         {
             // Postavi KlijentId iz logovanog korisnika
@@ -104,44 +125,32 @@ namespace NaPoso.Controllers
             // Ukloni validaciju za KlijentId (ručno postavljeno)
             ModelState.Remove("KlijentId");
 
-            // Debug info
-            TempData["Debug_PostParams"] = $"KlijentId: {recenzija.KlijentId}, RadnikId: {recenzija.RadnikId}, OglasId: {oglasId}";
-
-            if (!User.IsInRole("Admin"))
+            if (!User.IsInRole(RoleConstants.Admin))
             {
-                bool bypassVerification = false;
+                var verifiedOglasId = HttpContext.Session.GetInt32("VerifiedOglasId");
+                var verifiedRadnikId = HttpContext.Session.GetString("VerifiedRadnikId");
+                var paymentVerified = HttpContext.Session.GetString("PaymentVerified");
 
-                if (!bypassVerification)
+                if (verifiedOglasId == null ||
+                    verifiedOglasId != oglasId ||
+                    string.IsNullOrEmpty(verifiedRadnikId) ||
+                    string.IsNullOrEmpty(paymentVerified))
                 {
-                    var verifiedOglasId = HttpContext.Session.GetInt32("VerifiedOglasId");
-                    var verifiedRadnikId = HttpContext.Session.GetString("VerifiedRadnikId");
-                    var paymentVerified = HttpContext.Session.GetString("PaymentVerified");
-
-                    TempData["Debug_SessionValues"] = $"Session values - verifiedOglasId: {verifiedOglasId}, " +
-                                           $"verifiedRadnikId: {verifiedRadnikId}, " +
-                                           $"paymentToken: {(paymentVerified != null ? "exists" : "missing")}";
-
-                    if (verifiedOglasId == null ||
-                        verifiedOglasId != oglasId ||
-                        string.IsNullOrEmpty(verifiedRadnikId) ||
-                        string.IsNullOrEmpty(paymentVerified))
-                    {
-                        TempData["ErrorMessage"] = "Plaćanje nije potvrđeno za ovaj oglas.";
-                        return RedirectToAction("Index", "Home");
-                    }
-
-                    // ✅ Provjeri da li se RadnikId iz forme podudara sa sesijom
-                    if (recenzija.RadnikId != verifiedRadnikId)
-                    {
-                        TempData["ErrorMessage"] = "Neispravni podaci za radnika.";
-                        return RedirectToAction("Index", "Home");
-                    }
-
-                    // Očisti sesiju nakon validacije
-                    HttpContext.Session.Remove("PaymentVerified");
-                    HttpContext.Session.Remove("VerifiedOglasId");
-                    HttpContext.Session.Remove("VerifiedRadnikId");
+                    TempData["ErrorMessage"] = "Plaćanje nije potvrđeno za ovaj oglas.";
+                    return RedirectToAction("Index", "Home");
                 }
+
+                // Provjeri da li se RadnikId iz forme podudara sa sesijom
+                if (recenzija.RadnikId != verifiedRadnikId)
+                {
+                    TempData["ErrorMessage"] = "Neispravni podaci za radnika.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Ocisti sesiju nakon validacije
+                HttpContext.Session.Remove("PaymentVerified");
+                HttpContext.Session.Remove("VerifiedOglasId");
+                HttpContext.Session.Remove("VerifiedRadnikId");
             }
             else
             {
@@ -156,29 +165,22 @@ namespace NaPoso.Controllers
             {
                 try
                 {
-                    _context.Add(recenzija);
-                    await _context.SaveChangesAsync();
+                    await _recenzijaService.CreateAsync(recenzija);
 
                     TempData["SuccessMessage"] = "Recenzija je uspješno dodana.";
                     return RedirectToAction("Index", "Home");
                 }
                 catch (Exception ex)
                 {
-                    TempData["Debug_Error"] = $"Error: {ex.Message}";
                     ModelState.AddModelError("", "Greška prilikom spremanja recenzije.");
                 }
-            }
-            else
-            {
-                var errors = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                TempData["Debug_ModelErrors"] = errors;
             }
 
             return View(recenzija);
         }
 
         // GET: Recenzija/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -186,7 +188,7 @@ namespace NaPoso.Controllers
                 return NotFound();
             }
 
-            var recenzija = await _context.Recenzija.FindAsync(id);
+            var recenzija = await _recenzijaService.GetByIdAsync(id.Value);
 
             if (recenzija == null)
             {
@@ -198,7 +200,7 @@ namespace NaPoso.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Ocjena,Sadrzaj,RadnikId,KlijentId")] Recenzija recenzija)
         {
             if (id != recenzija.Id)
@@ -210,12 +212,15 @@ namespace NaPoso.Controllers
             {
                 try
                 {
-                    _context.Update(recenzija);
-                    await _context.SaveChangesAsync();
+                    var updated = await _recenzijaService.UpdateAsync(id, recenzija);
+                    if (updated == null)
+                    {
+                        return NotFound();
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!_context.Recenzija.Any(e => e.Id == recenzija.Id))
+                    if (!await _recenzijaService.ExistsAsync(recenzija.Id))
                     {
                         return NotFound();
                     }
@@ -224,13 +229,13 @@ namespace NaPoso.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index)); // ili gdje god želiš redirect
+                return RedirectToAction(nameof(Index));
             }
             return View(recenzija);
         }
 
         // GET: Recenzija/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -238,8 +243,7 @@ namespace NaPoso.Controllers
                 return NotFound();
             }
 
-            var recenzija = await _context.Recenzija
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recenzija = await _recenzijaService.GetByIdAsync(id.Value);
             if (recenzija == null)
             {
                 return NotFound();
@@ -250,52 +254,24 @@ namespace NaPoso.Controllers
 
         // POST: Recenzija/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recenzija = await _context.Recenzija.FindAsync(id);
-            if (recenzija != null)
-            {
-                _context.Recenzija.Remove(recenzija);
-            }
-
-            await _context.SaveChangesAsync();
+            await _recenzijaService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RecenzijaExists(int id)
+        private async Task<bool> RecenzijaExistsAsync(int id)
         {
-            return _context.Recenzija.Any(e => e.Id == id);
+            return await _recenzijaService.ExistsAsync(id);
         }
 
-        [Authorize(Roles = "Radnik")]
+        [Authorize(Roles = RoleConstants.Radnik)]
         public async Task<IActionResult> MojeRecenzije()
         {
-            var radnikId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
-
-            var recenzije = await _context.Recenzija
-                                          .Where(r => r.RadnikId == radnikId)
-                                          .ToListAsync();
-            var klijentiIds = recenzije.Select(r => r.KlijentId).Distinct().ToList();
-
-            var klijenti = await _context.Korisnik
-                                         .Where(u => klijentiIds.Contains(u.Id))
-                                         .Select(u => new { u.Id, u.Email })
-                                         .ToListAsync();
-
-            var recenzijeSaEmailom = recenzije.Select(r => new {
-                Recenzija = r,
-                KlijentEmail = klijenti.FirstOrDefault(k => k.Id == r.KlijentId)?.Email ?? "Nepoznat"
-            }).ToList();
-            var model = recenzije.Select(r => new RecenzijaViewModel
-            {
-                KlijentEmail = klijenti.FirstOrDefault(k => k.Id == r.KlijentId)?.Email ?? "Nepoznat",
-                Ocjena = r.Ocjena,
-                Sadrzaj = r.Sadrzaj
-            }).ToList();
-
-
+            var radnikId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = await _recenzijaService.GetByRadnikIdWithEmailAsync(radnikId);
             return View(model);
         }
     }

@@ -1,53 +1,178 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Profil";
     ViewData["ActivePage"] = ManageNavPages.Index;
+
+    var ime = Model?.Input?.Ime ?? User?.Identity?.Name?.Split('@')?[0] ?? "K";
+    var prezime = Model?.Input?.Prezime ?? "";
+    var inicijali = ((ime.Length > 0 ? char.ToUpper(ime[0]).ToString() : "") + (prezime.Length > 0 ? char.ToUpper(prezime[0]).ToString() : "")).Trim();
+    if (string.IsNullOrEmpty(inicijali)) inicijali = "K";
 }
 
+<div class="page-header">
+    <h1><i class="bi bi-person-circle me-2"></i>@ViewData["Title"]</h1>
+</div>
 
-
-<h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Ime" class="form-control" readonly />
-                <label asp-for="Input.Ime" class="form-label"></label>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Prezime" class="form-control" readonly />
-                <label asp-for="Input.Prezime" class="form-label"></label>
-            </div>
+<div class="row justify-content-lg-start">
+    <div class="col-xl-8 col-lg-9 col-md-11">
+        <div class="profile-card">
+            <form id="profile-form" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" readonly />
-                <label asp-for="Username" class="form-label"></label>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Unesite svoj broj telefona." />
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Verifikovan:</label>
-                <input class="form-control" value="@(Model.Input.Verified ? "Da" : "Ne")" readonly />
-            </div>
+                <div class="profile-header">
+                    <div class="profile-avatar" aria-hidden="true">@inicijali</div>
+                    <div class="profile-identity">
+                        <h2 class="profile-name">@ime @prezime</h2>
+                        <p class="profile-email">
+                            <i class="bi bi-envelope-at"></i>
+                            @(Model?.Username ?? User?.Identity?.Name ?? "")
+                        </p>
+                    </div>
+                </div>
 
-            <div class="mb-3">
-				<p class="form-label">Postavite svoj dokument za verifikaciju(Lična karta ili slično):</p>
-                <input asp-for="Input.Dokument" type="file" />
-                <span asp-validation-for="Input.Dokument"></span>
-            </div>
+                <div class="profile-form-row">
+                    <div class="profile-form-group">
+                        <label asp-for="Input.Ime" class="profile-form-label"></label>
+                        <input asp-for="Input.Ime" class="profile-form-input" />
+                        <span asp-validation-for="Input.Ime" class="text-danger"></span>
+                    </div>
+                    <div class="profile-form-group">
+                        <label asp-for="Input.Prezime" class="profile-form-label"></label>
+                        <input asp-for="Input.Prezime" class="profile-form-input" />
+                        <span asp-validation-for="Input.Prezime" class="text-danger"></span>
+                    </div>
 
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Spasi izmjene</button>
-        </form>
+                    <div class="profile-form-group full-width">
+                        <label asp-for="Username" class="profile-form-label">
+                            Email adresa
+                            @if (Model.IsEmailConfirmed)
+                            {
+                                <span class="badge bg-success ms-2" style="font-size: 0.75rem;"><i class="bi bi-check-circle"></i> Potvrđen</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning ms-2 text-dark" style="font-size: 0.75rem;"><i class="bi bi-exclamation-triangle"></i> Nepotvrđen</span>
+                            }
+                        </label>
+                        <input asp-for="Username" class="profile-form-input" readonly />
+                    </div>
+
+                    @if (!Model.IsEmailConfirmed)
+                    {
+                        <div class="profile-form-group full-width" style="text-align: center; margin-top: -0.5rem;">
+                            <button type="submit" asp-page-handler="SendVerificationEmail" formnovalidate class="btn-verify-email">
+                                <i class="bi bi-envelope-check me-1"></i> Pošalji verifikacioni email
+                            </button>
+                        </div>
+                    }
+
+                    <div class="profile-form-group full-width">
+                        <label asp-for="Input.PhoneNumber" class="profile-form-label">Broj telefona</label>
+                        <input asp-for="Input.PhoneNumber" class="profile-form-input" placeholder="Unesite svoj broj telefona" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="profile-verification">
+                    <h3 class="profile-verification-title" style="justify-content: center;">
+                        <i class="bi bi-shield-check"></i> Status verifikacije
+                    </h3>
+
+                    @if (Model.Input.Verified || User.IsInRole("Admin"))
+                    {
+                        <div class="profile-status-wrapper status-success" style="justify-content: center; text-align: center;">
+                            <span class="profile-status-badge status-success">
+                                <i class="bi bi-patch-check-fill"></i> Verifikovan
+                            </span>
+                            <p class="profile-status-text" style="max-width: none;">
+                                Vaš identitet je potvrđen. Možete koristiti sve funkcionalnosti platforme bez ograničenja.
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="profile-status-wrapper status-pending" style="flex-direction: column; align-items: center; text-align: center;">
+                            <span class="profile-status-badge status-warning">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Nije verifikovan
+                            </span>
+                            <p class="profile-status-text" style="max-width: none;">
+                                Pošaljite dokument da biste otključali sve pogodnosti platforme. Verifikacija traje do 2 radna dana.
+                            </p>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <span class="profile-verification-label">Pošaljite dokument za verifikaciju</span>
+                            <p class="profile-verification-hint">
+                                Lična karta ili sličan dokument (JPG, PNG ili PDF). Maksimalna veličina: 10&nbsp;MB.
+                            </p>
+                        </div>
+
+                        <div class="profile-file-row" style="justify-content: center;">
+                            <input asp-for="Input.Dokument"
+                                   id="dokument-input"
+                                   type="file"
+                                   class="profile-file-input"
+                                   accept=".jpg,.jpeg,.png,.pdf" />
+                            <label for="dokument-input" class="profile-file-btn" tabindex="0">
+                                <i class="bi bi-cloud-arrow-up-fill"></i>
+                                <span>Odaberi dokument</span>
+                            </label>
+                            <span id="dokument-ime" class="profile-file-name"></span>
+                        </div>
+                        <span asp-validation-for="Input.Dokument" class="profile-file-validation"></span>
+                    }
+                </div>
+
+                <div class="profile-actions" style="justify-content: center;">
+                    <button id="update-profile-button" type="submit" class="btn-profile-save" style="padding: 14px 48px; font-size: 1rem;">
+                        <span class="save-spinner" aria-hidden="true"></span>
+                        <i class="bi bi-check-lg save-icon" aria-hidden="true"></i>
+                        <span class="save-label">Spasi izmjene</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var fileInput = document.getElementById('dokument-input');
+            var fileName = document.getElementById('dokument-ime');
+            if (fileInput && fileName) {
+                fileInput.addEventListener('change', function () {
+                    if (fileInput.files && fileInput.files.length > 0) {
+                        fileName.textContent = fileInput.files[0].name;
+                    } else {
+                        fileName.textContent = '';
+                    }
+                });
+                var label = document.querySelector('label[for="dokument-input"]');
+                if (label) {
+                    label.addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            fileInput.click();
+                        }
+                    });
+                }
+            }
+
+            var form = document.getElementById('profile-form');
+            var saveBtn = document.getElementById('update-profile-button');
+            if (form && saveBtn) {
+                form.addEventListener('submit', function () {
+                    setTimeout(function () {
+                        saveBtn.classList.add('is-loading');
+                        saveBtn.disabled = true;
+                    }, 0);
+                });
+            }
+        })();
+    </script>
 }

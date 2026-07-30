@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -63,7 +63,7 @@ namespace NaPoso.Areas.Identity.Pages.Account
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Thank you for confirming your email change.";
+            StatusMessage = "Hvala Vam što ste potvrdili Vašu novu email adresu.";
             return Page();
         }
     }

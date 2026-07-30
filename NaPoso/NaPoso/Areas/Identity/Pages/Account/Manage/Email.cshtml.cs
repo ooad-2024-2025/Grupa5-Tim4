@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -126,8 +126,15 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Potvrdite promjenu emaila",
+                    $@"<p style=""font-family: Arial, Helvetica, sans-serif; color: #333333; font-size: 16px;"">
+                            Zatražili ste promjenu email adrese za vaš nalog.
+                       </p>
+                       <div style=""text-align: center; margin: 30px 0;"">
+                           <a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style=""display: inline-block; padding: 14px 28px; background-color: #e63950; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-family: Arial, Helvetica, sans-serif;"">
+                               Potvrdi Promjenu Emaila
+                           </a>
+                       </div>");
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
@@ -162,8 +169,15 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                "Potvrdite vaš email",
+                $@"<p style=""font-family: Arial, Helvetica, sans-serif; color: #333333; font-size: 16px;"">
+                        Zatražili ste link za potvrdu vaše email adrese.
+                   </p>
+                   <div style=""text-align: center; margin: 30px 0;"">
+                       <a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style=""display: inline-block; padding: 14px 28px; background-color: #e63950; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-family: Arial, Helvetica, sans-serif;"">
+                           Potvrdi Email
+                       </a>
+                   </div>");
 
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();

@@ -1,48 +1,46 @@
-﻿@model NaPoso.Models.Obavijest
+@model NaPoso.Models.Obavijest
 
 @{
-    ViewData["Title"] = "Uređivanje";
+    ViewData["Title"] = "Uredi obavijest";
 }
 
-<h1>Uredi</h1>
-
-<h4>Obavijest</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="KorisnikId" class="control-label"></label>
-                <input asp-for="KorisnikId" class="form-control" readonly />
-                <span asp-validation-for="KorisnikId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sadrzaj" class="control-label"></label>
-                <input asp-for="Sadrzaj" class="form-control" />
-                <span asp-validation-for="Sadrzaj" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VrijemeSlanja" class="control-label"></label>
-                <input asp-for="VrijemeSlanja" class="form-control" readonly />
-                <span asp-validation-for="VrijemeSlanja" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Tip" class="control-label"></label>
-                <select asp-for="Tip" asp-items="@(new SelectList(ViewData["TipList"] as IEnumerable<SelectListItem>, "Value", "Text"))" class="form-control" disabled></select>
-                <input type="hidden" asp-for="Tip" />
-                <span asp-validation-for="Tip" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Uredi" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div class="page-header">
+    <h1><i class="bi bi-pencil me-2"></i>Uredi obavijest</h1>
 </div>
 
-<div>
-    <a asp-action="Index">Nazad</a>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-group">
+                    <label asp-for="KorisnikId" class="form-label">Korisnik ID</label>
+                    <input asp-for="KorisnikId" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sadrzaj" class="form-label">Sadržaj</label>
+                    <input asp-for="Sadrzaj" class="form-control" />
+                    <span asp-validation-for="Sadrzaj" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="VrijemeSlanja" class="form-label">Vrijeme slanja</label>
+                    <input asp-for="VrijemeSlanja" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Tip" class="form-label">Tip</label>
+                    <select asp-for="Tip" asp-items="@(new SelectList(ViewData["TipList"] as IEnumerable<SelectListItem>, "Value", "Text"))" class="form-select" disabled></select>
+                    <input type="hidden" asp-for="Tip" />
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Spremi</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

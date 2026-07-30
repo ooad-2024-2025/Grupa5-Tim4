@@ -1,0 +1,93 @@
+/* ============================================
+   NaPoso Utilities
+   ============================================ */
+
+/* --- Text Utilities --- */
+.text-muted { color: var(--color-text-muted) !important; }
+.text-accent { color: var(--color-accent) !important; }
+.text-danger { color: var(--color-danger) !important; font-size: var(--text-small); }
+
+/* --- Page Headers --- */
+.page-header-danger h1 {
+  color: var(--color-danger);
+}
+
+/* --- Form Hint --- */
+.form-hint {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+  line-height: var(--leading-normal);
+}
+
+/* --- Button Modifiers --- */
+.btn:disabled, .btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* --- Notification Card --- */
+.notification-card {
+  border-left: 4px solid var(--color-accent);
+}
+
+.notification-card-read {
+  border-left-color: var(--color-border);
+  opacity: 0.7;
+}
+
+.notification-title {
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.notification-badge-inline {
+  margin-left: 6px;
+}
+
+/* --- Chat Utilities --- */
+.chat-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
+  flex-shrink: 0;
+}
+
+.chat-list-item {
+  cursor: pointer;
+}
+
+.chat-list-item:hover {
+  border-color: var(--color-accent-subtle);
+  box-shadow: var(--shadow-md);
+}
+
+.chat-list-name {
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.chat-list-preview {
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Stat Modifiers --- */
+.stat-card .stat-value-success {
+  color: var(--color-success);
+}
+
+.stat-card .stat-value-coral {
+  color: var(--color-coral);
+}

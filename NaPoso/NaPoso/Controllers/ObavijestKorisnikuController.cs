@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NaPoso.Constants;
 using NaPoso.Data;
 using NaPoso.Models;
 
 namespace NaPoso.Controllers
 {
-    [Authorize(Roles = "Admin,Klijent,Radnik")]
+    [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
     public class ObavijestKorisnikuController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,14 +24,14 @@ namespace NaPoso.Controllers
         }
 
         // GET: ObavijestKorisniku
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Index()
         {
             return View(await _context.ObavijestKorisniku.ToListAsync());
         }
 
         // GET: ObavijestKorisniku/MyNotifications
-        [Authorize(Roles = "Admin,Klijent,Radnik")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         public async Task<IActionResult> MyNotifications()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -44,7 +45,7 @@ namespace NaPoso.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Klijent,Radnik")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkAsRead(int id)
         {
@@ -63,7 +64,7 @@ namespace NaPoso.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Klijent,Radnik")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkAllAsRead()
         {
@@ -84,7 +85,7 @@ namespace NaPoso.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Klijent,Radnik")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearNotification(int id)
         {
@@ -103,7 +104,7 @@ namespace NaPoso.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Klijent,Radnik")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearAllNotifications()
         {
@@ -120,7 +121,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: ObavijestKorisniku/Details/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -140,7 +141,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: ObavijestKorisniku/Create
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public IActionResult Create()
         {
             return View();
@@ -149,7 +150,7 @@ namespace NaPoso.Controllers
         // POST: ObavijestKorisniku/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Create([Bind("Id,KorisnikId")] ObavijestKorisniku obavijestKorisniku)
         {
             if (ModelState.IsValid)
@@ -162,7 +163,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: ObavijestKorisniku/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -181,7 +182,7 @@ namespace NaPoso.Controllers
         // POST: ObavijestKorisniku/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,KorisnikId")] ObavijestKorisniku obavijestKorisniku)
         {
             if (id != obavijestKorisniku.Id)
@@ -198,7 +199,7 @@ namespace NaPoso.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ObavijestKorisnikuExists(obavijestKorisniku.Id))
+                    if (!await ObavijestKorisnikuExistsAsync(obavijestKorisniku.Id))
                     {
                         return NotFound();
                     }
@@ -213,7 +214,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: ObavijestKorisniku/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -234,7 +235,7 @@ namespace NaPoso.Controllers
         // POST: ObavijestKorisniku/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var obavijestKorisniku = await _context.ObavijestKorisniku.FindAsync(id);
@@ -247,13 +248,13 @@ namespace NaPoso.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ObavijestKorisnikuExists(int id)
+        private async Task<bool> ObavijestKorisnikuExistsAsync(int id)
         {
-            return _context.ObavijestKorisniku.Any(e => e.Id == id);
+            return await _context.ObavijestKorisniku.AnyAsync(e => e.Id == id);
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Klijent,Radnik")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkAsReadAjax(int id)
         {

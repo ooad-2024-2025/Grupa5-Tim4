@@ -1,0 +1,111 @@
+@model IEnumerable<NaPoso.Models.Recenzija>
+@{
+    ViewData["Title"] = "Profil radnika";
+    var radnik = ViewBag.Radnik as NaPoso.Models.Korisnik;
+    var rating = (double)ViewBag.ProsjecnaOcjena;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><i class="bi bi-person-badge me-2"></i>Profil radnika</h1>
+        <p class="lead">Detaljan pregled radnika i prethodnih recenzija</p>
+    </div>
+    <a href="javascript:history.back()" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+</div>
+
+@if (radnik == null)
+{
+    <div class="alert alert-danger">Radnik nije pronađen.</div>
+}
+else
+{
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="content-card text-center shadow-sm">
+                <div class="display-1 mb-3" style="color: var(--brand-primary-light);">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <h3 class="mb-1">@radnik.Ime @radnik.Prezime</h3>
+                <p class="text-muted mb-2">@radnik.Email</p>
+                @if (!string.IsNullOrEmpty(radnik.PhoneNumber))
+                {
+                    <p class="text-muted mb-3"><i class="bi bi-telephone-fill me-1"></i>@radnik.PhoneNumber</p>
+                }
+                
+                @if (radnik.Verified)
+                {
+                    <span class="badge bg-success px-3 py-2 mb-3 fs-6"><i class="bi bi-patch-check-fill me-1"></i>Verifikovan nalog</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary px-3 py-2 mb-3 fs-6"><i class="bi bi-shield-x me-1"></i>Nije verifikovan</span>
+                }
+                
+                <div class="mt-4 pt-3 border-top">
+                    <h5 class="text-muted text-uppercase" style="font-size: var(--text-caption); letter-spacing: 0.05em;">Prosječna ocjena</h5>
+                    <div class="display-4 fw-bold text-accent">
+                        @(rating > 0 ? rating.ToString("0.0") : "-")
+                    </div>
+                    <div class="fs-4" style="color: var(--brand-accent);">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Math.Round(rating))
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star"></i>
+                            }
+                        }
+                    </div>
+                    <div class="text-muted mt-1" style="font-size: var(--text-small);">Na osnovu @Model.Count() recenzija</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="content-card shadow-sm h-100">
+                <h3 class="mb-4"><i class="bi bi-card-text me-2"></i>Klijentske recenzije</h3>
+                
+                @if (!Model.Any())
+                {
+                    <div class="text-center p-5 text-muted bg-light rounded-3">
+                        <i class="bi bi-inbox fs-1 mb-3 d-block text-secondary"></i>
+                        <p class="mb-0">Ovaj radnik trenutno nema nijednu recenziju.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush gap-3">
+                        @foreach (var recenzija in Model)
+                        {
+                            var klijentName = ViewBag.ClientNames != null && ((Dictionary<string, string>)ViewBag.ClientNames).ContainsKey(recenzija.KlijentId) ? ((Dictionary<string, string>)ViewBag.ClientNames)[recenzija.KlijentId] : "Nepoznat klijent";
+                            <div class="list-group-item p-4 border rounded-3 bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="fw-bold fs-5">
+                                        <i class="bi bi-person-circle me-2" style="color: var(--brand-primary-light);"></i>@klijentName
+                                    </div>
+                                    <div class="fs-5" style="color: var(--brand-accent);">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= recenzija.Ocjena)
+                                            {
+                                                <i class="bi bi-star-fill"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star"></i>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-light" style="font-size: var(--text-body); line-height: 1.6;">@recenzija.Sadrzaj</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

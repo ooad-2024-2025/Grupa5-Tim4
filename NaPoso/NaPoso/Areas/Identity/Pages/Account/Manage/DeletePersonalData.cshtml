@@ -1,31 +1,44 @@
-﻿@page
+@page
 @model DeletePersonalDataModel
 @{
-    ViewData["Title"] = "Delete Personal Data";
+    ViewData["Title"] = "Brisanje ličnih podataka";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h3>@ViewData["Title"]</h3>
-
-<div class="alert alert-warning" role="alert">
-    <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-    </p>
+<div class="page-header">
+    <h1><i class="bi bi-trash me-2" style="color: var(--color-danger);"></i>@ViewData["Title"]</h1>
 </div>
 
-<div>
-    <form id="delete-user" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-        @if (Model.RequirePassword)
-        {
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Please enter your password." />
-                <label asp-for="Input.Password" class="form-label"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-        }
-        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete data and close my account</button>
-    </form>
+<div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Brisanje podataka će trajno ukloniti vaš račun, što se ne može oporaviti.</strong>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <form id="delete-user" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                @if (Model.RequirePassword)
+                {
+                    <div class="form-group">
+                        <label asp-for="Input.Password" class="form-label">Lozinka</label>
+                        <div class="password-wrapper">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Unesite lozinku za potvrdu" />
+                            <button type="button" class="password-toggle" aria-label="Prikaži lozinku" tabindex="0">
+                                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                }
+                <button class="btn btn-danger" type="submit">
+                    <i class="bi bi-trash me-1"></i>Obriši podatke i zatvori račun
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

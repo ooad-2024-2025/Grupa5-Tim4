@@ -1,0 +1,35 @@
+name: Mutation Tests (Non-blocking)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  mutation-tests:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Non-blocking — informational only
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      
+      - name: Install Stryker
+        run: dotnet tool install -g stryker.tool
+      
+      - name: Run Stryker
+        run: stryker --dashboard-url-off
+        working-directory: NaPoso/NaPoso.Tests
+        continue-on-error: true
+      
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-report
+          path: NaPoso/NaPoso.Tests/StrykerOutput/
+          retention-days: 30

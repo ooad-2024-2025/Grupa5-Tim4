@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace NaPoso.Enums
@@ -17,9 +17,8 @@ namespace NaPoso.Enums
             Aktivan = 1,
             Neaktivan = 0,
             Prihvacen = 2,
-            Odbijen = 3,
-            Placen = 4
-
+            Placen = 4,
+            Zavrsen = 5
         }
 
         public enum Obavjestenje

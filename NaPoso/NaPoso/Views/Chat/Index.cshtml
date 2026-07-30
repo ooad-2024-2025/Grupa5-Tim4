@@ -1,40 +1,61 @@
-﻿@model List<NaPoso.Models.Chat>
+@model List<NaPoso.Models.Chat>
 @using Microsoft.AspNetCore.Identity
 @using NaPoso.Models
-@inject UserManager<Korisnik> UserManager // Inject UserManager
+@inject UserManager<Korisnik> UserManager
 
 @{
     ViewData["Title"] = "Razgovori";
-    var currentUserId = UserManager.GetUserId(User); // Dobij ID trenutnog korisnika
+    var currentUserId = UserManager.GetUserId(User);
 }
 
-<h2>Razgovori</h2>
+<div class="page-header">
+    <h1><i class="bi bi-chat-dots me-2"></i>Razgovori</h1>
+    <p class="lead">Vaši aktivni razgovori</p>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Nemate započetih razgovora.</p>
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-chat"></i></div>
+        <h3>Nemate započetih razgovora</h3>
+        <p>Razgovori će se pojaviti ovdje kada počnete komunicirati sa drugim korisnicima.</p>
+    </div>
 }
 else
 {
-    <ul class="list-group">
+    <div class="row g-3">
         @foreach (var chat in Model)
         {
             var drugiKorisnik = chat.Korisnik1Id == currentUserId ? chat.Korisnik2 : chat.Korisnik1;
 
             if (drugiKorisnik != null && chat.Oglas != null)
             {
-                <li class="list-group-item">
-                    <a asp-action="Poruke" asp-route-id="@chat.Id">
-                        <strong>@drugiKorisnik.Ime @drugiKorisnik.Prezime</strong> - Oglas: @chat.Oglas.Naslov
+                <div class="col-md-6 col-lg-4">
+                    <a asp-action="Poruke" asp-route-id="@chat.Id" class="text-decoration-none">
+                        <div class="content-card chat-list-item">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="chat-avatar">
+                                    @(drugiKorisnik.Ime?.FirstOrDefault() ?? '?')
+                                </div>
+                                <div style="min-width: 0;">
+                                    <div class="chat-list-name">@drugiKorisnik.Ime @drugiKorisnik.Prezime</div>
+                                    <div class="chat-list-preview">
+                                        <i class="bi bi-megaphone me-1"></i>@chat.Oglas.Naslov
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </a>
-                </li>
+                </div>
             }
             else
             {
-                <li class="list-group-item text-muted">
-                    Razgovor sa nepoznatim korisnikom ili oglasom (ID: @chat.Id)
-                </li>
+                <div class="col-md-6 col-lg-4">
+                    <div class="content-card text-muted" style="font-size: var(--text-small);">
+                        Razgovor sa nepoznatim korisnikom (ID: @chat.Id)
+                    </div>
+                </div>
             }
         }
-    </ul>
+    </div>
 }

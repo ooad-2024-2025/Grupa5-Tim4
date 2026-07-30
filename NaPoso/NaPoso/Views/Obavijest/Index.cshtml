@@ -1,50 +1,53 @@
-﻿@model IEnumerable<NaPoso.Models.Obavijest>
+@model IEnumerable<NaPoso.Models.Obavijest>
 
 @{
     ViewData["Title"] = "Sve obavijesti";
 }
 
-<h1>Sve obavijesti</h1>
+<div class="page-header">
+    <h1><i class="bi bi-bell me-2"></i>Sve obavijesti</h1>
+    <p class="lead">Pregled svih obavijesti na platformi</p>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.KorisnikId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sadrzaj)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VrijemeSlanja)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tip)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.KorisnikId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sadrzaj)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VrijemeSlanja)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tip)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-            </td>
-        </tr>
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-bell"></i></div>
+        <h3>Nema obavijesti</h3>
+        <p>Obavijesti će se pojaviti ovdje kada budu dostupne.</p>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Korisnik</th>
+                    <th>Sadržaj</th>
+                    <th>Vrijeme slanja</th>
+                    <th>Tip</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><code style="font-size: var(--text-caption);">@item.KorisnikId</code></td>
+                        <td>@item.Sadrzaj</td>
+                        <td>@item.VrijemeSlanja.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td><span class="badge bg-info">@item.Tip</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-ghost btn-sm"><i class="bi bi-pencil me-1"></i>Uredi</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-ghost btn-sm"><i class="bi bi-eye me-1"></i>Detalji</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-ghost btn-sm text-danger"><i class="bi bi-trash me-1"></i>Obriši</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

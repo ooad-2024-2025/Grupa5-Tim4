@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using NaPoso.Constants;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -166,9 +167,19 @@ namespace NaPoso.Areas.Identity.Pages.Account
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
-                    await _userManager.AddToRoleAsync(user, Input.Uloga ?? "Klijent");
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _userManager.AddToRoleAsync(user, Input.Uloga ?? RoleConstants.Klijent);
+                    await _emailSender.SendEmailAsync(Input.Email, "Potvrdite vaš email",
+                        $@"<p style=""font-family: Arial, Helvetica, sans-serif; color: #333333; font-size: 16px;"">
+                            Dobrodošli na NaPos'o platformu!
+                       </p>
+                       <div style=""text-align: center; margin: 30px 0;"">
+                           <a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style=""display: inline-block; padding: 14px 28px; background-color: #e63950; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-family: Arial, Helvetica, sans-serif;"">
+                               Potvrdi Email
+                           </a>
+                       </div>
+                       <p style=""font-family: Arial, Helvetica, sans-serif; color: #333333; font-size: 16px;"">
+                           Molimo vas da potvrdite vašu email adresu klikom na dugme iznad.
+                       </p>");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

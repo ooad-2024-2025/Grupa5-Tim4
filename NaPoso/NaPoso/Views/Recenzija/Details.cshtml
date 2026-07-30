@@ -1,30 +1,31 @@
-﻿@model NaPoso.Models.Recenzija
+@model NaPoso.Models.Recenzija
 
 @{
-    ViewData["Title"] = "Detalji";
+    ViewData["Title"] = "Detalji recenzije";
 }
 
-<h1>Detalji</h1>
-
-<div>
-    <h4>Recenzija</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ocjena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ocjena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sadrzaj)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sadrzaj)
-        </dd>
-    </dl>
+<div class="page-header">
+    <h1><i class="bi bi-info-circle me-2"></i>Detalji recenzije</h1>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Uredi</a> |
-    <a asp-action="Index">Nazad</a>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Ocjena</dt>
+                <dd class="col-sm-9"><strong class="text-accent" style="font-size: var(--text-h3);">@Model.Ocjena / 5</strong></dd>
+
+                <dt class="col-sm-3">Sadržaj</dt>
+                <dd class="col-sm-9">@Model.Sadrzaj</dd>
+            </dl>
+        </div>
+
+        <div class="d-flex gap-3 mt-4">
+            @if (User.IsInRole(NaPoso.Constants.RoleConstants.Admin))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil me-1"></i>Uredi</a>
+            }
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
+        </div>
+    </div>
 </div>

@@ -1,37 +1,46 @@
-﻿@page
+@page
 @model LoginModel
 
 @{
     ViewData["Title"] = "Prijava";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <form id="account" method="post">
-                <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Input.Email" class="form-label">Email</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="auth-icon"><i class="bi bi-briefcase-fill"></i></h1>
+        <h1>Prijava</h1>
+        <p class="lead">Dobrodošli nazad</p>
+
+        <form id="account" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="form-group">
+                <label asp-for="Input.Email" class="form-label">Email adresa</label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="ime@primjer.com" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.Password" class="form-label">Lozinka</label>
+                <div class="password-wrapper">
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Unesite lozinku" />
+                    <button type="button" class="password-toggle" aria-label="Prikaži lozinku" tabindex="0">
+                        <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
                 </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password" class="form-label">Lozinka</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Prijavi se</button>
-                </div>
-                <div>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Novi ste?</a>
-                    </p>
-                </div>
-            </form>
-        </section>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <button id="login-submit" type="submit" class="w-100 btn btn-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Prijavi se
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <p class="mt-4 mb-2"><a asp-page="./ForgotPassword">Zaboravili ste lozinku?</a></p>
+            <p class="mb-0">Nemate račun? <a asp-page="./Register">Registrujte se</a></p>
+        </div>
     </div>
 </div>
 

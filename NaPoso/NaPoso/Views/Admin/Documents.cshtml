@@ -1,23 +1,65 @@
-﻿@model List<NaPoso.Models.DokumentiKorisnika>
+@model List<NaPoso.Models.DokumentiKorisnika>
 
-<h2>Svi dokumenti korisnika</h2>
+@{
+    ViewData["Title"] = "Dokumenti";
+}
 
-<ul>
-    @foreach (var doc in Model)
-    {
-        <li>
-            <a href="@Url.Content("~/documents/" + doc.FileName)" target="_blank">@doc.FileName</a>
-			- Email: @doc.Korisnik?.Email ; Ime: @doc.Korisnik?.Ime ; Prezime: @doc.Korisnik?.Prezime
-            <form asp-controller="Admin" asp-action="ApproveDocument" method="post" style="display:inline;">
-                <input type="hidden" name="fileName" value="@doc.FileName" />
-                <button type="submit" class="btn btn-success">Prihvati</button>
-            </form>
-            <form asp-controller="Admin" asp-action="DeleteDocument" method="post" style="display:inline;">
-                <input type="hidden" name="fileName" value="@doc.FileName" />
-                <button type="submit" class="btn btn-danger">Odbij</button>
-            </form>
-            <div></div>
-        </li>
+<div class="page-header">
+    <h1><i class="bi bi-file-earmark-text me-2"></i>Dokumenti korisnika</h1>
+    <p class="lead">Pregledajte i verificirajte dokumente</p>
+</div>
 
-    }
-</ul>
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-folder2-open"></i></div>
+        <h3>Nema dokumenata za pregled</h3>
+        <p>Kada korisnici pošalju dokumente, oni će se pojaviti ovdje.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var doc in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="content-card">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div>
+                            <h4 class="card-title">
+                                <i class="bi bi-file-earmark me-2"></i>@doc.FileName
+                            </h4>
+                            <p class="form-hint">
+                                @doc.Korisnik?.Email
+                            </p>
+                            @if (!string.IsNullOrEmpty(doc.Korisnik?.Ime))
+                            {
+                                <p class="card-text">
+                                    @doc.Korisnik.Ime @doc.Korisnik.Prezime
+                                </p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("ViewDocument", "Admin", new { fileName = doc.FileName })" target="_blank" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-eye me-1"></i>Pregledaj
+                        </a>
+                        <form asp-controller="Admin" asp-action="ApproveDocument" method="post" class="d-inline">
+                            <input type="hidden" name="fileName" value="@doc.FileName" />
+                            <button type="submit" class="btn btn-success btn-sm fw-bold">
+                                <i class="bi bi-check-lg me-1"></i>Prihvati
+                            </button>
+                        </form>
+                        <form asp-controller="Admin" asp-action="DeleteDocument" method="post" class="d-inline">
+                            <input type="hidden" name="fileName" value="@doc.FileName" />
+                            <button type="submit" class="btn btn-danger btn-sm text-white fw-bold" onclick="return confirm('Jeste li sigurni da želite odbiti ovaj dokument?')">
+                                <i class="bi bi-x-lg me-1"></i>Odbij
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,4 +1,4 @@
-﻿// Models/Poruka.cs
+// Models/Poruka.cs
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,6 +19,6 @@ namespace NaPoso.Models
         [Required]
         public string Tekst { get; set; }
 
-        public DateTime PoslanoAt { get; set; } = DateTime.Now;
+        public DateTime PoslanoAt { get; set; } = DateTime.UtcNow;
     }
 }

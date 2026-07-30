@@ -1,77 +1,50 @@
-﻿@model IEnumerable<NaPoso.Models.Oglas>
+@model IEnumerable<NaPoso.Models.Oglas>
 
 @{
     ViewData["Title"] = "Svi oglasi";
 }
 
-<h1>Svi oglasi</h1>
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><i class="bi bi-megaphone me-2"></i>Svi oglasi</h1>
+        <p class="lead">Pregled svih oglasa na platformi</p>
+    </div>
+    <a asp-action="KreirajPosao" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Kreiraj posao</a>
+</div>
 
-<p>
-    <a asp-action="KreirajPosao">Kreiraj Posao</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.KlijentId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RadnikId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Opis)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Lokacija)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipPosla)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CijenaPosla)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Naslov)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.KlijentId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RadnikId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Opis)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lokacija)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipPosla)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CijenaPosla)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Naslov)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Uredi</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalji</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Obriši</a>
-            </td>
-        </tr>
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+        <h3>Nema oglasa</h3>
+        <p>Kreirajte prvi oglas na platformi.</p>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                    <div class="content-card h-100 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">@item.Naslov</h5>
+                            <span class="badge @(item.Status == NaPoso.Enums.Enums.Status.Aktivan ? "bg-success" : item.Status == NaPoso.Enums.Enums.Status.Placen ? "bg-primary" : "bg-secondary")">
+                                @item.Status
+                            </span>
+                        </div>
+                        <p class="card-text flex-grow-1">@item.Opis</p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
+                            <div>
+                                <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>@LokacijaHelper.UGradu(item.Lokacija)</span>
+                                <span class="text-muted small ms-3"><i class="bi bi-briefcase me-1"></i>@item.TipPosla</span>
+                            </div>
+                            <strong class="text-accent">@item.CijenaPosla KM</strong>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

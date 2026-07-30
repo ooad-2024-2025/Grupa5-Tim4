@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NaPoso.Constants;
 using NaPoso.Data;
 using NaPoso.Models;
 
 namespace NaPoso.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = RoleConstants.Admin)]
     public class OglasKorisnikController : Controller
     {
         
@@ -105,7 +106,7 @@ namespace NaPoso.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OglasKorisnikExists(oglasKorisnik.Id))
+                    if (!await OglasKorisnikExistsAsync(oglasKorisnik.Id))
                     {
                         return NotFound();
                     }
@@ -152,9 +153,9 @@ namespace NaPoso.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OglasKorisnikExists(int id)
+        private async Task<bool> OglasKorisnikExistsAsync(int id)
         {
-            return _context.OglasKorisnik.Any(e => e.Id == id);
+            return await _context.OglasKorisnik.AnyAsync(e => e.Id == id);
         }
     }
 }

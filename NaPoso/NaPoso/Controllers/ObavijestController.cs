@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NaPoso.Constants;
 using NaPoso.Data;
 using NaPoso.Models;
 
@@ -16,20 +17,26 @@ namespace NaPoso.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Korisnik> _userManager;
-        public ObavijestController(ApplicationDbContext context)
+        public ObavijestController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Obavijest
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Obavijest.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+            var obavijesti = await _context.Obavijest
+                .Where(o => o.KorisnikId == userId)
+                .OrderByDescending(o => o.VrijemeSlanja)
+                .ToListAsync();
+            return View(obavijesti);
         }
 
         // GET: Obavijest/Details/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -70,10 +77,10 @@ namespace NaPoso.Controllers
         }
 
         // GET: Obavijest/Edit/5
-        [Authorize(Roles = "Admin")]
-        public IActionResult Edit(int id)
+        [Authorize(Roles = RoleConstants.Admin)]
+        public async Task<IActionResult> Edit(int id)
         {
-            var obavijest = _context.Obavijest.Find(id);
+            var obavijest = await _context.Obavijest.FindAsync(id);
             if (obavijest == null)
                 return NotFound();
 
@@ -90,7 +97,7 @@ namespace NaPoso.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,KorisnikId,Sadrzaj,VrijemeSlanja,Tip")] Obavijest obavijest)
         {
             if (id != obavijest.Id)
@@ -107,7 +114,7 @@ namespace NaPoso.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ObavijestExists(obavijest.Id))
+                    if (!await ObavijestExistsAsync(obavijest.Id))
                     {
                         return NotFound();
                     }
@@ -122,7 +129,7 @@ namespace NaPoso.Controllers
         }
 
         // GET: Obavijest/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,7 +149,7 @@ namespace NaPoso.Controllers
 
         // POST: Obavijest/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -156,9 +163,9 @@ namespace NaPoso.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ObavijestExists(int id)
+        private async Task<bool> ObavijestExistsAsync(int id)
         {
-            return _context.Obavijest.Any(e => e.Id == id);
+            return await _context.Obavijest.AnyAsync(e => e.Id == id);
         }
         
     }

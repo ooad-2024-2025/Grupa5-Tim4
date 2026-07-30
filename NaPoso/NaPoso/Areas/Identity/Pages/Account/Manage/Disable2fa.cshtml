@@ -1,25 +1,33 @@
-﻿@page
+@page
 @model Disable2faModel
 @{
-    ViewData["Title"] = "Disable two-factor authentication (2FA)";
+    ViewData["Title"] = "Onemogući dvofaktorsku autentifikaciju (2FA)";
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
 
-<partial name="_StatusMessage" for="StatusMessage" />
-<h3>@ViewData["Title"]</h3>
+<div class="page-header">
+    <h1><i class="bi bi-shield-x me-2" style="color: var(--color-danger);"></i>@ViewData["Title"]</h1>
+</div>
 
-<div class="alert alert-warning" role="alert">
-    <p>
-        <strong>This action only disables 2FA.</strong>
-    </p>
-    <p>
-        Disabling 2FA does not change the keys used in authenticator apps. If you wish to change the key
-        used in an authenticator app you should <a asp-page="./ResetAuthenticator">reset your authenticator keys.</a>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Ova akcija samo onemogućuje 2FA.</strong>
+    <p style="margin-top: var(--space-2); margin-bottom: 0;">
+        Onemogućavanje 2FA ne mijenja ključeve korištene u autentikacionim aplikacijama.
+        Ako želite promijeniti ključ, trebali biste <a asp-page="./ResetAuthenticator">resetovati ključeve autentikatora</a>.
     </p>
 </div>
 
-<div>
-    <form method="post">
-        <button class="btn btn-danger" type="submit">Disable 2FA</button>
-    </form>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <form method="post">
+                <button class="btn btn-danger" type="submit">
+                    <i class="bi bi-shield-x me-1"></i>Onemogući 2FA
+                </button>
+            </form>
+        </div>
+    </div>
 </div>

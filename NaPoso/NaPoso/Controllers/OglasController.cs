@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,37 +9,53 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NaPoso.Constants;
 using NaPoso.Data;
 using NaPoso.Models;
-using SQLitePCL;
+using NaPoso.Services;
 using static NaPoso.Enums.Enums;
 using Microsoft.AspNetCore.Identity;
-using NaPoso.Migrations;
 using Korisnik = NaPoso.Models.Korisnik;
 
 
 namespace NaPoso.Controllers
 {
+    [ApiVersion("1.0")]
+    [Authorize]
     public class OglasController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IOglasService _oglasService;
         private readonly UserManager<Korisnik> _userManager;
-        public OglasController(UserManager<Korisnik> userManager, ApplicationDbContext context)
-        {
-            _context = context;
-            _userManager = userManager;
+        private readonly ApplicationDbContext _context;
+        private readonly PaymentTransactionService _paymentService;
+        private readonly IStripeConnectService _stripeConnectService;
+        private readonly ILogger<OglasController> _logger;
 
+        public OglasController(
+            UserManager<Korisnik> userManager, 
+            IOglasService oglasService, 
+            ApplicationDbContext context,
+            PaymentTransactionService paymentService,
+            IStripeConnectService stripeConnectService,
+            ILogger<OglasController> logger)
+        {
+            _oglasService = oglasService;
+            _userManager = userManager;
+            _context = context;
+            _paymentService = paymentService;
+            _stripeConnectService = stripeConnectService;
+            _logger = logger;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         // GET: Oglas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Oglas.ToListAsync());
+            return View(await _oglasService.GetAllOglasAsync());
         }
 
         // GET: Oglas/Details/5
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent + "," + RoleConstants.Radnik)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,34 +63,34 @@ namespace NaPoso.Controllers
                 return NotFound();
             }
 
-            var oglas = await _context.Oglas
-                .FirstOrDefaultAsync(m => m.Id == id);
-            var korisnikId = _userManager.GetUserId(User);
-            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
-            {
-                return Forbid();
-            }
+            var oglas = await _oglasService.GetOglasByIdAsync(id.Value);
             if (oglas == null)
             {
                 return NotFound();
+            }
+
+            if (User.IsInRole(RoleConstants.Radnik))
+            {
+                var radnikId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var vecPrijavljen = await _context.OglasKorisnik
+                    .AnyAsync(ok => ok.OglasId == id.Value && ok.KorisnikId == radnikId);
+                ViewBag.VecPrijavljen = vecPrijavljen;
             }
 
             return View(oglas);
         }
 
         // GET: Oglas/Create
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
         public IActionResult Create()
         {
             return View();
         }
 
         //POST: Oglas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
         public async Task<IActionResult> Create([Bind("Opis,Lokacija,TipPosla,CijenaPosla,Naslov")] Oglas oglas)
         {
             if (!ModelState.IsValid)
@@ -82,7 +98,7 @@ namespace NaPoso.Controllers
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 foreach (var error in errors)
                 {
-                    Console.WriteLine(error);  // Ili logiraj negdje
+                    Console.WriteLine(error);
                 }
                 return View(oglas);
             }
@@ -91,22 +107,30 @@ namespace NaPoso.Controllers
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 if (userId == null)
                 {
-                    // Nema usera, vrati neki error ili redirect na login
                     return Unauthorized();
                 }
-                oglas.KlijentId = userId;
-                oglas.Status = Status.Aktivan;
-                oglas.RadnikId = null;
 
-                _context.Add(oglas);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(OglasiKlijenta));
+                string autorUloga;
+                string redirectAkcija;
+                if (User.IsInRole(RoleConstants.Admin))
+                {
+                    autorUloga = RoleConstants.Klijent;
+                    redirectAkcija = nameof(Index);
+                }
+                else
+                {
+                    autorUloga = RoleConstants.Klijent;
+                    redirectAkcija = nameof(OglasiKlijenta);
+                }
+
+                await _oglasService.CreateOglasAsync(oglas, userId, autorUloga);
+                return RedirectToAction(redirectAkcija);
             }
             return View(oglas);
         }
 
         // GET: Oglas/Edit/5
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -114,35 +138,37 @@ namespace NaPoso.Controllers
                 return NotFound();
             }
 
-            var oglas = await _context.Oglas.FindAsync(id);
-            var korisnikId = _userManager.GetUserId(User);
-            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
-            {
-                return Forbid();
-            }
+            var oglas = await _oglasService.GetOglasByIdAsync(id.Value);
             if (oglas == null)
             {
                 return NotFound();
             }
+
+            var korisnikId = _userManager.GetUserId(User);
+            bool jeVlasnik = oglas.KlijentId == korisnikId || oglas.RadnikId == korisnikId;
+            if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
+            {
+                return Forbid();
+            }
+
             return View(oglas);
         }
 
         // POST: Oglas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Opis,Lokacija,TipPosla,CijenaPosla,Naslov,Status")] Oglas oglas)
         {
-            var oglasIzBaze = await _context.Oglas.FindAsync(id);
+            var oglasIzBaze = await _oglasService.GetOglasByIdAsync(id);
             if (oglasIzBaze == null)
             {
                 return NotFound();
             }
 
             var korisnikId = _userManager.GetUserId(User);
-            if (oglasIzBaze.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            bool jeVlasnik = oglasIzBaze.KlijentId == korisnikId || oglasIzBaze.RadnikId == korisnikId;
+            if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
             {
                 return Forbid();
             }
@@ -156,18 +182,11 @@ namespace NaPoso.Controllers
             {
                 try
                 {
-                    // Ažuriraj samo polja
-                    oglasIzBaze.Opis = oglas.Opis;
-                    oglasIzBaze.Lokacija = oglas.Lokacija;
-                    oglasIzBaze.TipPosla = oglas.TipPosla;
-                    oglasIzBaze.CijenaPosla = oglas.CijenaPosla;
-                    oglasIzBaze.Naslov = oglas.Naslov;
-
-                    await _context.SaveChangesAsync();
+                    await _oglasService.UpdateOglasAsync(id, oglas);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OglasExists(oglas.Id))
+                    if (!await _oglasService.OglasExistsAsync(oglas.Id))
                     {
                         return NotFound();
                     }
@@ -183,7 +202,7 @@ namespace NaPoso.Controllers
 
 
         // GET: Oglas/Delete/5
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -191,7 +210,7 @@ namespace NaPoso.Controllers
                 return NotFound();
             }
 
-            var oglas = await _context.Oglas.FirstOrDefaultAsync(m => m.Id == id);
+            var oglas = await _oglasService.GetOglasByIdAsync(id.Value);
 
             if (oglas == null)
             {
@@ -199,7 +218,8 @@ namespace NaPoso.Controllers
             }
 
             var korisnikId = _userManager.GetUserId(User);
-            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            bool jeVlasnik = oglas.KlijentId == korisnikId || oglas.RadnikId == korisnikId;
+            if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
             {
                 return Forbid();
             }
@@ -209,27 +229,27 @@ namespace NaPoso.Controllers
         // POST: Oglas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
 
-            var oglas = await _context.Oglas.FindAsync(id);
+            var oglas = await _oglasService.GetOglasByIdAsync(id);
             var korisnikId = _userManager.GetUserId(User);
 
-            if (oglas.KlijentId != korisnikId && !User.IsInRole("Admin"))
+            bool jeVlasnik = oglas?.KlijentId == korisnikId || oglas?.RadnikId == korisnikId;
+            if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
                 return Forbid();
 
             if (oglas != null)
             {
-                _context.Oglas.Remove(oglas);
-                await _context.SaveChangesAsync();
+                await _oglasService.DeleteOglasAsync(id);
             }
 
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole(RoleConstants.Admin))
             {
                 return RedirectToAction(nameof(Index));
             }
-            else if (User.IsInRole("Klijent"))
+            else if (User.IsInRole(RoleConstants.Klijent))
             {
                 return RedirectToAction("OglasiKlijenta");
             }
@@ -238,12 +258,169 @@ namespace NaPoso.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OglasExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
+        public async Task<IActionResult> Zavrsi(int id)
         {
-            return _context.Oglas.Any(e => e.Id == id);
+            var oglas = await _oglasService.GetOglasByIdAsync(id);
+            if (oglas == null)
+            {
+                return NotFound();
+            }
+
+            var korisnikId = _userManager.GetUserId(User);
+            bool jeVlasnik = oglas.KlijentId == korisnikId || oglas.RadnikId == korisnikId;
+            if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
+            {
+                return Forbid();
+            }
+
+            oglas.Status = Status.Zavrsen;
+            await _oglasService.UpdateOglasAsync(id, oglas);
+
+            // Ažuriraj status odabranog radnika (prijave) na Zavrsen
+            var oglasKorisnik = await _context.OglasKorisnik
+                .FirstOrDefaultAsync(ok => ok.OglasId == id && (ok.Status == Status.Prihvacen || ok.Status == Status.Placen));
+
+            if (oglasKorisnik != null)
+            {
+                oglasKorisnik.Status = Status.Zavrsen;
+                _context.OglasKorisnik.Update(oglasKorisnik);
+                
+                // Pronađi korisnika
+                var radnik = await _userManager.FindByIdAsync(oglasKorisnik.KorisnikId!);
+
+                // Payout automatizacija (samo za Klijenta koji vrsi placanje)
+                // Radnik ne moze inicirati payout; samo mijenja status oglasa kao zavrsen
+                var transaction = await _context.PaymentTransactions
+                    .FirstOrDefaultAsync(t => t.OglasId == id && t.Status == PaymentStatus.Paid);
+
+                if (transaction != null && User.IsInRole(RoleConstants.Klijent)
+                    && radnik != null && radnik.PayoutsEnabled && !string.IsNullOrEmpty(radnik.StripeConnectedAccountId))
+                {
+                    try
+                    {
+                        long osnovicaFeninga = (long)Math.Round(Convert.ToDecimal(oglas.CijenaPosla) * 100);
+                        if (osnovicaFeninga < 0) osnovicaFeninga = 0;
+                        if (osnovicaFeninga > transaction.Amount) osnovicaFeninga = transaction.Amount;
+                        var platformFee = (long)Math.Round(osnovicaFeninga * 0.10);
+                        var workerAmount = transaction.Amount - platformFee;
+
+                        var transfer = await _stripeConnectService.CreateTransferAsync(
+                            radnik.StripeConnectedAccountId,
+                            workerAmount,
+                            transaction.Currency,
+                            transaction.StripePaymentIntentId);
+
+                        if (transfer != null)
+                        {
+                            transaction.TransferId = transfer.Id;
+                        }
+                        
+                        transaction.Status = PaymentStatus.Released;
+                        transaction.PlatformFeeAmount = platformFee;
+                        transaction.WorkerUserId = radnik.Id;
+                        transaction.UpdatedAt = DateTime.UtcNow;
+
+                        _context.PaymentTransactions.Update(transaction);
+
+                        // Pošalji obavještenje
+                        var formattedAmount = $"{workerAmount / 100.0:F2} {transaction.Currency.ToUpper()}";
+                        _context.Obavijest.Add(new Obavijest
+                        {
+                            KorisnikId = radnik.Id,
+                            Sadrzaj = $"Klijent je označio posao \"{oglas.Naslov}\" kao završen. Iznos od {formattedAmount} je prebačen na vaš račun.",
+                            VrijemeSlanja = DateTime.UtcNow,
+                            Tip = Obavjestenje.DrugaObavjestenja
+                        });
+
+                        TempData["ToastMessage"] = $"Posao uspješno završen. Isplata od {formattedAmount} poslana radniku.";
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Automated payout failed for Oglas {OglasId}", id);
+                        TempData["ToastMessage"] = "Posao završen, ali isplata nije uspjela. Admin je obaviješten.";
+                    }
+                }
+                else
+                {
+                    // Dodaj obavijest za radnika iako nije Stripe
+                    if (radnik != null)
+                    {
+                        _context.Obavijest.Add(new Obavijest
+                        {
+                            KorisnikId = radnik.Id,
+                            Sadrzaj = $"Klijent je označio posao \"{oglas.Naslov}\" kao završen.",
+                            VrijemeSlanja = DateTime.UtcNow,
+                            Tip = Obavjestenje.DrugaObavjestenja
+                        });
+                    }
+                    TempData["ToastMessage"] = "Posao uspješno završen.";
+                }
+
+                // NAJVAŽNIJE: Spremi promjene na OglasKorisnik i transakciju UVIJEK
+                // (bez obzira da li je Stripe radio ili ne)
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                TempData["ToastMessage"] = "Posao uspješno završen.";
+            }
+
+            return RedirectToAction(nameof(OglasiKlijenta));
         }
-        
-        [Authorize(Roles = "Radnik")]
+
+        // ============================================================
+        // AKCIJA: MojiOglasi — samo Klijent i Admin mogu vidjeti svoje objave
+        // Koristi IOglasService.GetOglasByAutorIdAsync (KlijentId)
+        // ============================================================
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
+        public async Task<IActionResult> MojiOglasi(string filter = "Aktivni", string query = "")
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Koristi novu metodu data-efcore-agenta: autor = KlijentId ILI RadnikId
+            var oglasi = await _oglasService.GetOglasByAutorIdAsync(userId);
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                oglasi = oglasi.Where(o => o.Naslov != null && o.Naslov.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            var sviOriginal = oglasi.ToList();
+            var aktivniOriginal = sviOriginal.Where(o => o.Status != Status.Zavrsen && o.Status != Status.Neaktivan).ToList();
+            var zavrseniOriginal = sviOriginal.Where(o => o.Status == Status.Zavrsen).ToList();
+
+            if (filter == "Aktivni")
+            {
+                oglasi = aktivniOriginal;
+            }
+            else if (filter == "Zavrseni")
+            {
+                oglasi = zavrseniOriginal;
+            }
+            else
+            {
+                oglasi = sviOriginal;
+            }
+
+            ViewBag.CurrentFilter = filter;
+            ViewBag.CurrentQuery = query;
+            ViewBag.UkupnoSvih = sviOriginal.Count;
+            ViewBag.UkupnoAktivnih = aktivniOriginal.Count;
+            ViewBag.UkupnoZavrsenih = zavrseniOriginal.Count;
+
+            // Za Klijente koristi postojeći view (on sada radi univerzalno - "Moji oglasi" naslov)
+            if (User.IsInRole(RoleConstants.Klijent) || User.IsInRole(RoleConstants.Admin))
+            {
+                return View("OglasiKlijenta", oglasi);
+            }
+            // Za Radnike koristi isti view (neutralni naslov "Moji oglasi")
+            return View("OglasiKlijenta", oglasi);
+        }
+
+        [Authorize]
         public async Task<IActionResult> PrikazOglasa(string search, string lokacija, string tipPosla, string sort, int? minCijena, int? maxCijena)
         {
             if (minCijena.HasValue && (minCijena < 0 || minCijena > 9999999999999))
@@ -253,225 +430,180 @@ namespace NaPoso.Controllers
                 ModelState.AddModelError("maxCijena", "Maksimalna cijena mora biti između 0 i 9999999999999.");
 
 
-            var oglasi = from o in _context.Oglas
-                        join k in _context.Users on o.KlijentId equals k.Id
-                        where o.Status == Status.Aktivan && o.RadnikId == null
-                        select new VerifikovanView
-                        {
-                            Oglas = o,
-                            Verifikovan = k.Verified
-                        };
-
-            if (!string.IsNullOrEmpty(search))
-                oglasi = oglasi.Where(o => o.Oglas.Naslov.Contains(search) || o.Oglas.Opis.Contains(search));
-
-            if (!string.IsNullOrEmpty(lokacija))
-                oglasi = oglasi.Where(o => o.Oglas.Lokacija.Contains(lokacija));
-
-            if (!string.IsNullOrEmpty(tipPosla))
-                oglasi = oglasi.Where(o => o.Oglas.TipPosla == tipPosla);
-
-            if (minCijena.HasValue)
-                oglasi = oglasi.Where(o => o.Oglas.CijenaPosla >= minCijena.Value);
-
-            if (maxCijena.HasValue)
-                oglasi = oglasi.Where(o => o.Oglas.CijenaPosla <= maxCijena.Value);
-
-            oglasi = sort switch
-            {
-                "cijena_asc" => oglasi.OrderBy(o => o.Oglas.CijenaPosla),
-                "cijena_desc" => oglasi.OrderByDescending(o => o.Oglas.CijenaPosla),
-                _ => oglasi.OrderBy(o => o.Oglas.Naslov)
-            };
+            var oglasi = await _oglasService.SearchOglasiAsync(search, lokacija, tipPosla, sort, minCijena, maxCijena);
             var korisnikId = _userManager.GetUserId(User);
-            var prijavljeniOglasi = await _context.OglasKorisnik
-                .Where(x => x.KorisnikId == korisnikId)
-                .Select(x => x.OglasId)
-                .ToListAsync();
+            var prijavljeniOglasi = korisnikId != null
+                ? await _oglasService.GetPrijavljeniOglasiAsync(korisnikId)
+                : new List<int>();
 
             ViewBag.PrijavljeniOglasiId = prijavljeniOglasi;
-            return View(await oglasi.ToListAsync());
+            return View(oglasi);
         }
-        [Authorize(Roles = "Admin,Klijent")]
-        public async Task<IActionResult> OglasiKlijenta()
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
+        public async Task<IActionResult> OglasiKlijenta(string filter = "Aktivni", string query = "")
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var oglasi = await _context.Oglas
-                .Where(o => o.KlijentId == userId)
-                .ToListAsync();
+            var oglasi = await _oglasService.GetOglasByKlijentIdAsync(userId);
+            
+            if (!string.IsNullOrEmpty(query))
+            {
+                oglasi = oglasi.Where(o => o.Naslov != null && o.Naslov.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            var sviOriginal = oglasi.ToList();
+            var aktivniOriginal = sviOriginal.Where(o => o.Status != Status.Zavrsen && o.Status != Status.Neaktivan).ToList();
+            var zavrseniOriginal = sviOriginal.Where(o => o.Status == Status.Zavrsen).ToList();
+
+            if (filter == "Aktivni")
+            {
+                oglasi = aktivniOriginal;
+            }
+            else if (filter == "Zavrseni")
+            {
+                oglasi = zavrseniOriginal;
+            }
+            else
+            {
+                oglasi = sviOriginal;
+            }
+
+            ViewBag.CurrentFilter = filter;
+            ViewBag.CurrentQuery = query;
+            ViewBag.UkupnoSvih = sviOriginal.Count;
+            ViewBag.UkupnoAktivnih = aktivniOriginal.Count;
+            ViewBag.UkupnoZavrsenih = zavrseniOriginal.Count;
 
             return View(oglasi);
         }
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
         public async Task<IActionResult> PrijavljeniRadnici(int oglasId)
         {
-            // Prvo dohvatimo oglas i proverimo da li klijent koji gleda je vlasnik oglasa
-            var oglas = await _context.Oglas
-                .FirstOrDefaultAsync(o => o.Id == oglasId);
+            var prijave = await _oglasService.GetApplicantsForOglasAsync(oglasId, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if (prijave.Count == 0)
+            {
+                var oglas = await _oglasService.GetOglasByIdAsync(oglasId);
+                if (oglas == null)
+                    return NotFound();
 
-            if (oglas == null)
-                return NotFound();
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                bool jeVlasnik = oglas.KlijentId == userId || oglas.RadnikId == userId;
+                if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
+                    return Forbid();
+            }
 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (oglas.KlijentId != userId)
-                return Forbid();
-
-            // Dohvati prijave za taj oglas, ukljucujuci informacije o radniku (korisniku)
-            var prijave = await _context.OglasKorisnik
-                .Where(ok => ok.OglasId == oglasId)
-                .Include(ok => ok.Korisnik) // ako imas navigacionu property za korisnika
-                .ToListAsync();
+            var ratings = new Dictionary<string, double>();
+            foreach (var prijava in prijave)
+            {
+                var radnikId = prijava.KorisnikId;
+                var workerReviews = await _context.Recenzija.Where(r => r.RadnikId == radnikId).ToListAsync();
+                if (workerReviews.Any())
+                {
+                    ratings[radnikId] = workerReviews.Average(r => r.Ocjena);
+                }
+                else
+                {
+                    ratings[radnikId] = 0;
+                }
+            }
+            ViewBag.Ratings = ratings;
 
             return View(prijave);
         }
-        [Authorize(Roles = "Radnik")]
+        [Authorize(Roles = RoleConstants.Radnik)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> PrijaviRadnikaNaOglas(int oglasId)
         {
-            try
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                // First check if the job is still available
-                var oglas = await _context.Oglas
-                    .FirstOrDefaultAsync(o => o.Id == oglasId);
-
-                if (oglas == null || oglas.Status != Status.Aktivan || oglas.RadnikId != null)
-                {
-                    // Job is not available anymore
-                    return RedirectToAction("PrijavaGreska");
-                }
-
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                // Provjera da li se već prijavio
-                var postoji = await _context.OglasKorisnik
-                    .AnyAsync(ok => ok.OglasId == oglasId && ok.KorisnikId == userId);
-
-                if (!postoji)
-                {
-                    var prijava = new Models.OglasKorisnik
-                    {
-                        OglasId = oglasId,
-                        KorisnikId = userId,
-                        DatumPrijave = DateTime.Now,
-                        Status = Status.Aktivan
-                    };
-                    var obavijest = new Obavijest
-                    {
-                        KorisnikId = oglas.KlijentId, // ID klijenta
-                        Sadrzaj = $"Novi radnik se prijavio na vaš oglas: {oglas.Naslov}",
-                        VrijemeSlanja = DateTime.Now,
-                        Tip = Obavjestenje.DrugaObavjestenja
-                    };
-                    _context.OglasKorisnik.Add(prijava);
-                    _context.Obavijest.Add(obavijest);
-                    await _context.SaveChangesAsync();
-                }
-               
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("UspjesnaPrijava");
+                bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+                return isAjax ? Json(new { success = false, message = "Niste prijavljeni." }) : RedirectToAction("PrijavaGreska");
             }
-            catch (Exception ex)
+
+            var result = await _oglasService.ApplyToOglasAsync(oglasId, userId);
+            bool ajax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+            if (!result)
             {
-                // Log the exception
-                Console.WriteLine($"Error in PrijaviRadnikaNaOglas: {ex.Message}");
-                return RedirectToAction("PrijavaGreska");
+                return ajax
+                    ? Json(new { success = false, message = "Već ste prijavljeni na ovaj oglas ili prijava nije uspjela." })
+                    : RedirectToAction("PrijavaGreska");
             }
+
+            return ajax
+                ? Json(new { success = true, message = "Uspješno ste se prijavili na oglas." })
+                : RedirectToAction("UspjesnaPrijava");
         }
 
-        [Authorize(Roles = "Radnik")]
+        [Authorize(Roles = RoleConstants.Radnik)]
         public async Task<IActionResult> PrijaviSe(int oglasId)
         {
-            try
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
-                // First check if the job is still available
-                var oglas = await _context.Oglas
-                    .FirstOrDefaultAsync(o => o.Id == oglasId);
-
-                if (oglas == null || oglas.Status != Status.Aktivan || oglas.RadnikId != null)
-                {
-                    // Job is not available anymore
-                    return RedirectToAction("PrijavaGreska");
-                }
-
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                var prijava = new OglasKorisnik
-                {
-                    KorisnikId = userId,
-                    OglasId = oglasId,
-                    DatumPrijave = DateTime.Now,
-                    Status = Status.Aktivan
-                };
-
-                _context.OglasKorisnik.Add(prijava);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("UspjesnaPrijava");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in PrijaviSe: {ex.Message}");
                 return RedirectToAction("PrijavaGreska");
             }
+
+            var result = await _oglasService.ApplyToOglasAsync(oglasId, userId);
+            if (!result)
+            {
+                return RedirectToAction("PrijavaGreska");
+            }
+
+            return RedirectToAction("UspjesnaPrijava");
         }
 
 
-        [Authorize(Roles = "Admin,Klijent")]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Prihvati(int id)
         {
-            var prijava = await _context.OglasKorisnik
-    .Include(p => p.Oglas)
-    .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (prijava == null)
+            var prijava = await _context.OglasKorisnik.FindAsync(id);
+            if (prijava?.OglasId == null)
                 return NotFound();
 
-            prijava.Status = Status.Prihvacen;
-            var obavijest = new Obavijest
-            {
-                KorisnikId = prijava.KorisnikId,
-                Sadrzaj = $"Vaša prijava na oglas '{prijava.Oglas.Naslov}' je prihvaćena.",
-                VrijemeSlanja = DateTime.Now,
-                Tip = Obavjestenje.DrugaObavjestenja
-            };
-            _context.Obavijest.Add(obavijest);
+            var oglas = await _oglasService.GetOglasByIdAsync(prijava.OglasId.Value);
+            var userId = _userManager.GetUserId(User);
+            bool jeVlasnik = oglas?.KlijentId == userId || oglas?.RadnikId == userId;
+            if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
+                return Forbid();
 
-            await _context.SaveChangesAsync();
+            var result = await _oglasService.AcceptApplicationAsync(id);
+            if (!result)
+                return NotFound();
 
-            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId }); 
+            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava?.OglasId });
         }
-        [Authorize(Roles = "Admin,Klijent")]
+
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Odbij(int id)
         {
-            var prijava = await _context.OglasKorisnik
-                .Include(p => p.Oglas)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var prijava = await _context.OglasKorisnik.FindAsync(id);
+            if (prijava?.OglasId != null)
+            {
+                var oglas = await _oglasService.GetOglasByIdAsync(prijava.OglasId.Value);
+                bool jeVlasnik = oglas?.KlijentId == userId || oglas?.RadnikId == userId;
+                if (!jeVlasnik && !User.IsInRole(RoleConstants.Admin))
+                    return Forbid();
+            }
 
-            if (prijava == null || prijava.Oglas == null)
+            var result = await _oglasService.RejectApplicationAsync(id, userId);
+            if (!result)
                 return NotFound();
 
-            // Provjera da li trenutni korisnik ima pravo odbiti ovu prijavu
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (prijava.Oglas.KlijentId != userId)
-                return Forbid();
-            var obavijest = new Obavijest
-            {
-                KorisnikId = prijava.KorisnikId,
-                Sadrzaj = $"Vaša prijava na oglas '{prijava.Oglas.Naslov}' je odbijena.",
-                VrijemeSlanja = DateTime.Now,
-                Tip = Obavjestenje.DrugaObavjestenja
-            };
-            _context.Obavijest.Add(obavijest);
-            prijava.Status = Status.Odbijen;
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava.OglasId });
+            return RedirectToAction("PrijavljeniRadnici", new { oglasId = prijava?.OglasId });
         }
 
-        [Authorize(Roles = "Klijent")]
+        // InitiatePayment ostaje samo za Klijenta (placanje je onaj koji klijent inicijalizuje ka radniku)
+        [Authorize(Roles = RoleConstants.Klijent)]
         public async Task<IActionResult> InitiatePayment(int oglasId, string radnikId)
         {
-            var oglas = await _context.Oglas.FirstOrDefaultAsync(o => o.Id == oglasId);
+            var oglas = await _oglasService.GetOglasByIdAsync(oglasId);
             if (oglas == null)
             {
                 return NotFound();
@@ -480,24 +612,27 @@ namespace NaPoso.Controllers
             TempData["OglasId"] = oglasId;
             TempData["RadnikId"] = radnikId;
 
-            long amountInCents = (long)(oglas.CijenaPosla * 100);
+            decimal cijenaKm = Convert.ToDecimal(oglas.CijenaPosla);
+            long amountInCents = (long)Math.Round(cijenaKm * 100);
 
-            var checkoutUrl = $"/Identity/Payment/Checkout?amount={amountInCents}&productName={Uri.EscapeDataString($"Plaćanje za oglas: {oglas.Naslov}")}";
+            var checkoutUrl = $"/Identity/Payment/Checkout?amount={amountInCents}&amountKm={cijenaKm.ToString(System.Globalization.CultureInfo.InvariantCulture)}&productName={Uri.EscapeDataString($"Plaćanje za oglas: {oglas.Naslov}")}";
 
             return Redirect(checkoutUrl);
         }
 
+        [AllowAnonymous]
         public IActionResult UspjesnaPrijava()
         {
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult PrijavaGreska()
         {
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public IActionResult KreirajPosao()
         {
             return View();
@@ -505,7 +640,7 @@ namespace NaPoso.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = RoleConstants.Admin)]
         public async Task<IActionResult> KreirajPosao(AdminOglasView model)
         {
             if (ModelState.IsValid)
@@ -525,15 +660,67 @@ namespace NaPoso.Controllers
                     TipPosla = model.TipPosla,
                     CijenaPosla = model.CijenaPosla,
                     KlijentId = klijent.Id,
-                    Status = Status.Aktivan // ili default status koji koristiš
+                    Status = Status.Aktivan
                 };
 
-                _context.Add(oglas);
-                await _context.SaveChangesAsync();
+                await _oglasService.CreateOglasAsync(oglas, klijent.Id, RoleConstants.Klijent);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(model);
+        }
+        [Authorize(Roles = RoleConstants.Radnik)]
+        public async Task<IActionResult> MojePrijave(string filter = "Sve", string query = "")
+        {
+            var radnikId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var prijave = await _oglasService.GetRadnikPrijaveAsync(radnikId);
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                prijave = prijave.Where(p => p.Oglas != null && p.Oglas.Naslov != null
+                    && p.Oglas.Naslov.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (filter == "Aktivne")
+            {
+                prijave = prijave.Where(p => p.Status == Status.Aktivan || p.Status == Status.Prihvacen).ToList();
+            }
+            else if (filter == "Zavrsene")
+            {
+                prijave = prijave.Where(p => p.Status == Status.Zavrsen || p.Status == Status.Placen).ToList();
+            }
+
+            ViewBag.CurrentFilter = filter;
+            ViewBag.CurrentQuery = query;
+
+            return View(prijave);
+        }
+
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Klijent)]
+        public async Task<IActionResult> ProfilRadnika(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var radnik = await _userManager.FindByIdAsync(id);
+            if (radnik == null)
+            {
+                return NotFound();
+            }
+
+            var reviews = await _context.Recenzija.Where(r => r.RadnikId == id).ToListAsync();
+            var rating = reviews.Any() ? reviews.Average(r => r.Ocjena) : 0;
+            
+            var clientIds = reviews.Select(r => r.KlijentId).Distinct().ToList();
+            var clients = await _userManager.Users.Where(u => clientIds.Contains(u.Id)).ToDictionaryAsync(u => u.Id, u => string.IsNullOrWhiteSpace(u.Ime) ? u.Email : $"{u.Ime} {u.Prezime}");
+            
+            ViewBag.Radnik = radnik;
+            ViewBag.ProsjecnaOcjena = rating;
+            ViewBag.ClientNames = clients;
+            
+            return View(reviews);
         }
     }
 }

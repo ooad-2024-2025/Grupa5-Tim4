@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace NaPoso.Models
 {
     public class RecenzijaViewModel
     {
+        public int Id { get; set; }
         public string KlijentEmail { get; set; }
         [Required(ErrorMessage = "Ovo polje je obavezno.")]
         [Range(1, 5, ErrorMessage = "Ocjena mora biti između 1 i 5.")]

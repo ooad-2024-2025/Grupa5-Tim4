@@ -1,14 +1,26 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="bs" data-theme="light">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NaPoso</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <script>
+        (function () {
+            var t = localStorage.getItem('naposo-theme');
+            var d = (t === 'dark') || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.setAttribute('data-theme', d ? 'dark' : 'light');
+        })();
+    </script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/NaPoso.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/themes.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/utilities.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 @using Microsoft.AspNetCore.Identity
@@ -19,12 +31,11 @@
 
 @{
     List<Obavijest> obavijesti = new();
-
-    if (User.IsInRole("Klijent") || User.IsInRole("Radnik"))
+    if (User.IsInRole("Klijent") || User.IsInRole("Radnik") || User.IsInRole("Admin"))
     {
         var userId = UserManager.GetUserId(User);
         obavijesti = Db.Obavijest
-            .Where(x => x.KorisnikId.ToString() == userId && (x.IsRead == null || x.IsRead == false))
+            .Where(x => x.KorisnikId == userId && (x.IsRead == null || x.IsRead == false))
             .OrderByDescending(x => x.VrijemeSlanja)
             .Take(5)
             .ToList();
@@ -33,96 +44,93 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NaPoso</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
+        <div style="height: 4px; background: var(--color-accent); width: 100%;"></div>
+        <nav class="navbar navbar-expand-sm navbar-naPoso" aria-label="Glavna navigacija">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-grid-1x2-fill me-2" style="color: var(--color-accent);"></i>
+                    <span class="navbar-brand-copy">
+                        <span class="navbar-brand-title">NaPoso</span>
+                        <span class="navbar-brand-subtitle">oglasi, komunikacija, isplate</span>
+                    </span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Otvori navigaciju">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Početna stranica</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house me-1"></i>Početna
+                            </a>
                         </li>
-
-                        @if (User.IsInRole("Admin"))
+                        
+                        @if (User.IsInRole("Klijent"))
                         {
+                            <!-- Klijent vidi isključivo svoje oglase -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Statistika</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Documents">Dokumenti</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Oglas" asp-action="Index">Oglasi</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Obavijest" asp-action="Index">Obavijesti</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Recenzija" asp-action="Index">Recenzije</a>
+                                <a class="nav-link active-link" asp-controller="Oglas" asp-action="OglasiKlijenta">
+                                    <i class="bi bi-briefcase me-1"></i>Moji Oglasi
+                                </a>
                             </li>
                         }
-                        @if (User.IsInRole("Radnik")){
-                            <div class="dropdown me-2" id="notificationDropdown">
-                                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-bell"></i> Obavijesti
-                                    @if (obavijesti.Any())
-                                    {
-                                        <span class="badge bg-danger notification-count">@obavijesti.Count</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-danger notification-count d-none">0</span>
-                                    }
-                                </button>
-                                <div class="dropdown-menu">
-                                    <div class="notification-container">
-                                        @if (!obavijesti.Any())
-                                        {
-                                            <span class="dropdown-item no-notifications">Nema novih obavijesti</span>
-                                        }
-                                        else
-                                        {
-                                            foreach (var o in obavijesti)
-                                            {
-                                                <a class="dropdown-item notification-item" data-id="@o.Id">
-                                                    @o.Sadrzaj <br />
-                                                    <small>@o.VrijemeSlanja.ToString("g")</small>
-                                                </a>
-                                            }
-                                        }
-                                    </div>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-center" asp-controller="ObavijestKorisniku" asp-action="MyNotifications">Prikaži sve</a>
-                                </div>
-                            </div>
+                        else
+                        {
+                            <!-- Radnik i Admin vide sve oglase -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Chat" asp-action="Index">Razgovori</a>
+                                <a class="nav-link" asp-controller="Oglas" asp-action="PrikazOglasa">
+                                    <i class="bi bi-search me-1"></i>Pretraga Oglasa
+                                </a>
+                            </li>
+                        }
+                        
+                        @if (User.IsInRole("Radnik"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active-link" asp-controller="Oglas" asp-action="MojePrijave">
+                                    <i class="bi bi-clock-history me-1"></i>Moje prijave
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Oglas" asp-action="PrikazOglasa">Oglasi za poslove</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Recenzija" asp-action="MojeRecenzije">Moje recenzije</a>
+                                <a class="nav-link" asp-controller="Home" asp-action="Radnik">
+                                    <i class="bi bi-speedometer2 me-1"></i>Moj Dashboard
+                                </a>
                             </li>
                         }
                         @if (User.IsInRole("Klijent"))
                         {
-                            <div class="dropdown me-2" id="notificationDropdown">
-                                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-bell"></i> Obavijesti
+                            <li class="nav-item">
+                                <a class="nav-link active-link" asp-controller="Home" asp-action="Klijent">
+                                    <i class="bi bi-speedometer2 me-1"></i>Moj Dashboard
+                                </a>
+                            </li>
+                        }
+                        
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active-link" asp-controller="Admin" asp-action="Index">
+                                    <i class="bi bi-shield-lock me-1"></i>Admin Panel
+                                </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Radnik") || User.IsInRole("Klijent"))
+                        {
+                            var notifUrl = User.IsInRole("Admin")
+                                ? Url.Action("Index", "Obavijest")!
+                                : Url.Action("MyNotifications", "ObavijestKorisniku")!;
+
+                            <li class="nav-item dropdown notification-badge">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-bell"></i>
                                     @if (obavijesti.Any())
                                     {
-                                        <span class="badge bg-danger notification-count">@obavijesti.Count</span>
+                                        <span class="notification-count">@obavijesti.Count</span>
                                     }
-                                    else
-                                    {
-                                        <span class="badge bg-danger notification-count d-none">0</span>
-                                    }
-                                </button>
-                                <div class="dropdown-menu">
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
                                     <div class="notification-container">
                                         @if (!obavijesti.Any())
                                         {
@@ -139,70 +147,84 @@
                                             }
                                         }
                                     </div>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-center" asp-controller="ObavijestKorisniku" asp-action="MyNotifications">Prikaži sve</a>
+                                    <hr class="dropdown-divider" />
+                                    <a class="dropdown-item text-center" href="@notifUrl">Prikaži sve</a>
                                 </div>
-                            </div>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Chat" asp-action="Index">Razgovori</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Oglas" asp-action="OglasiKlijenta">Moji Oglasi</a>
                             </li>
                         }
                     </ul>
-                    <partial name="_LoginPartial" />
+
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Theme Toggle -->
+                        <div class="theme-toggle" role="radiogroup" aria-label="Odabir teme">
+                            <button class="theme-toggle-btn active" data-theme="light" aria-label="Svijetla tema" title="Svijetla">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                            </button>
+                            <button class="theme-toggle-btn" data-theme="dark" aria-label="Tamna tema" title="Tamna">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                            </button>
+                            <button class="theme-toggle-btn" data-theme="system" aria-label="Sistemska tema" title="Sistem">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </button>
+                        </div>
+
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <main role="main" class="flex-shrink-0">
+        <div class="page-container">
             @RenderBody()
-        </main>
+        </div>
+    </main>
+
+    <footer class="footer-naPoso">
+        <div class="container">
+            <p class="mb-2">&copy; @DateTime.Now.Year NaPoso &mdash; OOAD 2024/2025, Grupa 5, Tim 4</p>
+            <small class="text-muted d-block footer-note">
+                <i class="bi bi-info-circle me-1"></i><strong>Napomena:</strong> Ovaj sistem je razvijen isključivo u edukativne svrhe, u sklopu studentskog projekta. Plaćanja se obrađuju u test okruženju, pa se pri korištenju aplikacije ne vrši nikakva stvarna finansijska transakcija niti se tereti bilo koja kartica.
+            </small>
+        </div>
+    </footer>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        @if (TempData["ToastMessage"] != null)
+        {
+            <div class="toast toast-naposo toast-success align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  <i class="bi bi-check-circle-fill toast-icon me-2"></i>@TempData["ToastMessage"]
+                </div>
+                <button type="button" class="btn-close btn-close-naposo me-2 m-auto" data-bs-dismiss="toast" aria-label="Zatvori"></button>
+              </div>
+            </div>
+        }
+        @if (TempData["ToastErrorMessage"] != null)
+        {
+            <div class="toast toast-naposo toast-error align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  <i class="bi bi-x-circle-fill toast-icon me-2"></i>@TempData["ToastErrorMessage"]
+                </div>
+                <button type="button" class="btn-close btn-close-naposo me-2 m-auto" data-bs-dismiss="toast" aria-label="Zatvori"></button>
+              </div>
+            </div>
+        }
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    
     <script>
-        $(document).ready(function() {
-            // Handle notification clicks
-            $('.notification-item').on('click', function(e) {
-                e.preventDefault();
-                const notificationId = $(this).data('id');
-                const $this = $(this);
-                
-                // Send AJAX request to mark notification as read
-                $.ajax({
-                    url: '/ObavijestKorisniku/MarkAsReadAjax',
-                    type: 'POST',
-                    data: { id: notificationId },
-                    headers: {
-                        "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function() {
-                        // Remove the notification from the dropdown
-                        $this.slideUp(200, function() {
-                            $(this).remove();
-                            
-                            // Update count
-                            let count = parseInt($('.notification-count').text()) - 1;
-                            if (count <= 0) {
-                                // If no more notifications, show "no notifications" message
-                                $('.notification-count').addClass('d-none').text('0');
-                                if ($('.notification-item').length === 0) {
-                                    $('.notification-container').html('<span class="dropdown-item no-notifications">Nema novih obavijesti</span>');
-                                }
-                            } else {
-                                $('.notification-count').text(count);
-                            }
-                        });
-                    }
-                });
+        document.addEventListener("DOMContentLoaded", function () {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function (toastEl) {
+                return new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
             });
+            toastList.forEach(toast => toast.show());
         });
     </script>
 

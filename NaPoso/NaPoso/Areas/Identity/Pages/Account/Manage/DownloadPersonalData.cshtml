@@ -1,11 +1,23 @@
-﻿@page
+@page
 @model DownloadPersonalDataModel
 @{
-    ViewData["Title"] = "Download Your Data";
+    ViewData["Title"] = "Preuzmi svoje podatke";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h3>@ViewData["Title"]</h3>
+<div class="page-header">
+    <h1><i class="bi bi-download me-2"></i>@ViewData["Title"]</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <p style="color: var(--color-text-secondary); font-size: var(--text-small);">
+                Kliknite dugme ispod da preuzmete svoje podatke.
+            </p>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

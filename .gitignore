@@ -10,3 +10,33 @@ obj/
 *.swp
 *.DS_Store
 Thumbs.db
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+appsettings.Development.json
+appsettings.*.Local.json
+
+# Build artifacts
+*.nupkg
+*.snupkg
+publish/
+
+# Test / coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# IDE
+.idea/
+*.sln.docstates
+.cursor/
+
+# Docker / local DB volumes
+pgdata/
+
+# AI agent configs — never commit
+.mimocode/
+.agents/

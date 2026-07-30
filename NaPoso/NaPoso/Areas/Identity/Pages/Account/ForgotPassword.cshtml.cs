@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -55,9 +55,9 @@ namespace NaPoso.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                if (user == null)
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
+                    // Don't reveal that the user does not exist
                     return RedirectToPage("./ForgotPasswordConfirmation");
                 }
 
@@ -68,13 +68,23 @@ namespace NaPoso.Areas.Identity.Pages.Account
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     pageHandler: null,
-                    values: new { area = "Identity", code },
+                    values: new { area = "Identity", code, email = Input.Email },
                     protocol: Request.Scheme);
 
                 await _emailSender.SendEmailAsync(
                     Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Resetovanje lozinke",
+                    $@"<p style=""font-family: Arial, Helvetica, sans-serif; color: #333333; font-size: 16px;"">
+                            Primili smo zahtjev za resetovanje lozinke na vašem računu.
+                       </p>
+                       <div style=""text-align: center; margin: 30px 0;"">
+                           <a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style=""display: inline-block; padding: 14px 28px; background-color: #e63950; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-family: Arial, Helvetica, sans-serif;"">
+                               Resetuj Lozinku
+                           </a>
+                       </div>
+                       <p style=""font-family: Arial, Helvetica, sans-serif; color: #333333; font-size: 16px;"">
+                           Ako niste zatražili promjenu lozinke, možete ignorisati ovaj email.
+                       </p>");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

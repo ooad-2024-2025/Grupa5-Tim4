@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -46,7 +46,14 @@ namespace NaPoso.Areas.Identity.Pages.Payment
 
                     if (prijava != null)
                     {
-                        prijava.Status = Status.Placen; // postavi status na placen
+                        prijava.Status = Status.Zavrsen; // Nakon uspješnog plaćanja, posao odmah završen za radnika (kalkuliše se u njegovoj zaradi)
+                        
+                        var oglas = await _context.Oglas.FirstOrDefaultAsync(o => o.Id == OglasId);
+                        if (oglas != null)
+                        {
+                            oglas.Status = Status.Zavrsen; // Automatsko zatvaranje oglasa
+                        }
+
                         await _context.SaveChangesAsync();
                     }
                     else

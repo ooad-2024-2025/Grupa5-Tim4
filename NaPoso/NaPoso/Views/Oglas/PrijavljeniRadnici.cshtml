@@ -1,67 +1,116 @@
-﻿@model IEnumerable<NaPoso.Models.OglasKorisnik>
-
+@model IEnumerable<NaPoso.Models.OglasKorisnik>
 @using NaPoso.Enums
 @using static NaPoso.Enums.Enums
-<h3>Prijavljeni radnici</h3>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Ime</th>
-			<th>Prezime</th>
-            <th>Email</th>
-			<th>Verifikovan</th>
-            <th>Datum prijave</th>
-			<th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
+@{
+    ViewData["Title"] = "Prijavljeni radnici";
+}
+
+<div class="page-header">
+    <h1><i class="bi bi-people me-2"></i>Prijavljeni radnici</h1>
+    <p class="lead">Pregledajte i upravljajte prijavama</p>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-people"></i></div>
+        <h3>Nema prijavljenih radnika</h3>
+        <p>Kada se radnici prijave na vaš oglas, oni će se pojaviti ovdje.</p>
+    </div>
+}
+else
+{
+    var imaPrihvacenogRadnika = Model.Any(p => p.Status == Status.Prihvacen);
+    <div class="row g-4 animate-fade-in-up">
         @foreach (var prijava in Model)
         {
-            <tr>
-				<td>@prijava.Korisnik.Ime</td>
-				<td>@prijava.Korisnik.Prezime</td>
-                <td>@prijava.Korisnik.Email</td>
-                <td>
-                    @(prijava.Korisnik.Verified ? "Da" : "Ne")
-                </td>
-                <td>@prijava.DatumPrijave.ToString("dd.MM.yyyy")</td>
-                <td>@prijava.Oglas.Status</td>
-                <td>
-                    @if (prijava.Status == Status.Aktivan)
-                    {
-                        <a asp-action="Prihvati" asp-route-id="@prijava.Id" class="btn btn-success">Prihvati</a>
-                        <a asp-action="Odbij" asp-route-id="@prijava.Id" class="btn btn-danger">Odbij</a>
-                    }
-                    else if (prijava.Status == Status.Placen)
-                    {
-                        <span class="text-success">Plaćeno</span>
-                    }
-                    else if (prijava.Status == Status.Prihvacen)
-                    {
-                        <a asp-action="InitiatePayment"
-                           asp-route-oglasId="@prijava.OglasId"
-                           asp-route-radnikId="@prijava.KorisnikId"
-                           class="btn btn-primary">Plati</a>
-
-                        <a asp-controller="Chat" asp-action="StartChat"
-                           asp-route-oglasId="@prijava.OglasId"
-                           asp-route-korisnik2Id="@prijava.KorisnikId"
-                           class="btn btn-info ml-2">
-                            Razgovor
-                        </a>
-                    }
-                    else if (prijava.Status == Status.Odbijen)
-                    {
-                        <span class="text-danger">Odbijeno</span>
-                    }
-                </td>
-
-            </tr>
-            
+            <div class="col-md-6 col-lg-4">
+                <div class="content-card h-100 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3 gap-2">
+                        <div class="flex-grow-1" style="min-width: 0;">
+                            <h4 class="mb-1 text-truncate" style="font-family: var(--font-heading);" title="@prijava.Korisnik.Ime @prijava.Korisnik.Prezime">
+                                @prijava.Korisnik.Ime @prijava.Korisnik.Prezime
+                            </h4>
+                            <div class="text-muted text-truncate" style="font-size: var(--text-small);" title="@prijava.Korisnik.Email">@prijava.Korisnik.Email</div>
+                            @if (!string.IsNullOrEmpty(prijava.Korisnik.PhoneNumber))
+                            {
+                                <div class="text-muted mt-1 text-truncate" style="font-size: var(--text-small);" title="@prijava.Korisnik.PhoneNumber">
+                                    <i class="bi bi-telephone-fill me-1"></i>@prijava.Korisnik.PhoneNumber
+                                </div>
+                            }
+                            @if (ViewBag.Ratings != null && ((Dictionary<string, double>)ViewBag.Ratings).ContainsKey(prijava.KorisnikId))
+                            {
+                                var rating = ((Dictionary<string, double>)ViewBag.Ratings)[prijava.KorisnikId];
+                                if (rating > 0)
+                                {
+                                    <div class="fw-bold mt-1 text-truncate" style="font-size: var(--text-small); color: var(--brand-accent);">
+                                        <i class="bi bi-star-fill me-1"></i>@(rating.ToString("0.0")) / 5
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-muted mt-1 text-truncate" style="font-size: var(--text-small);">
+                                        <i class="bi bi-star me-1"></i>Nema ocjena
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="d-flex flex-column align-items-end flex-shrink-0 gap-2">
+                            @if (prijava.Korisnik.Verified)
+                            {
+                                <span class="badge bg-success" title="Verifikovan korisnik"><i class="bi bi-check-circle me-1"></i>Verifikovan</span>
+                            }
+                            <a asp-action="ProfilRadnika" asp-route-id="@prijava.KorisnikId" class="btn btn-outline-primary btn-sm text-nowrap">
+                                <i class="bi bi-person me-1"></i>Profil
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="text-muted mb-4" style="font-size: var(--text-caption);">
+                        <i class="bi bi-calendar3 me-1"></i>Prijavljen/a: @prijava.DatumPrijave.ToString("dd.MM.yyyy")
+                    </div>
+                    
+                    <div class="mt-auto pt-3 border-top d-flex gap-2 justify-content-between align-items-center">
+                        @if (prijava.Status == Status.Aktivan && !imaPrihvacenogRadnika)
+                        {
+                            <form asp-action="Prihvati" method="post" class="flex-grow-1">
+                                <input type="hidden" name="id" value="@prijava.Id" />
+                                <button type="submit" class="btn btn-success btn-sm w-100 fw-bold shadow-sm hover-lift"><i class="bi bi-check-lg me-1"></i>PRIHVATI</button>
+                            </form>
+                            <form asp-action="Odbij" method="post" class="flex-grow-1">
+                                <input type="hidden" name="id" value="@prijava.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm w-100 text-white fw-bold shadow-sm hover-lift"><i class="bi bi-x-lg me-1"></i>ODBIJ</button>
+                            </form>
+                        }
+                        else if (prijava.Status == Status.Aktivan && imaPrihvacenogRadnika)
+                        {
+                            <span class="badge bg-secondary w-100 py-2"><i class="bi bi-lock me-1"></i>Pozicija popunjena</span>
+                        }
+                        else if (prijava.Status == Status.Placen)
+                        {
+                            <span class="badge bg-success w-100 py-2"><i class="bi bi-credit-card me-1"></i>Plaćeno</span>
+                        }
+                        else if (prijava.Status == Status.Prihvacen)
+                        {
+                            <a asp-action="InitiatePayment" asp-route-oglasId="@prijava.OglasId" asp-route-radnikId="@prijava.KorisnikId" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-credit-card me-1"></i>Plati</a>
+                            <form asp-controller="Chat" asp-action="StartChat" method="post" class="d-inline flex-grow-1" style="flex: 1;">
+                                <input type="hidden" name="oglasId" value="@prijava.OglasId" />
+                                <input type="hidden" name="korisnik2Id" value="@prijava.KorisnikId" />
+                                <button type="submit" class="btn btn-secondary btn-sm w-100"><i class="bi bi-chat me-1"></i>Razgovor</button>
+                            </form>
+                        }
+                        else if (prijava.Status == Status.Neaktivan)
+                        {
+                            <span class="badge bg-secondary w-100 py-2"><i class="bi bi-x-circle me-1"></i>Nije odabrano</span>
+                        }
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
-<div>
-	<a asp-action="OglasiKlijenta">Nazad</a>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-action="OglasiKlijenta" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad</a>
 </div>
