@@ -21,6 +21,7 @@
     document.documentElement.setAttribute('data-theme', resolved);
     localStorage.setItem(THEME_KEY, theme);
     updateToggleButtons(theme);
+    window.dispatchEvent(new CustomEvent('themeChanged', { detail: resolved }));
   }
 
   function updateToggleButtons(theme) {

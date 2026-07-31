@@ -26,7 +26,7 @@ services:
         condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=naposo;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=${NEON_CONNECTION_STRING:-Host=db;Port=5432;Database=naposo;Username=postgres;Password=postgres}
       - Stripe__SecretKey=${STRIPE_SECRET_KEY:-}
       - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY:-}
       - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET:-}

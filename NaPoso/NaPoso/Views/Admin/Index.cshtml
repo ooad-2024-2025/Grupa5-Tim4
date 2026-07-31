@@ -178,6 +178,21 @@
                     animation: { duration: 900, easing: 'easeOutQuart' }
                 }
             });
+
+            window.addEventListener('themeChanged', function() {
+                var textPrimary = cssVar('--text-primary', '#14181A');
+                var textSecondary = cssVar('--text-secondary', '#546a7b');
+                var borderColor = cssVar('--color-border', '#d3d8e0');
+                
+                usersChart.options.plugins.legend.labels.color = textPrimary;
+                usersChart.update();
+                
+                jobsChart.options.scales.x.ticks.color = textPrimary;
+                jobsChart.options.scales.y.ticks.color = textSecondary;
+                jobsChart.options.scales.y.grid.color = hexToRgba(borderColor.replace(' ','') || '#d3d8e0', 0.7);
+                jobsChart.update();
+            });
+
         });
     </script>
 }
