@@ -114,7 +114,7 @@ namespace NaPoso.Data
             if (testRadnik != null) radnici.Add(testRadnik);
 
             if (!klijenti.Any() || !radnici.Any())
-                return;
+                return false;
 
             // Seed Oglasi (30+)
             var random = new Random(42); // Seed for reproducible data

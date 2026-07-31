@@ -24,8 +24,8 @@ using Microsoft.AspNetCore.DataProtection;
 using DotNetEnv;
 
 Env.TraversePath().Load();
-if (File.Exists("/etc/secrets/.env")) Env.Load("/etc/secrets/.env");
-if (File.Exists("/app/.env")) Env.Load("/app/.env");
+if (System.IO.File.Exists("/etc/secrets/.env")) Env.Load("/etc/secrets/.env");
+if (System.IO.File.Exists("/app/.env")) Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
