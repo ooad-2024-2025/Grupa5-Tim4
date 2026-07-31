@@ -124,7 +124,7 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 
 // DataProtection: persist keys to Docker volume so sessions/cookies survive container rebuilds
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "keys")))
     .SetApplicationName("NaPoso");
 
 builder.Services.ConfigureApplicationCookie(options =>
