@@ -141,6 +141,7 @@
     window.NaPosoToast = {
       show: function (message, type, duration) {
         type = type || 'info';
+        if (type === 'danger') type = 'error';
         duration = duration || 4000;
         var container = document.getElementById('toast-container');
         if (!container) {
@@ -151,10 +152,17 @@
         }
         var toast = document.createElement('div');
         toast.className = 'naPoso-toast naPoso-toast-' + type;
-        var icons = { success: 'bi-check-circle-fill', danger: 'bi-exclamation-circle-fill', warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill' };
+        var icons = { success: 'bi-check-circle-fill', error: 'bi-exclamation-circle-fill', warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill', 'success-oglas-klijent': 'bi-person-check-fill', 'success-oglas-radnik': 'bi-briefcase-fill' };
         toast.innerHTML = '<i class="bi ' + (icons[type] || icons.info) + '"></i><span>' + message + '</span>';
         toast.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transform:translateX(20px);transition:all 0.25s ease;max-width:400px;';
-        var colors = { success: 'var(--color-success-light);color:var(--color-success);border:1px solid rgba(48,164,108,0.3)', danger: 'var(--color-danger-light);color:var(--color-danger);border:1px solid rgba(229,72,77,0.3)', warning: 'var(--color-warning-light);color:var(--color-warning);border:1px solid rgba(229,161,0,0.3)', info: 'var(--color-accent-light);color:var(--color-accent);border:1px solid rgba(91,95,199,0.3)' };
+        var colors = {
+          success: 'background:var(--color-success-light);color:var(--color-success);border:1px solid rgba(48,164,108,0.3)',
+          error: 'background:var(--color-danger-light);color:var(--color-danger);border:1px solid rgba(229,72,77,0.3)',
+          warning: 'background:var(--color-warning-light);color:var(--color-warning);border:1px solid rgba(229,161,0,0.3)',
+          info: 'background:var(--color-accent-light);color:var(--color-accent);border:1px solid rgba(91,95,199,0.3)',
+          'success-oglas-klijent': 'background:rgba(0,224,184,0.12);color:#00B89A;border:1px solid rgba(0,224,184,0.35)',
+          'success-oglas-radnik': 'background:rgba(255,61,104,0.10);color:#E02A55;border:1px solid rgba(255,61,104,0.30)'
+        };
         toast.style.cssText += colors[type] || colors.info;
         container.appendChild(toast);
         requestAnimationFrame(function () { toast.style.opacity = '1'; toast.style.transform = 'translateX(0)'; });
@@ -165,6 +173,7 @@
         }, duration);
       }
     };
+    window.showToast = function (message, type, duration) { return window.NaPosoToast.show(message, type, duration); };
     // ── Count-Up Animation ──
     document.querySelectorAll('.stat-value').forEach(function(el) {
       var text = el.innerText.trim();

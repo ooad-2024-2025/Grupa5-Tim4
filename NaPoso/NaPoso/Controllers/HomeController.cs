@@ -64,15 +64,53 @@ namespace NaPoso.Controllers
             //    - Amount = UKUPAN iznos (osnova + baksis)
             //    - PlatformFeeAmount = 10% SAMO od osnovne cijene (bez baksisa)
             //    → Dakle: Amount - PlatformFeeAmount = (osnova - 10% osnove) + 100% baksis
-            // 2. Fallback: stari OglasKorisnik (zavrseni/placeni) bez transakcije
+            // 2. Fallback za starije transakcije ili transakcije bez WorkerUserId:
+            //    uzmi transakcije gde OglasId odgovara Zavrsen/Placen OglasKorisnik za ovog radnika
+            // 3. Fallback: stari OglasKorisnik (zavrseni/placeni) bez transakcije
             //    → 90% CijenaPosla (osnova) - pokušavamo i naći baksis
             // ============================================================
-            var transakcije = await _context.PaymentTransactions
+            var glavneTransakcije = await _context.PaymentTransactions
                 .Where(pt => pt.WorkerUserId == radnikId &&
                              (pt.Status == PaymentStatus.Released ||
                               pt.Status == PaymentStatus.Paid ||
                               pt.Status == PaymentStatus.Held))
                 .ToListAsync();
+
+            // --- FALLBACK DODATNE TRANSAKCIJE: Za OglasId gdje je OglasKorisnik.Status=Zavrsen/Placen za
+            //     ovog radnika, pronadji PaymentTransaction (sa OglasId, bez obzira na WorkerUserId)
+            //     ciji WorkerUserId moze biti prazan (starije ili slucaj kada ApplyCheckoutSessionMetadataAsync
+            //     nije stigao/nije postavio WorkerUserId).
+            var zavrseniOglasIdsZaRadnika = await _context.OglasKorisnik
+                .Where(ok => ok.KorisnikId == radnikId &&
+                             (ok.Status == Enums.Enums.Status.Zavrsen || ok.Status == Enums.Enums.Status.Placen) &&
+                             ok.OglasId.HasValue)
+                .Select(ok => ok.OglasId.Value)
+                .Distinct()
+                .ToListAsync();
+
+            var dodatneTransakcijeIds = new HashSet<int>();
+            List<PaymentTransaction> dodatneTransakcije = new();
+            if (zavrseniOglasIdsZaRadnika.Any())
+            {
+                dodatneTransakcije = await _context.PaymentTransactions
+                    .Where(pt => zavrseniOglasIdsZaRadnika.Contains(pt.OglasId.Value) &&
+                                 pt.OglasId.HasValue &&
+                                 (pt.Status == PaymentStatus.Released ||
+                                  pt.Status == PaymentStatus.Paid ||
+                                  pt.Status == PaymentStatus.Held))
+                    .ToListAsync();
+            }
+
+            // Union (bez duplikata) glavne + dodatne, prioritizuj glavne ako postoje preko dodatnih
+            Dictionary<int, PaymentTransaction> txMap = new();
+            foreach (var t in glavneTransakcije) txMap[t.Id] = t;
+            foreach (var t in dodatneTransakcije) txMap.TryAdd(t.Id, t);
+            var transakcije = txMap.Values.OrderBy(t => t.Id).ToList();
+
+            _logger.LogInformation(
+                "[Radnik Dashboard] Transakcije: glavne={NTx1} (WorkerUserId match), dodatne={NTx2} (OglasKorisnik match), " +
+                "ukupno_unikatno={TotalTx} za radnika {RadId}",
+                glavneTransakcije.Count, dodatneTransakcije.Count, transakcije.Count, radnikId);
 
             var zaradaIzvrseneIsplate = 0m;
             decimal ukupniBaksis = 0m;
@@ -99,25 +137,42 @@ namespace NaPoso.Controllers
                 {
                     povezaniOglasiIds.Add(pt.OglasId.Value);
 
-                    // EKSPLICITNO izračunaj baksis:
-                    // Baksis = Transaction.Amount - (oglas.CijenaPosla * 100)
-                    // Ako je Amount > CijenaPosla*100, razlika je BAKŠIŠ 100% za radnika
-                    // VAŽNO: za financijski look-up ignoriramo soft-delete filter (zavrseni/obrisani
-                    //   oglas je deo istorije, mora biti dostupan za izračun).
-                    var oglas = await _context.Oglas
-                        .IgnoreQueryFilters()
-                        .FirstOrDefaultAsync(o => o.Id == pt.OglasId.Value);
-                    if (oglas != null)
+                    // IZVOR ISTINE ZA BAKŠIŠ: prvo eksplicitno TipAmountFeninga polje (postavljeno
+                    // iz Stripe metadata prilikom checkout sessije), a samo ako je to 0, onda
+                    // računamo kao razliku Amount - CijenaPosla (fallback kalkulacija).
+                    long baksisFeninga = pt.TipAmountFeninga;
+                    if (baksisFeninga <= 0)
                     {
-                        var osnovaFeninga = (long)Math.Round((decimal)oglas.CijenaPosla * 100m);
-                        var baksisFeninga = pt.Amount - osnovaFeninga;
-                        if (baksisFeninga > 0)
+                        var oglas = await _context.Oglas
+                            .IgnoreQueryFilters()
+                            .FirstOrDefaultAsync(o => o.Id == pt.OglasId.Value);
+                        if (oglas != null)
                         {
-                            ukupniBaksis += (decimal)baksisFeninga / 100m;
+                            var osnovaFeninga = (long)Math.Round((decimal)oglas.CijenaPosla * 100m);
+                            baksisFeninga = pt.Amount - osnovaFeninga;
+                            _logger.LogInformation(
+                                "[Radnik Dashboard] Baksis fallback kalkulacija za transakciju {TxId}: " +
+                                "TipAmountFeninga={TipF}, Amount={Amt}, CijenaPosla={Cp}, IzračunatBaksis={BaksisF}",
+                                pt.Id, pt.TipAmountFeninga, pt.Amount, oglas.CijenaPosla, baksisFeninga);
                         }
+                    }
+                    else
+                    {
+                        _logger.LogInformation(
+                            "[Radnik Dashboard] Baksis preuzet iz TipAmountFeninga za transakciju {TxId}: {BaksisF}",
+                            pt.Id, baksisFeninga);
+                    }
+                    if (baksisFeninga > 0)
+                    {
+                        ukupniBaksis += (decimal)baksisFeninga / 100m;
                     }
                 }
             }
+
+            _logger.LogInformation(
+                "[Radnik Dashboard] KRAJ: ukupno transakcija={NTx}, zaradaIzvrseneIsplate={ZarIzv:0.00} KM, " +
+                "UKUPNI_BAKSIS={Baksis:0.00} KM (radnik={RadId})",
+                transakcije.Count, zaradaIzvrseneIsplate, ukupniBaksis, radnikId);
 
             var zavrseniOglasiIds = await _context.OglasKorisnik
                 .Where(ok => ok.KorisnikId == radnikId &&
@@ -238,19 +293,35 @@ namespace NaPoso.Controllers
                 if (pt.OglasId.HasValue)
                 {
                     placeniOglasiIds.Add(pt.OglasId.Value);
-                    // VAŽNO: za finansijski look-up ignoriramo soft-delete filter
-                    //   (istorijska transakcija mora imati pristup oglasu bez obzira na status)
-                    var oglas = await _context.Oglas
-                        .IgnoreQueryFilters()
-                        .FirstOrDefaultAsync(o => o.Id == pt.OglasId.Value);
-                    if (oglas != null)
+                    // IZVOR ISTINE ZA BAKŠIŠ: prvo eksplicitno TipAmountFeninga polje (iz Stripe
+                    // metadata), ako je 0 onda fallback na kalkulaciju.
+                    long baksisFeninga = pt.TipAmountFeninga;
+                    if (baksisFeninga <= 0)
                     {
-                        // Osnova = CijenaPosla u KM, baksis = preostali dio Amounta
-                        var osnovaFeninga = (long)Math.Round((decimal)oglas.CijenaPosla * 100m);
-                        var baksisFeninga = pt.Amount - osnovaFeninga;
-                        if (baksisFeninga > 0)
-                            ukupniBaksis += (decimal)baksisFeninga / 100m;
+                        // VAŽNO: za finansijski look-up ignoriramo soft-delete filter
+                        //   (istorijska transakcija mora imati pristup oglasu bez obzira na status)
+                        var oglas = await _context.Oglas
+                            .IgnoreQueryFilters()
+                            .FirstOrDefaultAsync(o => o.Id == pt.OglasId.Value);
+                        if (oglas != null)
+                        {
+                            // Osnova = CijenaPosla u KM, baksis = preostali dio Amounta
+                            var osnovaFeninga = (long)Math.Round((decimal)oglas.CijenaPosla * 100m);
+                            baksisFeninga = pt.Amount - osnovaFeninga;
+                            _logger.LogInformation(
+                                "[Klijent Dashboard] Baksis fallback kalkulacija za transakciju {TxId}: " +
+                                "TipAmountFeninga={TipF}, Amount={Amt}, CijenaPosla={Cp}, IzračunatBaksis={BaksisF}",
+                                pt.Id, pt.TipAmountFeninga, pt.Amount, oglas.CijenaPosla, baksisFeninga);
+                        }
                     }
+                    else
+                    {
+                        _logger.LogInformation(
+                            "[Klijent Dashboard] Baksis preuzet iz TipAmountFeninga za transakciju {TxId}: {BaksisF}",
+                            pt.Id, baksisFeninga);
+                    }
+                    if (baksisFeninga > 0)
+                        ukupniBaksis += (decimal)baksisFeninga / 100m;
                 }
             }
 

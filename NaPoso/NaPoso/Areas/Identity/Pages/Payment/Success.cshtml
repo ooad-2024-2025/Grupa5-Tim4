@@ -31,7 +31,8 @@
         <div class="d-flex gap-3 justify-content-center mt-6">
             @if (Model.OglasId.HasValue && !string.IsNullOrEmpty(Model.RadnikId))
             {
-                <a asp-controller="Recenzija" asp-action="Create" asp-route-radnikId="@Model.RadnikId" asp-route-oglasId="@Model.OglasId" class="btn btn-primary">
+                var recenzijaUrl = Url.Action("Create", "Recenzija", new { radnikId = Model.RadnikId, oglasId = Model.OglasId.Value });
+                <a href="@recenzijaUrl" class="btn btn-primary">
                     <i class="bi bi-star me-1"></i>Ostavi recenziju
                 </a>
             }

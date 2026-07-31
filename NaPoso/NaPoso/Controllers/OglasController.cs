@@ -124,6 +124,7 @@ namespace NaPoso.Controllers
                 }
 
                 await _oglasService.CreateOglasAsync(oglas, userId, autorUloga);
+                TempData["ToastMessage"] = $"Oglas \"{oglas.Naslov}\" je uspješno kreiran.";
                 return RedirectToAction(redirectAkcija);
             }
             return View(oglas);

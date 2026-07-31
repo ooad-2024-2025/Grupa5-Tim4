@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.DataProtection;
 using DotNetEnv;
 
 Env.TraversePath().Load();
@@ -120,6 +121,11 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
     options.TokenLifespan = TimeSpan.FromMinutes(5);
 });
+
+// DataProtection: persist keys to Docker volume so sessions/cookies survive container rebuilds
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
+    .SetApplicationName("NaPoso");
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -356,6 +362,58 @@ using (var scope = app.Services.CreateScope())
         var applied = await context.Database.GetAppliedMigrationsAsync();
         logger.LogInformation("[Startup] Database schema OK. Migrations applied: {AppliedCount}, pending: {PendingCount}",
             applied.Count(), pending.Count());
+
+        // ============================================================
+        // RAW SQL SCHEMA PATCHES: Add StripeSessionId column, make
+        // StripeEventId nullable, and update indexes for idempotent
+        // transaction creation from Stripe session_id.
+        // These are safe to run multiple times (IF NOT EXISTS guards).
+        // ============================================================
+        try
+        {
+            // Add StripeSessionId column if missing
+            await context.Database.ExecuteSqlRawAsync(@"
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = 'PaymentTransaction' AND column_name = 'StripeSessionId'
+                    ) THEN
+                        ALTER TABLE ""PaymentTransaction"" ADD COLUMN ""StripeSessionId"" text;
+                    END IF;
+                END $$;
+            ");
+
+            // Make StripeEventId nullable (ALTER COLUMN ... DROP NOT NULL is safe even if already nullable)
+            await context.Database.ExecuteSqlRawAsync(@"
+                ALTER TABLE ""PaymentTransaction"" ALTER COLUMN ""StripeEventId"" DROP NOT NULL;
+            ");
+
+            // Nullify empty StripeEventId values
+            await context.Database.ExecuteSqlRawAsync(@"
+                UPDATE ""PaymentTransaction"" SET ""StripeEventId"" = NULL WHERE ""StripeEventId"" = '';
+            ");
+
+            // Drop old non-filtered StripeEventId unique index and recreate as filtered
+            await context.Database.ExecuteSqlRawAsync(@"
+                DROP INDEX IF EXISTS ""IX_PaymentTransaction_StripeEventId"";
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_PaymentTransaction_StripeEventId""
+                    ON ""PaymentTransaction"" (""StripeEventId"")
+                    WHERE ""StripeEventId"" IS NOT NULL;
+            ");
+
+            // Create unique filtered index on StripeSessionId
+            await context.Database.ExecuteSqlRawAsync(@"
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_PaymentTransaction_StripeSessionId""
+                    ON ""PaymentTransaction"" (""StripeSessionId"")
+                    WHERE ""StripeSessionId"" IS NOT NULL;
+            ");
+
+            logger.LogInformation("[Startup] Schema patches (StripeSessionId, StripeEventId nullable, indexes) applied.");
+        }
+        catch (Exception patchEx)
+        {
+            logger.LogWarning(patchEx, "[Startup] Schema patches failed (may already be applied).");
+        }
     }
     catch (Exception ex)
     {
@@ -451,6 +509,8 @@ app.MapPost("/webhook/stripe", async (HttpContext context, ApplicationDbContext 
     var webhookLogger = sp.GetRequiredService<ILogger<Program>>();
     var json = await new StreamReader(context.Request.Body).ReadToEndAsync();
 
+    webhookLogger.LogInformation("[Stripe Webhook] Raw payload received: {Payload}", json);
+
     Event stripeEvent;
     try
     {
@@ -470,11 +530,63 @@ app.MapPost("/webhook/stripe", async (HttpContext context, ApplicationDbContext 
 
     switch (stripeEvent.Type)
     {
+        case "checkout.session.completed":
+        {
+            var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
+            if (session != null)
+            {
+                webhookLogger.LogInformation(
+                    "[Stripe Webhook] checkout.session.completed. SessionId={SessionId}, PaymentIntentId={PiId}, Metadata={@Metadata}",
+                    session.Id, session.PaymentIntentId, session.Metadata);
+
+                string? mdUserId = null;
+                int? mdOglasId = null;
+                string? mdRadnikId = null;
+                long mdTipAmountFeninga = 0;
+
+                if (session.Metadata != null)
+                {
+                    if (session.Metadata.TryGetValue("UserId", out var v))
+                        mdUserId = v;
+                    if (session.Metadata.TryGetValue("OglasId", out var oglasStr)
+                        && int.TryParse(oglasStr, out var oglasParsed))
+                        mdOglasId = oglasParsed;
+                    if (session.Metadata.TryGetValue("RadnikId", out var r))
+                        mdRadnikId = r;
+                    if (session.Metadata.TryGetValue("TipAmountFeninga", out var tipStr)
+                        && long.TryParse(tipStr, out var tipParsed))
+                        mdTipAmountFeninga = tipParsed;
+                }
+
+                webhookLogger.LogInformation(
+                    "[Stripe Webhook] Metadata parsed: UserId={U}, OglasId={O}, RadnikId={R}, TipAmountFeninga={Tip}",
+                    mdUserId, mdOglasId, mdRadnikId, mdTipAmountFeninga);
+
+                if (!string.IsNullOrEmpty(session.PaymentIntentId))
+                {
+                    var changed = await dbContext.ApplyCheckoutSessionMetadataAsync(
+                        session.PaymentIntentId,
+                        mdUserId,
+                        mdOglasId,
+                        mdRadnikId,
+                        mdTipAmountFeninga);
+
+                    webhookLogger.LogInformation(
+                        "[Stripe Webhook] ApplyCheckoutSessionMetadataAsync completed. Changed={Changed}",
+                        changed);
+                }
+            }
+            break;
+        }
         case "payment_intent.succeeded":
         {
             var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
             if (paymentIntent != null)
             {
+                webhookLogger.LogInformation(
+                    "[Stripe Webhook] payment_intent.succeeded. PaymentIntentId={PiId}, AmountReceived={A}, Currency={C}",
+                    paymentIntent.Id, paymentIntent.AmountReceived, paymentIntent.Currency);
+
                 await dbContext.HandleStripePaymentEventAsync(
                     paymentIntent.Id,
                     stripeEvent.Id,
@@ -557,6 +669,9 @@ app.MapPost("/webhook/stripe", async (HttpContext context, ApplicationDbContext 
             break;
         case "payout.failed":
             webhookLogger.LogWarning("Payout FAILED event received: {EventId}", stripeEvent.Id);
+            break;
+        default:
+            webhookLogger.LogInformation("Unhandled Stripe event type: {EventType}", stripeEvent.Type);
             break;
     }
 

@@ -24,8 +24,7 @@ namespace NaPoso.Models
         [Required]
         public string StripePaymentIntentId { get; set; } = string.Empty;
 
-        [Required]
-        public string StripeEventId { get; set; } = string.Empty;
+        public string? StripeEventId { get; set; }
 
         public long Amount { get; set; }
 
@@ -44,5 +43,13 @@ namespace NaPoso.Models
         public string? TransferId { get; set; }
         public long? PlatformFeeAmount { get; set; }
         public string? WorkerUserId { get; set; }
+
+        // Stripe Checkout Session ID — used for idempotent transaction creation
+        // so that the Success page can reliably create/find transactions without TempData
+        public string? StripeSessionId { get; set; }
+
+        // Eksplicitno sačuvan bakšiš (nagrada za radnika) u feningima
+        // (Amount = Osnova + TipAmountFeninga; provizija se računa samo od osnove)
+        public long TipAmountFeninga { get; set; } = 0;
     }
 }

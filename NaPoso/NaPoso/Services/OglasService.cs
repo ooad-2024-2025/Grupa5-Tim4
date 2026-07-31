@@ -306,7 +306,7 @@ namespace NaPoso.Services
         public async Task<List<OglasKorisnik>> GetRadnikPrijaveAsync(string radnikId)
         {
             return await _context.OglasKorisnik
-                .Where(ok => ok.KorisnikId == radnikId)
+                .Where(ok => ok.KorisnikId == radnikId && ok.Status != Status.Neaktivan)
                 .Include(ok => ok.Oglas)
                 .OrderByDescending(ok => ok.DatumPrijave)
                 .ToListAsync();

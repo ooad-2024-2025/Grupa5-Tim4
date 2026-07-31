@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/utilities.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="icon" type="image/png" href="~/images/naposo_logo_icon.png" />
 </head>
 @using Microsoft.AspNetCore.Identity
 @using NaPoso.Data
@@ -43,12 +44,15 @@
 }
 
 <body>
+    <div id="pageLoader" class="page-loader" aria-hidden="true">
+        <img src="~/images/naposo_logo_icon.png" alt="NaPoso" class="page-loader-logo" />
+    </div>
     <header>
         <div style="height: 4px; background: var(--color-accent); width: 100%;"></div>
         <nav class="navbar navbar-expand-sm navbar-naPoso" aria-label="Glavna navigacija">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-grid-1x2-fill me-2" style="color: var(--color-accent);"></i>
+                    <img src="~/images/naposo_logo_icon.png" alt="NaPoso" class="navbar-brand-logo me-2" />
                     <span class="navbar-brand-copy">
                         <span class="navbar-brand-title">NaPoso</span>
                         <span class="navbar-brand-subtitle">oglasi, komunikacija, isplate</span>
@@ -226,6 +230,60 @@
             });
             toastList.forEach(toast => toast.show());
         });
+
+        (function () {
+            var SESSION_KEY = 'naposo_loaded';
+            var storage = typeof window.sessionStorage !== 'undefined' ? window.sessionStorage : null;
+
+            if (storage && storage.getItem(SESSION_KEY)) {
+                var existing = document.getElementById('pageLoader');
+                if (existing) {
+                    existing.classList.add('is-hidden');
+                    if (existing.parentNode) existing.parentNode.removeChild(existing);
+                }
+                return;
+            }
+
+            var loader = document.getElementById('pageLoader');
+            var minDurationMs = 2700;
+            var startTime = Date.now();
+            var pageLoaded = false;
+            var timeoutFired = false;
+            var done = false;
+
+            var tryHide = function () {
+                if (done) return;
+                if (!pageLoaded || !timeoutFired) return;
+                done = true;
+                if (loader && !loader.classList.contains('is-hidden')) {
+                    loader.classList.add('is-hidden');
+                    setTimeout(function () {
+                        if (loader && loader.parentNode) {
+                            loader.parentNode.removeChild(loader);
+                        }
+                        if (storage) {
+                            try { storage.setItem(SESSION_KEY, 'true'); } catch (e) { }
+                        }
+                    }, 500);
+                }
+            };
+
+            setTimeout(function () {
+                timeoutFired = true;
+                tryHide();
+            }, minDurationMs);
+
+            var onLoaded = function () {
+                pageLoaded = true;
+                tryHide();
+            };
+
+            if (document.readyState === 'complete') {
+                onLoaded();
+            } else {
+                window.addEventListener('load', onLoaded);
+            }
+        })();
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

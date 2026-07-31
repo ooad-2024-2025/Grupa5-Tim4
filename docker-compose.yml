@@ -38,6 +38,9 @@ services:
       - Admin__Password=${ADMIN_PASSWORD:-Admin123!}
       - Seed__RadnikPassword=${SEED_RADNIK_PASSWORD:-Test123!}
       - Seed__KlijentPassword=${SEED_KLIJENT_PASSWORD:-Test123!}
+    volumes:
+      - dataprotection-keys:/app/keys
 
 volumes:
   pgdata:
+  dataprotection-keys:

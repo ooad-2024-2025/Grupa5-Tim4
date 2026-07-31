@@ -132,8 +132,7 @@ else
                             {
                                 <button type="button"
                                         class="btn btn-primary btn-sm px-4 prijavi-se-btn"
-                                        data-oglas-id="@oglas.Oglas.Id"
-                                        onclick="event.stopPropagation()">
+                                        data-oglas-id="@oglas.Oglas.Id">
                                     <i class="bi bi-box-arrow-in-right me-1"></i>Prijavi se
                                 </button>
                             }
@@ -152,119 +151,82 @@ else
 (function () {
     var csrfField = document.querySelector('input[name="__RequestVerificationToken"]');
     var csrfToken = csrfField ? csrfField.value : '';
+    var showToast = window.showToast || window.NaPosoToast?.show || function(m, t) { if (typeof bootstrap !== 'undefined' && bootstrap.Toast) bootstrap.Toast.getOrCreateInstance(document.createElement('div')).show(); };
 
-    function showNaposoToast(poruka, tip) {
-        if (!tip) tip = 'success';
-        var container = document.getElementById('toastContainer') || document.querySelector('.toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'toast-container position-fixed p-3';
-            container.id = 'toastContainer';
-            container.style.bottom = '0';
-            container.style.right = '0';
-            container.style.zIndex = '9999';
-            document.body.appendChild(container);
-        }
-
-        var toastEl = document.createElement('div');
-        var isSuccess = tip === 'success';
-        toastEl.className = 'toast align-items-center border-0 mb-2';
-        toastEl.setAttribute('role', 'alert');
-        toastEl.setAttribute('aria-live', 'assertive');
-        toastEl.style.minWidth = '320px';
-        toastEl.style.backgroundColor = isSuccess ? 'var(--status-success-light, #e6fbf3)' : 'var(--status-danger-light, #fde9e9)';
-        toastEl.style.color = isSuccess ? 'var(--status-success, #028066)' : 'var(--status-danger, #b42318)';
-        toastEl.style.borderRadius = 'var(--radius-lg, 14px)';
-        toastEl.style.boxShadow = 'var(--shadow-lg, 0 12px 28px rgba(14,59,54,0.14))';
-
-        var ikona = isSuccess
-            ? '<i class="bi bi-check-circle-fill me-2 fs-5"></i>'
-            : '<i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>';
-
-        toastEl.innerHTML = '<div class="d-flex align-items-center p-3">' +
-            ikona +
-            '<div class="toast-body flex-grow-1 fw-semibold" style="font-size: var(--text-small, 0.9rem); color: inherit; padding: 0;">' + poruka + '</div>' +
-            '<button type="button" class="btn-close ms-2 me-1" data-bs-dismiss="toast" aria-label="Zatvori"></button>' +
-            '</div>';
-
-        container.appendChild(toastEl);
-
-        if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
-            var toast = new bootstrap.Toast(toastEl, { delay: 3500, autohide: true });
-            toast.show();
-            toastEl.addEventListener('hidden.bs.toast', function () { if (toastEl.parentNode) toastEl.parentNode.removeChild(toastEl); });
-        } else {
-            setTimeout(function () { if (toastEl.parentNode) toastEl.parentNode.removeChild(toastEl); }, 3500);
+    function replaceBtnWithPrijavljen(btn, label) {
+        try {
+            var replacement = document.createElement('div');
+            replacement.className = 'text-success fw-semibold';
+            replacement.style.fontSize = 'var(--text-caption)';
+            replacement.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>' + (label || 'Prijavljeni ste');
+            replacement.style.cursor = 'default';
+            replacement.addEventListener('click', function (e) { e.stopPropagation(); e.preventDefault(); });
+            var parent = btn.parentElement || btn.parentNode;
+            if (parent) parent.replaceChild(replacement, btn);
+        } catch (e) {
+            if (typeof console !== 'undefined') console.error(e);
+            btn.style.display = 'none';
         }
     }
 
-    document.addEventListener('click', async function (e) {
-        var btn = e.target.closest('.prijavi-se-btn');
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest && e.target.closest('.prijavi-se-btn');
         if (!btn) return;
-        e.stopPropagation();
+        e.stopImmediatePropagation();
         e.preventDefault();
 
         var oglasId = btn.getAttribute('data-oglas-id');
         if (!oglasId) return;
 
+        btn.blur();
         btn.disabled = true;
         var originalHTML = btn.innerHTML;
         btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Prijava...';
 
-        try {
-            var body = new URLSearchParams();
-            body.append('oglasId', oglasId);
-
-            var resp = await fetch('/Oglas/PrijaviRadnikaNaOglas', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'RequestVerificationToken': csrfToken
-                },
-                body: body.toString(),
-                credentials: 'same-origin'
-            });
-
-            if (!resp.ok) {
-                var msgErr = 'Prijava nije uspjela. Pokušajte ponovo.';
-                try {
-                    var jErr = await resp.json();
-                    if (jErr && jErr.message) msgErr = jErr.message;
-                } catch (_) { }
-                showNaposoToast(msgErr, 'danger');
-                btn.disabled = false;
-                btn.innerHTML = originalHTML;
-                return;
-            }
-
-            var data = { success: true, message: 'Uspješno ste se prijavili na oglas.' };
+        (async function () {
             try {
-                var jData = await resp.json();
-                if (jData && typeof jData.success !== 'undefined') {
-                    if (typeof jData.message !== 'undefined') data.message = jData.message;
-                    data.success = jData.success;
-                }
-            } catch (_) { }
+                var body = new URLSearchParams();
+                body.append('oglasId', oglasId);
+                body.append('__RequestVerificationToken', csrfToken);
 
-            if (data.success) {
-                showNaposoToast(data.message, 'success');
-                var replacement = document.createElement('div');
-                replacement.className = 'text-success fw-semibold';
-                replacement.style.fontSize = 'var(--text-caption)';
-                replacement.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Prijavljeni ste';
-                if (btn.parentNode) btn.parentNode.replaceChild(replacement, btn);
-            } else {
-                showNaposoToast(data.message || 'Prijava nije uspjela.', 'danger');
+                var resp = await fetch('/Oglas/PrijaviRadnikaNaOglas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: body.toString(),
+                    credentials: 'same-origin'
+                });
+
+                var json = null;
+                try { json = await resp.json(); } catch (_) { json = null; }
+
+                var msg = 'Prijava nije uspjela. Pokušajte ponovo.';
+                var success = false;
+                if (json && typeof json.message !== 'undefined') msg = json.message;
+                success = resp.ok && json && json.success === true;
+
+                if (success) {
+                    showToast(msg || 'Uspješno ste se prijavili na oglas.', 'success-oglas-klijent');
+                    replaceBtnWithPrijavljen(btn, 'Prijavljeni ste');
+                } else {
+                    var vecPrijavljen = msg && (msg.indexOf('Već ste prijavljen') !== -1 || msg.indexOf('prijavljeni na ovaj oglas') !== -1);
+                    showToast(msg, 'danger');
+                    if (vecPrijavljen) {
+                        replaceBtnWithPrijavljen(btn, 'Prijavljeni ste');
+                    } else {
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
+                    }
+                }
+            } catch (err) {
+                showToast('Došlo je do greške prilikom prijave.', 'danger');
                 btn.disabled = false;
                 btn.innerHTML = originalHTML;
             }
-        } catch (err) {
-            showNaposoToast('Došlo je do greške prilikom prijave.', 'danger');
-            btn.disabled = false;
-            btn.innerHTML = originalHTML;
-        }
-    });
+        })();
+    }, true);
 })();
 </script>
 }

@@ -26,7 +26,11 @@ public class StripeService
 
     public bool IsConfigured => !string.IsNullOrWhiteSpace(_apiKey);
 
-    public async Task<Session?> CreateCheckoutSessionAsync(string productName, long amount, string currency = "usd")
+    public async Task<Session?> CreateCheckoutSessionAsync(
+        string productName,
+        long amount,
+        string currency = "usd",
+        Dictionary<string, string>? metadata = null)
     {
         if (!IsConfigured)
             return null;
@@ -55,7 +59,8 @@ public class StripeService
             },
             Mode = "payment",
             SuccessUrl = $"{domain}/Identity/Payment/Success?session_id={{CHECKOUT_SESSION_ID}}",
-            CancelUrl = $"{domain}/Identity/Payment/Cancel"
+            CancelUrl = $"{domain}/Identity/Payment/Cancel",
+            Metadata = metadata ?? new Dictionary<string, string>()
         };
 
         var client = new StripeClient(_apiKey!);
