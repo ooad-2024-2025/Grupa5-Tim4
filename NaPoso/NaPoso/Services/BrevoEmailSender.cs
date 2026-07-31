@@ -72,8 +72,8 @@ namespace NaPoso.Services
                         userName = user.Ime;
                     }
                 }
-                // U produkciji će ovo biti dostupno preko stvarnog domena.
-                string logoImgTag = "<img src=\"https://naposo.me/images/naposo_logo.png\" alt=\"NaPos'o Logo\" style=\"width: 60px; height: auto; margin-bottom: 12px;\" /><br/>";
+                // TODO: Nakon Render deploymenta, promijeniti na wwwroot/images/naposo_logo.png servirano direktno iz .NET aplikacije, ukloniti zavisnost od GitHub Pages
+                string logoImgTag = "<img src=\"https://idzafic1.github.io/images/naposo_logo.png\" alt=\"NaPos'o Logo\" style=\"width: 60px; height: auto; margin-bottom: 12px;\" /><br/>";
 
                 string styledMessage = $@"
                 <!DOCTYPE html>
