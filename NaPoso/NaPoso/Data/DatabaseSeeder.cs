@@ -7,7 +7,7 @@ namespace NaPoso.Data
 {
     public static class DatabaseSeeder
     {
-        public static async Task SeedAsync(IServiceProvider serviceProvider)
+        public static async Task<bool> SeedAsync(IServiceProvider serviceProvider)
         {
             var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             var userManager = serviceProvider.GetRequiredService<UserManager<Korisnik>>();
@@ -24,9 +24,9 @@ namespace NaPoso.Data
             }
 
             // Check if we already have seeded data
-            if (await userManager.FindByEmailAsync("klijent1@mail.com") != null)
+            if (await context.Oglas.AnyAsync() || await userManager.FindByEmailAsync("klijent1@mail.com") != null)
             {
-                return; // Seeding already done
+                return false; // Seeding already done
             }
 
             // Seed Klijenti (10)
@@ -239,6 +239,8 @@ namespace NaPoso.Data
 
             await context.PaymentTransactions.AddRangeAsync(transactions);
             await context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

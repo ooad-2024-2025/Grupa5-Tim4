@@ -24,6 +24,8 @@ using Microsoft.AspNetCore.DataProtection;
 using DotNetEnv;
 
 Env.TraversePath().Load();
+if (File.Exists("/etc/secrets/.env")) Env.Load("/etc/secrets/.env");
+if (File.Exists("/app/.env")) Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -426,8 +428,15 @@ using (var scope = app.Services.CreateScope())
     // Seed dummy data
     try 
     {
-        await NaPoso.Data.DatabaseSeeder.SeedAsync(services);
-        logger.LogInformation("[Startup] Dummy data seeded successfully.");
+        bool seeded = await NaPoso.Data.DatabaseSeeder.SeedAsync(services);
+        if (seeded)
+        {
+            logger.LogInformation("[Startup] Dummy data seeded successfully.");
+        }
+        else
+        {
+            logger.LogInformation("[Startup] Database already contains data. Seeding skipped.");
+        }
     }
     catch (Exception ex)
     {
