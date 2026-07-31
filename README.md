@@ -204,7 +204,7 @@ Aplikacija je prošla kroz 8 faza quality hardeninga:
 
 ```
 Grupa5-Tim4/
-├── NaPoso/
+├── NaPoso/                    # C# kod i web projekat
 │   ├── NaPoso.sln
 │   └── NaPoso/
 │       ├── Controllers/       # MVC kontroleri
@@ -213,14 +213,19 @@ Grupa5-Tim4/
 │       ├── Models/            # Domain modeli
 │       ├── Services/          # Business logika
 │       ├── Views/             # Razor views
-│       ├── Areas/Identity/    # Identity pages (login, payment)
-│       └── wwwroot/           # Statički fajlovi
-├── .github/workflows/         # CI/CD
-├── .agents/                   # Agent instrukcije
-├── Dockerfile
-├── docker-compose.yml
-├── .env.example
-└── .gitignore
+│       ├── Areas/Identity/    # Identity pages (auth, payment)
+│       └── wwwroot/           # Statički fajlovi (CSS, JS, slike)
+├── docs/                      # Dokumentacija i test izvještaji
+├── scripts/                   # Skripte za bazu i deployment
+├── grafana/                   # Grafana dashboard konfiguracije
+├── loadtest/                  # k6 load testing skripte
+├── .github/workflows/         # CI/CD (GitHub Actions)
+├── Dockerfile                 # Multi-stage Docker build
+├── docker-compose.yml         # Glavna Docker konfiguracija (App + DB)
+├── docker-compose.otel.yml    # Telemetry servisi (Prometheus, Grafana, Jaeger)
+├── prometheus.yml             # Prometheus konfiguracija
+├── .env.example               # Template za lokalne environment varijable
+└── .gitignore                 # Git ignore pravila
 ```
 
 ## Licenca

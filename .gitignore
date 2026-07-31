@@ -39,7 +39,13 @@ coverage/
 # Docker / local DB volumes
 pgdata/
 
-# AI agent configs — never commit
+# AI agent configs / Scratch - never commit
 .mimocode/
 .agents/
 agent-notes/
+.gemini/
+*.sql
+
+# Keys and local data
+keys/
+dataprotection-keys/
