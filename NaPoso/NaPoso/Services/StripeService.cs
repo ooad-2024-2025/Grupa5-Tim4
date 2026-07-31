@@ -16,7 +16,9 @@ public class StripeService
         _httpContextAccessor = httpContextAccessor;
 
         _apiKey = _configuration["Stripe:SecretKey"]
-               ?? _configuration.GetSection("Stripe")["SecretKey"];
+               ?? _configuration.GetSection("Stripe")["SecretKey"]
+               ?? Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY")
+               ?? Environment.GetEnvironmentVariable("STRIPE_API_KEY");
 
         if (!string.IsNullOrWhiteSpace(_apiKey))
         {
