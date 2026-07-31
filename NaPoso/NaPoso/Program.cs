@@ -29,6 +29,15 @@ if (System.IO.File.Exists("/app/.env")) Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Map flat environment variables (STRIPE_SECRET_KEY) to ASP.NET Core config hierarchy (Stripe:SecretKey)
+// Render and other PaaS platforms inject env vars with underscores, not the double-underscore ASP.NET convention
+var envStripeSecret = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+var envStripePub = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
+if (!string.IsNullOrEmpty(envStripeSecret))
+    builder.Configuration["Stripe:SecretKey"] = envStripeSecret;
+if (!string.IsNullOrEmpty(envStripePub))
+    builder.Configuration["Stripe:PublishableKey"] = envStripePub;
+
 // Structured logging with environment-aware sinks
 builder.Logging.ClearProviders();
 
@@ -424,6 +433,13 @@ using (var scope = app.Services.CreateScope())
 
     await CreateRoles(services, logger);
     await CreateAdminUser(services, logger);
+
+    // Log Stripe configuration status
+    var stripeConfigured = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY"));
+    var stripeFromConfig = !string.IsNullOrEmpty(app.Configuration["Stripe:SecretKey"]);
+    logger.LogInformation("[Startup] Stripe env STRIPE_SECRET_KEY: {EnvFound}, Config Stripe:SecretKey: {ConfigFound}", 
+        stripeConfigured ? "FOUND" : "NOT FOUND", 
+        stripeFromConfig ? "FOUND" : "NOT FOUND");
     
     // Seed dummy data
     try 
