@@ -33,6 +33,26 @@
         btn.classList.toggle('active', btnTheme === theme);
       }
     });
+
+    var iconClass = 'bi-laptop';
+    if (theme === 'dark') iconClass = 'bi-moon-stars-fill';
+    else if (theme === 'light') iconClass = 'bi-sun-fill';
+
+    document.querySelectorAll('.mobile-theme-indicator').forEach(function (indicator) {
+      indicator.innerHTML = '<i class="bi ' + iconClass + '"></i>';
+      indicator.setAttribute('data-theme-current', theme);
+    });
+  }
+
+  function cycleTheme() {
+    var current = localStorage.getItem(THEME_KEY);
+    if (current === 'light') {
+      setTheme('dark');
+    } else if (current === 'dark') {
+      setTheme('system');
+    } else {
+      setTheme('light');
+    }
   }
 
   // Apply theme immediately to prevent flash
@@ -43,6 +63,26 @@
     document.querySelectorAll('.theme-toggle-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
         setTheme(this.dataset.theme);
+      });
+    });
+
+    document.querySelectorAll('.mobile-theme-indicator').forEach(function (indicator) {
+      indicator.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        cycleTheme();
+      });
+      indicator.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          cycleTheme();
+        }
+      });
+    });
+
+    document.querySelectorAll('.mobile-profile-caret').forEach(function (caret) {
+      caret.addEventListener('click', function (e) {
+        e.preventDefault();
       });
     });
 

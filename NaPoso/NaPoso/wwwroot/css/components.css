@@ -183,6 +183,258 @@ body {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%235a6078' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
+/* =====================================================
+   MOBILE HAMBURGER MENU — Collapse Panel Fix
+   Bootstrap sm breakpoint = 576px, so hamburger shows < 576px.
+   The fix:
+   1) Remove fixed height on navbar so collapse can expand
+   2) Position the collapse panel absolutely below the navbar row
+   3) Give it an OPAQUE background (not frosted/transparent)
+   4) Full width, high z-index to cover page content
+   ===================================================== */
+@media (max-width: 575.98px) {
+  /* Allow navbar to NOT clip the collapse panel */
+  .navbar-naPoso {
+    height: auto;
+    min-height: var(--navbar-height);
+  }
+
+  /* The .container inside needs to wrap so toggler + brand stay on first row */
+  .navbar-naPoso > .container {
+    flex-wrap: wrap;
+  }
+
+  /* The collapse panel itself — absolute dropdown below navbar */
+  .navbar-naPoso .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1050;
+    background: var(--color-surface, #1A2023);
+    border-bottom: 2px solid var(--color-accent, #e63950);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-4) var(--space-5);
+    max-height: calc(100vh - var(--navbar-height) - 4px);
+    overflow-y: auto;
+  }
+
+  /* Stack nav items vertically with spacing */
+  .navbar-naPoso .navbar-collapse .navbar-nav {
+    flex-direction: column;
+    gap: var(--space-1);
+    width: 100%;
+  }
+
+  /* Each nav link — full width, comfortable touch target */
+  .navbar-naPoso .navbar-collapse .nav-link {
+    padding: var(--space-3) var(--space-4) !important;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-base, 1rem);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-link:hover {
+    background: var(--color-surface-hover) !important;
+  }
+
+  /* Theme toggle + login partial wrapper — keep mobile controls on one row */
+  .navbar-naPoso .navbar-collapse .d-flex {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    flex-wrap: nowrap;
+  }
+
+  /* Hide the desktop theme toggle strip on mobile; use inline indicator in profile row */
+  .navbar-naPoso .navbar-collapse .theme-toggle {
+    display: none;
+  }
+
+  .navbar-naPoso .navbar-collapse .d-flex > ul.navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-2);
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .navbar-naPoso .navbar-collapse .d-flex > ul.navbar-nav > li.nav-item.dropdown {
+    width: 100% !important;
+    align-self: stretch !important;
+    justify-content: flex-start !important;
+    margin-right: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-row {
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-hover);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    flex: 0 0 auto;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-avatar i {
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-theme-indicator {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: var(--radius-full);
+    color: var(--color-text-muted);
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-theme-indicator i {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-caret {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    flex: 0 0 auto;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-caret::after {
+    margin-left: 0;
+    vertical-align: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-row:hover .mobile-theme-indicator,
+  .navbar-naPoso .navbar-collapse .mobile-profile-row:hover .mobile-profile-caret {
+    color: var(--color-accent);
+  }
+
+  .navbar-naPoso .navbar-collapse .desktop-profile-toggle {
+    display: none !important;
+  }
+
+  .navbar-naPoso .navbar-collapse .d-flex > ul.navbar-nav > li.nav-item.dropdown > .dropdown-menu {
+    width: 100% !important;
+    margin-left: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-item.dropdown > .nav-link.dropdown-toggle::after {
+    margin-left: 2px;
+    flex: 0 0 auto;
+  }
+
+  /* Prijava button — full width on mobile */
+  .navbar-naPoso .navbar-collapse .btn-primary.btn-sm {
+    width: 100%;
+    text-align: center;
+    padding: var(--space-3) var(--space-5);
+    min-height: 44px;
+  }
+
+  /* Compact dropdown menus on mobile */
+  .navbar-naPoso .navbar-collapse .dropdown-menu {
+    border: none;
+    background: transparent;
+    padding: var(--space-1) 0 0 var(--space-3); /* Slightly tighter indent */
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .navbar-naPoso .navbar-collapse .dropdown-item {
+    padding: var(--space-2) var(--space-2);
+    border-radius: var(--radius-sm);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+
+  .navbar-naPoso .navbar-collapse .dropdown-header {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .navbar-naPoso .navbar-collapse .dropdown-divider {
+    margin: var(--space-1) 0;
+    opacity: 0.1;
+  }
+
+  /* Notification badge should sit on the bell edge, not float beside it */
+  .navbar-naPoso .notification-badge > .nav-link > .notification-bell-icon {
+    width: 1.15em;
+    height: 1.15em;
+    line-height: 1;
+  }
+
+  .navbar-naPoso .notification-badge .notification-count {
+    top: -6px;
+    right: -6px;
+    min-width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 9px;
+    padding: 0 3px;
+    transform: translate(20%, -20%);
+  }
+
+  .navbar-naPoso .notification-badge > .nav-link.dropdown-toggle::after {
+    margin-left: 2px;
+    vertical-align: middle;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-item.dropdown > .dropdown-menu,
+  .navbar-naPoso .navbar-collapse .notification-badge > .dropdown-menu {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    width: 100%;
+    margin-top: var(--space-2) !important;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-item.dropdown > .nav-link,
+  .navbar-naPoso .navbar-collapse .notification-badge > .nav-link {
+    justify-content: flex-start;
+  }
+}
+
 /* --- Buttons --- */
 .btn {
   font-family: var(--font-sans);

@@ -133,11 +133,13 @@
 
                             <li class="nav-item dropdown notification-badge">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-bell"></i>
-                                    @if (obavijesti.Any())
-                                    {
-                                        <span class="notification-count">@obavijesti.Count</span>
-                                    }
+                                    <span class="position-relative d-inline-flex align-items-center justify-content-center notification-bell-icon">
+                                        <i class="bi bi-bell"></i>
+                                        @if (obavijesti.Any())
+                                        {
+                                            <span class="notification-count">@obavijesti.Count</span>
+                                        }
+                                    </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <div class="notification-container">

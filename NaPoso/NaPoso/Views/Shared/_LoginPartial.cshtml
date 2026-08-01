@@ -9,9 +9,17 @@
         var displayName = appUser != null ? $"{appUser.Ime} {appUser.Prezime}" : User.Identity.Name;
 
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="mobile-profile-row d-flex align-items-center w-100 d-md-none">
+                <span class="mobile-profile-avatar" aria-hidden="true"><i class="bi bi-person-circle"></i></span>
+                <span class="mobile-profile-name">@displayName</span>
+                <button type="button" class="mobile-theme-indicator" aria-label="Promijeni temu" title="Promijeni temu"></button>
+                <button type="button" class="nav-link dropdown-toggle mobile-profile-caret" id="navbarDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Otvori profil meni"></button>
+            </div>
+
+            <a class="nav-link dropdown-toggle d-flex align-items-center desktop-profile-toggle d-none d-md-flex" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-circle fs-5 me-2"></i> @displayName
             </a>
+
             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="border-radius: 0.5rem;" aria-labelledby="navbarDropdown">
                 <li><h6 class="dropdown-header text-muted text-uppercase">Moj Nalog</h6></li>
                 @if (User.IsInRole("Radnik"))
