@@ -13,68 +13,196 @@
     <p class="lead">Pronađite posao koji vam odgovara</p>
 </div>
 
-<div class="content-card mb-6">
-    @Html.AntiForgeryToken()
-    <form method="get" asp-action="PrikazOglasa" class="mb-3">
-        <label class="form-label mb-2">Pretraga</label>
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Pretraga po naslovu ili opisu..." value="@searchValue" />
-            <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-search me-1"></i>Pretraži
-            </button>
+<style>
+    /* Card Styles */
+    .ad-card {
+        border-radius: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: var(--bg-card, #ffffff);
+        border: 1px solid var(--border-color, #e1e5f2);
+        padding: 1.5rem;
+    }
+    .ad-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    }
+    
+    /* Grid Mode Specifics */
+    #adContainer.layout-grid .ad-card-inner {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    #adContainer.layout-grid .ad-card-right {
+        align-items: flex-start !important;
+        margin-top: 1rem;
+    }
+    
+    /* List Mode Specifics */
+    #adContainer.layout-list .ad-card-inner {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+    #adContainer.layout-list .ad-card-right {
+        align-items: flex-end !important;
+    }
+    
+    /* Status Badge */
+    .badge-status-modern {
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+        padding: 0.5rem 0.75rem;
+        border-radius: 50rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+</style>
+
+@Html.AntiForgeryToken()
+
+<!-- Toolbar: Pretraga, Filteri i Grid/List Kontrole -->
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+    <form method="get" asp-action="PrikazOglasa" class="flex-grow-1" style="max-width: 600px;">
+        <div class="input-group shadow-sm rounded-pill overflow-hidden border bg-surface">
+            <span class="input-group-text bg-transparent border-0 text-muted ps-3">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="search" class="form-control border-0 bg-transparent shadow-none" placeholder="Pretraga po naslovu ili opisu..." value="@searchValue" />
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">Pretraži</button>
         </div>
     </form>
+    
+    <div class="d-flex align-items-center gap-2">
+        <button type="button" id="toggleFiltersBtn" class="btn btn-outline-secondary rounded-pill d-flex align-items-center gap-2 px-3 fw-semibold shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#filtersOffcanvas">
+            <i class="bi bi-funnel"></i> Filteri
+        </button>
+        
+        <div class="btn-group bg-surface-subtle p-1 rounded-pill border" role="group">
+            <button type="button" id="btnList" class="btn btn-sm rounded-pill px-3 active-view" style="color: var(--primary-accent); background-color: var(--bg-card); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <i class="bi bi-list-task fs-5"></i>
+            </button>
+            <button type="button" id="btnGrid" class="btn btn-sm rounded-pill px-3 text-muted">
+                <i class="bi bi-grid-fill fs-5"></i>
+            </button>
+        </div>
+    </div>
+</div>
 
-    <button id="toggleFiltersBtn" class="btn btn-ghost btn-sm mt-3">
-        <i class="bi bi-funnel me-1"></i>Filteri
-    </button>
+<!-- Offcanvas Filteri -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="filtersOffcanvas" aria-labelledby="filtersOffcanvasLabel" style="background-color: var(--bg-card); color: var(--text-primary);">
+    <div class="offcanvas-header border-bottom" style="border-color: var(--color-border) !important;">
+        <h5 class="offcanvas-title fw-bold" id="filtersOffcanvasLabel"><i class="bi bi-funnel me-2 text-primary"></i>Filtriraj Oglase</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Zatvori"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="filterForm" method="get" asp-action="PrikazOglasa">
+            <!-- Lokacija -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-secondary mb-1">Lokacija</label>
+                <div class="input-group border rounded-3 overflow-hidden">
+                    <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                    <input type="text" name="lokacija" class="form-control border-0 bg-transparent shadow-none" placeholder="Unesite grad..."
+                           value="@HttpContextAccessor.HttpContext.Request.Query["lokacija"]"
+                           id="lokacijaInput" />
+                </div>
+            </div>
 
-    <form id="filterForm" method="get" asp-action="PrikazOglasa" class="mt-3" style="display:none;">
-        <div class="row g-3">
-            <div class="col-md-3">
-                <input type="text" name="lokacija" class="form-control" placeholder="Lokacija"
-                       value="@HttpContextAccessor.HttpContext.Request.Query["lokacija"]"
-                       id="lokacijaInput" />
+            <!-- Cijena -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-secondary">Raspon Cijene (KM)</label>
+                <div class="d-flex align-items-center gap-2">
+                    <input type="text" id="minCijenaInput" name="minCijena" class="form-control" placeholder="Min"
+                           value="@HttpContextAccessor.HttpContext.Request.Query["minCijena"]" />
+                    <span class="text-muted">-</span>
+                    <input type="text" id="maxCijenaInput" name="maxCijena" class="form-control" placeholder="Max"
+                           value="@HttpContextAccessor.HttpContext.Request.Query["maxCijena"]" />
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="text" id="minCijenaInput" name="minCijena" class="form-control" placeholder="Min cijena"
-                       value="@HttpContextAccessor.HttpContext.Request.Query["minCijena"]" />
-            </div>
-            <div class="col-md-2">
-                <input type="text" id="maxCijenaInput" name="maxCijena" class="form-control" placeholder="Max cijena"
-                       value="@HttpContextAccessor.HttpContext.Request.Query["maxCijena"]" />
-            </div>
-            <div class="col-md-3">
+
+            <!-- Sortiranje -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-secondary">Sortiraj po</label>
                 <select name="sort" class="form-select">
-                    <option value="">Sortiraj po</option>
+                    <option value="">Najnovije (podrazumijevano)</option>
                     <option value="cijena_asc">Cijena - Rastuće</option>
                     <option value="cijena_desc">Cijena - Opadajuće</option>
                 </select>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="bi bi-funnel me-1"></i>Filtriraj
-                </button>
+
+            <hr class="my-4" style="border-color: var(--color-border);" />
+
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("PrikazOglasa")" class="btn btn-outline-secondary w-50 fw-semibold rounded-3 d-flex align-items-center justify-content-center">Očisti</a>
+                <button type="submit" class="btn btn-primary w-50 fw-semibold rounded-3">Primijeni</button>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
+</div>
     
-    <hr class="my-4" style="border-color: var(--color-border);" />
+<hr class="my-4" style="border-color: var(--color-border);" />
 
 <script>
-    document.getElementById("toggleFiltersBtn").addEventListener("click", function () {
-        const form = document.getElementById("filterForm");
-        form.style.display = (form.style.display === "none") ? "block" : "none";
-    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const btnList = document.getElementById('btnList');
+        const btnGrid = document.getElementById('btnGrid');
+        const container = document.getElementById('adContainer');
+        
+        function setView(view) {
+            if(view === 'grid') {
+                container.className = 'row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 animate-fade-in-up layout-grid';
+                btnGrid.classList.add('active-view');
+                btnGrid.style.color = 'var(--primary-accent)';
+                btnGrid.style.backgroundColor = 'var(--bg-card)';
+                btnGrid.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                btnGrid.classList.remove('text-muted');
+                
+                btnList.classList.remove('active-view');
+                btnList.style.color = '';
+                btnList.style.backgroundColor = 'transparent';
+                btnList.style.boxShadow = 'none';
+                btnList.classList.add('text-muted');
+            } else {
+                container.className = 'd-flex flex-column gap-3 animate-fade-in-up layout-list';
+                btnList.classList.add('active-view');
+                btnList.style.color = 'var(--primary-accent)';
+                btnList.style.backgroundColor = 'var(--bg-card)';
+                btnList.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                btnList.classList.remove('text-muted');
+                
+                btnGrid.classList.remove('active-view');
+                btnGrid.style.color = '';
+                btnGrid.style.backgroundColor = 'transparent';
+                btnGrid.style.boxShadow = 'none';
+                btnGrid.classList.add('text-muted');
+            }
+        }
+        
+        if (btnGrid && btnList && container) {
+            btnGrid.addEventListener('click', () => setView('grid'));
+            btnList.addEventListener('click', () => setView('list'));
+            setView('list'); // Default view
+        }
 
-    document.getElementById("minCijenaInput").addEventListener("input", function (e) {
-        this.value = this.value.replace(/[^0-9]/g, '');
-    });
-    document.getElementById("maxCijenaInput").addEventListener("input", function (e) {
-        this.value = this.value.replace(/[^0-9]/g, '');
-    });
-    document.getElementById("lokacijaInput").addEventListener("input", function () {
-        this.value = this.value.replace(/[^A-Za-zšđčćžŠĐČĆŽ\s]/g, '');
+        const minCijenaInput = document.getElementById("minCijenaInput");
+        if (minCijenaInput) {
+            minCijenaInput.addEventListener("input", function (e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+        const maxCijenaInput = document.getElementById("maxCijenaInput");
+        if (maxCijenaInput) {
+            maxCijenaInput.addEventListener("input", function (e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+        const lokacijaInput = document.getElementById("lokacijaInput");
+        if (lokacijaInput) {
+            lokacijaInput.addEventListener("input", function () {
+                this.value = this.value.replace(/[^A-Za-zšđčćžŠĐČĆŽ\s]/g, '');
+            });
+        }
     });
 </script>
 
@@ -95,45 +223,45 @@
         </svg>
         <h3>Nema aktivnih oglasa</h3>
         <p>Trenutno nema dostupnih oglasa koji odgovaraju vašim kriterijima.</p>
-        <button class="btn btn-primary mt-3" onclick="window.location.href='@Url.Action("PrikazOglasa")'">Očistite filtere</button>
+        <button class="btn btn-primary mt-3 rounded-pill px-4" onclick="window.location.href='@Url.Action("PrikazOglasa")'">Očistite filtere</button>
     </div>
 }
 else
 {
-    <div class="row g-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div id="adContainer" class="d-flex flex-column gap-3 animate-fade-in-up layout-list" style="animation-delay: 0.1s;">
         @{ int delayCounter = 2; }
         @foreach (var oglas in Model)
         {
-            <div class="col-12" style="animation-delay: @(delayCounter * 0.05)s;">
-                <div class="content-card h-100" style="cursor: pointer; padding: var(--space-5);" onclick="window.location='@Url.Action("Details", new { id = oglas.Oglas.Id })'">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div class="col" style="animation-delay: @(delayCounter * 0.05)s;">
+                <div class="ad-card" style="cursor: pointer;" onclick="window.location='@Url.Action("Details", new { id = oglas.Oglas.Id })'">
+                    <div class="d-flex justify-content-between ad-card-inner gap-3">
                         <div class="flex-grow-1">
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <h4 class="mb-0">@oglas.Oglas.Naslov</h4>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <h4 class="mb-0 fw-bold">@oglas.Oglas.Naslov</h4>
                                 @if (oglas.Verifikovan)
                                 {
-                                    <span class="badge badge-soft-success" title="Verifikovan korisnik"><i class="bi bi-check-circle me-1"></i>Verifikovan</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1"><i class="bi bi-check-circle me-1"></i>Verifikovan</span>
                                 }
                             </div>
-                            <p class="text-muted mb-2" style="font-size: var(--text-small);">@oglas.Oglas.Opis</p>
-                            <div class="d-flex align-items-center gap-4 text-muted" style="font-size: var(--text-caption);">
-                                <span><i class="bi bi-geo-alt me-1"></i>@LokacijaHelper.UGradu(oglas.Oglas.Lokacija)</span>
+                            <p class="text-secondary mb-3" style="font-size: 0.95rem;">@oglas.Oglas.Opis</p>
+                            <div class="d-flex align-items-center gap-2 text-muted fw-medium" style="font-size: 0.9rem;">
+                                <i class="bi bi-geo-alt-fill text-danger"></i> @LokacijaHelper.UGradu(oglas.Oglas.Lokacija)
                             </div>
                         </div>
-                        <div class="d-flex flex-md-column align-items-md-end align-items-center justify-content-between gap-3" style="min-width: 150px;">
-                            <div class="text-accent fs-4 fw-bold">@oglas.Oglas.CijenaPosla KM</div>
+                        
+                        <div class="d-flex flex-column justify-content-center ad-card-right gap-2" style="min-width: 140px;">
+                            <div class="fw-bolder" style="color: var(--primary-accent); font-size: 1.5rem;">@oglas.Oglas.CijenaPosla KM</div>
+                            
                             @if (prijavljeni != null && prijavljeni.Contains(oglas.Oglas.Id))
                             {
-                                <div class="text-success fw-semibold" style="font-size: var(--text-caption);">
-                                    <i class="bi bi-check-circle-fill me-1"></i>Prijavljeni ste
+                                <div class="badge-status-modern">
+                                    <i class="bi bi-check-circle-fill"></i> Prijavljeni ste
                                 </div>
                             }
                             else if (User.IsInRole("Radnik"))
                             {
-                                <button type="button"
-                                        class="btn btn-primary btn-sm px-4 prijavi-se-btn"
-                                        data-oglas-id="@oglas.Oglas.Id">
-                                    <i class="bi bi-box-arrow-in-right me-1"></i>Prijavi se
+                                <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold prijavi-se-btn" data-oglas-id="@oglas.Oglas.Id">
+                                    Prijavi se
                                 </button>
                             }
                         </div>
@@ -144,14 +272,41 @@ else
         }
     </div>
 }
-</div>
 
 @section Scripts {
 <script>
 (function () {
     var csrfField = document.querySelector('input[name="__RequestVerificationToken"]');
     var csrfToken = csrfField ? csrfField.value : '';
-    var showToast = window.showToast || window.NaPosoToast?.show || function(m, t) { if (typeof bootstrap !== 'undefined' && bootstrap.Toast) bootstrap.Toast.getOrCreateInstance(document.createElement('div')).show(); };
+    
+    function showToastMsg(m, type) {
+        var container = document.querySelector('.toast-container');
+        if (!container) return;
+        
+        var isError = type === 'danger' || type === 'error';
+        var toastClass = isError ? 'toast-error' : 'toast-success';
+        var iconClass = isError ? 'bi-x-circle-fill' : 'bi-check-circle-fill';
+        
+        var toastHTML = `
+            <div class="toast toast-naposo ${toastClass} align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  <i class="bi ${iconClass} toast-icon me-2"></i>${m}
+                </div>
+                <button type="button" class="btn-close btn-close-naposo me-2 m-auto" data-bs-dismiss="toast" aria-label="Zatvori"></button>
+              </div>
+            </div>`;
+            
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = toastHTML.trim();
+        var toastEl = tempDiv.firstChild;
+        container.appendChild(toastEl);
+        
+        if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    }
 
     function replaceBtnWithPrijavljen(btn, label) {
         try {
@@ -208,11 +363,11 @@ else
                 success = resp.ok && json && json.success === true;
 
                 if (success) {
-                    showToast(msg || 'Uspješno ste se prijavili na oglas.', 'success-oglas-klijent');
+                    showToastMsg(msg || 'Uspješno ste se prijavili na oglas.', 'success-oglas-klijent');
                     replaceBtnWithPrijavljen(btn, 'Prijavljeni ste');
                 } else {
                     var vecPrijavljen = msg && (msg.indexOf('Već ste prijavljen') !== -1 || msg.indexOf('prijavljeni na ovaj oglas') !== -1);
-                    showToast(msg, 'danger');
+                    showToastMsg(msg, 'danger');
                     if (vecPrijavljen) {
                         replaceBtnWithPrijavljen(btn, 'Prijavljeni ste');
                     } else {
@@ -221,7 +376,7 @@ else
                     }
                 }
             } catch (err) {
-                showToast('Došlo je do greške prilikom prijave.', 'danger');
+                showToastMsg('Došlo je do greške prilikom prijave.', 'danger');
                 btn.disabled = false;
                 btn.innerHTML = originalHTML;
             }

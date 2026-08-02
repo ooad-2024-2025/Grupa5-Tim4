@@ -6,42 +6,50 @@
 :root {
   color-scheme: light;
   
-  /* Brand core — duboka tirkizna */
-  --brand-primary: #0E3B36;       
-  --brand-primary-light: #1C6F63;
-  --brand-primary-dark: #082421;
+  /* Paleta iz specifikacije (OLX-style NaPoso) */
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --text-primary: #022b3a;
+  --text-secondary: #475569;
+  --primary-accent: #1f7a8c;
+  --primary-accent-hover: #155d6b;
+  --border-color: #e1e5f2;
+  --highlight-bg: #bfdbf7;
 
-  /* Accent #1 — glavni CTA, energija i pokret */
-  --brand-accent: #FF3D68;        
-  --brand-accent-hover: #E62457;
-  --brand-accent-light: #FF7A96;
+  /* Brand core */
+  --brand-primary: #022b3a;       
+  --brand-primary-light: #1f7a8c;
+  --brand-primary-dark: #011922;
 
-  /* Accent #2 — sekundarni, isključivo za gradijente/glow */
+  /* Accent #1 — CTA dugmad */
+  --brand-accent: #1f7a8c;        
+  --brand-accent-hover: #155d6b;
+  --brand-accent-light: #bfdbf7;
+
+  /* Accent #2 */
   --brand-accent-2: #00E0B8;      
   --brand-accent-2-dim: #00A88A;
 
   /* Duotone gradient token */
-  --brand-duotone: linear-gradient(135deg, var(--brand-accent) 0%, var(--brand-accent-2) 100%);
+  --brand-duotone: linear-gradient(135deg, var(--primary-accent) 0%, #00E0B8 100%);
 
   /* Neutralni tonovi (Light) */
-  --surface-bg: #f5f7fa;
-  --surface-card: #ffffff;
-  --surface-card-hover: #eef1f5;
-  --surface-border: #d3d8e0;
+  --surface-bg: var(--bg-main);
+  --surface-card: var(--bg-card);
+  --surface-card-hover: #f1f5f9;
+  --surface-border: var(--border-color);
 
   /* Tekst (Light) */
-  --text-primary: #14181A;
-  --text-secondary: #546a7b;
-  --text-muted: #7A8285;
-  --text-inverse: #F5F5F0;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
 
-  /* Mapiranje starih varijabli radi kompatibilnosti */
-  --color-bg: var(--surface-bg);
-  --color-surface: var(--surface-card);
-  --color-surface-raised: var(--surface-card);
+  /* Mapiranje starih varijabli radi potpunog oslanjanja na novu paletu */
+  --color-bg: var(--bg-main);
+  --color-surface: var(--bg-card);
+  --color-surface-raised: var(--bg-card);
   --color-surface-hover: var(--surface-card-hover);
-  --color-border: var(--surface-border);
-  --color-border-strong: #9ea3b0;
+  --color-border: var(--border-color);
+  --color-border-strong: #cbd5e1;
   
   --color-text: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -151,32 +159,36 @@
 [data-theme="dark"] {
   color-scheme: dark;
   
-  /* Neutralni tonovi - Dark (iz briefa) */
-  --surface-bg: #0F1416;
-  --surface-card: #1A2023;
-  --surface-card-hover: #232A2D;
-  --surface-border: #2E373A;
+  --bg-main: #022b3a;
+  --bg-card: #093a4f;
+  --text-primary: #ffffff;
+  --text-secondary: #e1e5f2;
+  --primary-accent: #1f7a8c;
+  --primary-accent-hover: #2695ab;
+  --border-color: #1f4f63;
+  --highlight-bg: #154559;
 
-  /* Tekst - Dark (iz briefa) */
-  --text-primary: #F5F5F0;        
-  --text-secondary: #B8BEC0;
-  --text-muted: #7A8285;
-  --text-inverse: #14181A;
+  --surface-bg: var(--bg-main);
+  --surface-card: var(--bg-card);
+  --surface-card-hover: #0c4761;
+  --surface-border: var(--border-color);
 
-  /* Mapiranje starih varijabli radi kompatibilnosti */
-  --color-bg: var(--surface-bg);
-  --color-surface: var(--surface-card);
-  --color-surface-raised: var(--surface-card);
+  --text-muted: #94a3b8;
+  --text-inverse: #022b3a;
+
+  --color-bg: var(--bg-main);
+  --color-surface: var(--bg-card);
+  --color-surface-raised: var(--bg-card);
   --color-surface-hover: var(--surface-card-hover);
-  --color-border: var(--surface-border);
-  --color-border-strong: #7A8285;
+  --color-border: var(--border-color);
+  --color-border-strong: #2c6c87;
   
   --color-text: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
   --color-text-inverse: var(--text-inverse);
 
-  --color-bg-frosted: rgba(15, 20, 22, 0.85);
+  --color-bg-frosted: rgba(2, 43, 58, 0.92);
 
   /* Shadows for dark mode */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);

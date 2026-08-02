@@ -1,133 +1,196 @@
 @{
-    ViewData["Title"] = "Početna stranica";
+    ViewData["Title"] = "Početna - Pronađi ili ponudi uslugu";
 }
 
-<section class="hero-section animate-fade-in-up" style="position: relative; overflow: hidden;">
-    <div class="hero-copy" style="position: relative; z-index: 1;">
-        <span class="hero-eyebrow"><i class="bi bi-graph-up-arrow"></i> Profesionalno tržište poslova</span>
-        <h1>Brzo objavi posao ili pronađi pravog čovjeka za njega.</h1>
-        <p>NaPoso povezuje klijente i radnike u jednom sigurnom toku: od oglasa i prijave, preko komunikacije, do plaćanja i recenzija.</p>
+<!-- HERO SECTION SA OLX SEARCH BAROM -->
+<section class="hero-section animate-fade-in-up mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <div class="hero-copy">
+        <span class="hero-eyebrow"><i class="bi bi-stars"></i> Najveća berza usluga</span>
+        <h1 class="fw-bold lh-base mb-0" style="font-size: 3rem; letter-spacing: normal;">Brzo objavi posao ili pronađi pravog <span style="color: var(--primary-accent);">majstora.</span></h1>
+        <p class="text-secondary fs-5 mt-4 mb-4">NaPoso povezuje klijente i stručnjake u jednom sigurnom okruženju: od prijave i komunikacije do zaštićene isplate.</p>
 
-        <div class="hero-actions">
-            @if (User.Identity?.IsAuthenticated != true)
-            {
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg">
-                    <i class="bi bi-rocket-takeoff me-2"></i>Kreiraj nalog
-                </a>
-                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-secondary btn-lg">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Prijava
-                </a>
-            }
-            else
-            {
-                @if (User.IsInRole("Radnik"))
-                {
-                    <a asp-controller="Home" asp-action="Radnik" class="btn btn-primary btn-lg shadow-sm hover-lift">
-                        <i class="bi bi-speedometer2 me-2"></i>Idi na dashboard
-                    </a>
-                }
-                else if (User.IsInRole("Klijent"))
-                {
-                    <a asp-controller="Home" asp-action="Klijent" class="btn btn-primary btn-lg shadow-sm hover-lift">
-                        <i class="bi bi-speedometer2 me-2"></i>Idi na dashboard
-                    </a>
-                }
-                else if (User.IsInRole("Admin"))
-                {
-                    <a asp-controller="Admin" asp-action="Index" class="btn btn-primary btn-lg shadow-sm hover-lift">
-                        <i class="bi bi-speedometer2 me-2"></i>Idi na dashboard
-                    </a>
-                }
-            }
+        <!-- OLX HERO SEARCH BAR FORM -->
+        <form asp-controller="Oglas" asp-action="PrikazOglasa" method="get" class="hero-search-box p-2 bg-surface rounded-4 shadow-lg border w-100" style="max-width: 850px;">
+            <div class="d-flex flex-column flex-md-row gap-2 align-items-md-center">
+                <div class="flex-grow-1" style="flex-basis: 55%;">
+                    <div class="input-group border-0" style="height: 48px;">
+                        <span class="input-group-text bg-transparent border-0 text-muted ps-3">
+                            <i class="bi bi-search fs-5 text-primary"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control border-0 bg-transparent shadow-none fs-6 h-100" placeholder="Koju uslugu trebate danas? (npr. Vodoinstalater, Web dizajner...)" />
+                    </div>
+                </div>
+                <div class="flex-grow-1" style="flex-basis: 30%;">
+                    <div class="input-group border-0 border-start-md" style="height: 48px;">
+                        <span class="input-group-text bg-transparent border-0 text-muted ps-3">
+                            <i class="bi bi-geo-alt-fill fs-5 text-danger"></i>
+                        </span>
+                        <select name="lokacija" class="form-select border-0 bg-transparent shadow-none fs-6 text-secondary h-100">
+                            <option value="">Sve lokacije / Gradovi</option>
+                            <option value="Sarajevo">Sarajevo</option>
+                            <option value="Banja Luka">Banja Luka</option>
+                            <option value="Tuzla">Tuzla</option>
+                            <option value="Zenica">Zenica</option>
+                            <option value="Mostar">Mostar</option>
+                            <option value="Bihać">Bihać</option>
+                            <option value="Bijeljina">Bijeljina</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-shrink-0" style="flex-basis: 15%;">
+                    <button type="submit" class="btn btn-primary w-100 rounded-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 px-3" style="white-space: nowrap; height: 48px;">
+                        <i class="bi bi-search"></i> <span>Pretraži</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="hero-actions d-flex flex-wrap gap-2 mt-4 align-items-center">
+            <span class="text-muted fs-8 fw-semibold me-2"><i class="bi bi-fire text-warning me-1"></i> Popularno:</span>
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Vodoinstalater" class="badge bg-surface-subtle text-secondary border rounded-pill py-2 px-3 text-decoration-none hover-lift">Vodoinstalater</a>
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Električar" class="badge bg-surface-subtle text-secondary border rounded-pill py-2 px-3 text-decoration-none hover-lift">Električar</a>
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Web" class="badge bg-surface-subtle text-secondary border rounded-pill py-2 px-3 text-decoration-none hover-lift">Web Dizajn</a>
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Transport" class="badge bg-surface-subtle text-secondary border rounded-pill py-2 px-3 text-decoration-none hover-lift">Selidbe</a>
         </div>
     </div>
+    </div>
 
-    <div class="hero-side-panel">
-        <div class="hero-side-card">
-            <div style="display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-3);">
-                <img src="~/images/hero.png" alt="NaPoso Platforma" class="img-fluid rounded-3" style="max-height: 60px; object-fit: contain; opacity: 0.9;" />
-                <h3 style="margin: 0;">Kako izgleda rad kroz platformu</h3>
+    <div class="col-lg-5">
+        <div class="hero-side-panel">
+            <div class="hero-side-card rounded-4 p-4 border shadow-sm">
+            <div class="hero-side-card-header mb-3">
+                <img src="~/images/handyman_client_handshake.png" alt="Rad kroz platformu" class="img-fluid rounded-4 shadow-sm w-100 object-fit-cover mb-3" style="max-height: 240px;" />
+                <h4 class="fw-bold mb-0">Rad kroz <br> platformu</h4>
             </div>
-            <ul class="hero-points">
-                <li><i class="bi bi-1-circle-fill"></i><span>Kreiraš oglas ili pregledaš aktivne poslove.</span></li>
-                <li><i class="bi bi-2-circle-fill"></i><span>Komuniciraš direktno kroz razgovore bez prebacivanja na druge alate.</span></li>
-                <li><i class="bi bi-3-circle-fill"></i><span>Zaključiš posao uz pregled statusa, recenzije i sigurnu isplatu.</span></li>
+            <ul class="hero-points list-unstyled mb-0">
+                <li class="d-flex align-items-start gap-3 mb-3">
+                    <i class="bi bi-1-circle-fill text-primary d-flex align-items-center justify-content-center" style="font-size: 1.5rem; width: 32px; height: 32px; flex-shrink: 0;"></i>
+                    <span class="pt-1"><strong>Objavi zahtjev:</strong> Opiši šta ti treba i postavi budžet.</span>
+                </li>
+                <li class="d-flex align-items-start gap-3 mb-3">
+                    <i class="bi bi-2-circle-fill text-primary d-flex align-items-center justify-content-center" style="font-size: 1.5rem; width: 32px; height: 32px; flex-shrink: 0;"></i>
+                    <span class="pt-1"><strong>Izaberi majstora:</strong> Uporedi ponude, recenzije i ocjene radnika.</span>
+                </li>
+                <li class="d-flex align-items-start gap-3">
+                    <i class="bi bi-3-circle-fill text-primary d-flex align-items-center justify-content-center" style="font-size: 1.5rem; width: 32px; height: 32px; flex-shrink: 0;"></i>
+                    <span class="pt-1"><strong>Sigurna isplata:</strong> Novac se prebacuje tek po završetku posla.</span>
+                </li>
             </ul>
         </div>
     </div>
-</section>
-
-<section class="trust-section">
-    <div class="trust-section-header">
-        <h2 class="trust-section-title"><i class="bi bi-stars me-2"></i>Zašto NaPos'o</h2>
-        <p class="trust-section-subtitle">Tri ključna prednosti koja platformu čine brzom, sigurnom i jasnom za sve korisnike.</p>
-    </div>
-    <div class="trust-row">
-        <div class="hero-trust-item">
-            <div class="hero-trust-icon">
-                <i class="bi bi-lightning-charge-fill"></i>
-            </div>
-            <div class="hero-trust-value">Brzo</div>
-            <div class="hero-trust-label">Objavljivanje</div>
-        </div>
-        <div class="hero-trust-item">
-            <div class="hero-trust-icon">
-                <i class="bi bi-shield-fill-check"></i>
-            </div>
-            <div class="hero-trust-value">Sigurno</div>
-            <div class="hero-trust-label">Plaćanje</div>
-        </div>
-        <div class="hero-trust-item">
-            <div class="hero-trust-icon">
-                <i class="bi bi-bar-chart-line-fill"></i>
-            </div>
-            <div class="hero-trust-value">Jasno</div>
-            <div class="hero-trust-label">Praćenje</div>
-        </div>
     </div>
 </section>
 
-<section class="feature-grid section-gap">
-    <div class="feature-card animate-fade-in-up">
-        <div class="feature-card-icon">
-            <i class="bi bi-megaphone"></i>
+<!-- TOP 5 KATEGORIJA USLUGA (SMANJENJE KOGNITIVNOG OPTEREĆENJA) -->
+<section class="categories-section mb-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="bi bi-grid-fill text-primary me-2"></i>Top 5 Kategorija Usluga</h3>
+            <p class="text-muted mb-0">Fokusirajte se na najtraženije usluge na platformi</p>
         </div>
-        <h3>Oglašavaj poslove</h3>
-        <p>Kreiraj oglase, postavi uslove i pronađi idealnog radnika za svoj projekat.</p>
+        <a asp-controller="Oglas" asp-action="PrikazOglasa" class="btn btn-outline-secondary btn-sm rounded-pill fw-semibold d-none d-md-inline-flex align-items-center gap-1">
+            <i class="bi bi-grid-3x3-gap"></i> Sve kategorije &rarr;
+        </a>
     </div>
-    <div class="feature-card animate-fade-in-up">
-        <div class="feature-card-icon">
-            <i class="bi bi-search"></i>
+
+    <div class="row g-3">
+        <!-- 1. Građevinarstvo & Majstori -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Majstor" class="card category-card h-100 text-center p-3 border rounded-4 text-decoration-none hover-lift">
+                <div class="category-icon-wrapper mb-3 rounded-circle bg-primary-subtle text-primary mx-auto d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <i class="bi bi-tools fs-4"></i>
+                </div>
+                <h6 class="fw-bold text-primary mb-1">Građevinarstvo & Majstori</h6>
+                <small class="text-muted">Vodoinstalateri, Moleri...</small>
+            </a>
         </div>
-        <h3>Pronađi posao</h3>
-        <p>Pretraži dostupne poslove po lokaciji, tipu i cijeni. Prijavi se jednim klikom.</p>
+
+        <!-- 2. IT, Dizajn & Marketing -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="IT" class="card category-card h-100 text-center p-3 border rounded-4 text-decoration-none hover-lift">
+                <div class="category-icon-wrapper mb-3 rounded-circle bg-info-subtle text-info mx-auto d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <i class="bi bi-laptop fs-4"></i>
+                </div>
+                <h6 class="fw-bold text-primary mb-1">IT, Dizajn & Marketing</h6>
+                <small class="text-muted">Web, Logo, SEO...</small>
+            </a>
+        </div>
+
+        <!-- 3. Ljepota, Njega & Zdravlje -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Kozmetika" class="card category-card h-100 text-center p-3 border rounded-4 text-decoration-none hover-lift">
+                <div class="category-icon-wrapper mb-3 rounded-circle bg-danger-subtle text-danger mx-auto d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <i class="bi bi-heart-pulse fs-4"></i>
+                </div>
+                <h6 class="fw-bold text-primary mb-1">Ljepota & Njega</h6>
+                <small class="text-muted">Frizerske, Masaže...</small>
+            </a>
+        </div>
+
+        <!-- 4. Transport & Selidbe -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Transport" class="card category-card h-100 text-center p-3 border rounded-4 text-decoration-none hover-lift">
+                <div class="category-icon-wrapper mb-3 rounded-circle bg-warning-subtle text-warning mx-auto d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <i class="bi bi-truck fs-4"></i>
+                </div>
+                <h6 class="fw-bold text-primary mb-1">Transport & Selidbe</h6>
+                <small class="text-muted">Kombi prevoz, Šlep...</small>
+            </a>
+        </div>
+
+        <!-- 5. Edukacija & Instrukcije -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Edukacija" class="card category-card h-100 text-center p-3 border rounded-4 text-decoration-none hover-lift">
+                <div class="category-icon-wrapper mb-3 rounded-circle bg-success-subtle text-success mx-auto d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <i class="bi bi-journal-bookmark fs-4"></i>
+                </div>
+                <h6 class="fw-bold text-primary mb-1">Edukacija & Časovi</h6>
+                <small class="text-muted">Matematika, Jezici...</small>
+            </a>
+        </div>
+
+        <!-- 6. + Sve Kategorije Card -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <a asp-controller="Oglas" asp-action="PrikazOglasa" class="card category-card h-100 text-center p-3 border border-dashed rounded-4 text-decoration-none hover-lift bg-surface-subtle">
+                <div class="category-icon-wrapper mb-3 rounded-circle bg-secondary-subtle text-secondary mx-auto d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <i class="bi bi-plus-lg fs-4"></i>
+                </div>
+                <h6 class="fw-bold text-primary mb-1">+ Sve Kategorije</h6>
+                <small class="text-muted">Pregledaj sve sekcije</small>
+            </a>
+        </div>
     </div>
-    <div class="feature-card animate-fade-in-up">
-        <div class="feature-card-icon">
-            <i class="bi bi-shield-check"></i>
-        </div>
-        <h3>Sigurno plaćanje</h3>
-        <p>Sigurna integracija plaćanja osigurava zaštićeno plaćanje za obavljene poslove.</p>
+</section>
+
+<!-- SEANSA: ZAŠTO NAPOSO -->
+<section class="trust-section my-5">
+    <div class="trust-section-header text-center mb-4">
+        <h3 class="trust-section-title fw-bold"><i class="bi bi-shield-check text-primary me-2"></i>Zašto izabrati NaPoso.me</h3>
+        <p class="trust-section-subtitle text-muted">Tri ključne prednosti koje platformu čine najpouzdanijom u regiji</p>
     </div>
-    <div class="feature-card animate-fade-in-up">
-        <div class="feature-card-icon">
-            <i class="bi bi-chat-dots"></i>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 p-4 border rounded-4 shadow-sm text-center">
+                <div class="fs-1 text-primary mb-2"><i class="bi bi-lightning-charge-fill"></i></div>
+                <h5 class="fw-bold">Brzo Objavljivanje</h5>
+                <p class="text-muted mb-0">Objavite oglas za manje od 2 minute i odmah primajte ponude proverenih stručnjaka.</p>
+            </div>
         </div>
-        <h3>Real-time komunikacija</h3>
-        <p>Četuj sa klijentima ili radnicima direktno kroz platformu.</p>
-    </div>
-    <div class="feature-card animate-fade-in-up">
-        <div class="feature-card-icon">
-            <i class="bi bi-star"></i>
+        <div class="col-md-4">
+            <div class="card h-100 p-4 border rounded-4 shadow-sm text-center">
+                <div class="fs-1 text-success mb-2"><i class="bi bi-shield-fill-check"></i></div>
+                <h5 class="fw-bold">Zaštićeno Plaćanje</h5>
+                <p class="text-muted mb-0">Integrisani Stripe sistem garantuje da novac ne ide izvođaču dok niste 100% zadovoljni.</p>
+            </div>
         </div>
-        <h3>Sistem recenzija</h3>
-        <p>Ocjenjuj saradnike i gradi reputaciju kroz provjerene recenzije.</p>
-    </div>
-    <div class="feature-card animate-fade-in-up">
-        <div class="feature-card-icon">
-            <i class="bi bi-clipboard-check"></i>
+        <div class="col-md-4">
+            <div class="card h-100 p-4 border rounded-4 shadow-sm text-center">
+                <div class="fs-1 text-warning mb-2"><i class="bi bi-star-fill"></i></div>
+                <h5 class="fw-bold">Provjerene Recenzije</h5>
+                <p class="text-muted mb-0">Transparentan sistem ocjena i recenzija bez mogućnosti lažnih utisaka.</p>
+            </div>
         </div>
-        <h3>Verifikacija dokumenata</h3>
-        <p>Verifikuj svoj identitet i stekni povjerenje klijenata ili radnika.</p>
     </div>
 </section>

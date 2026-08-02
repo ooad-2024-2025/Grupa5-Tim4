@@ -8,13 +8,13 @@ using NaPoso.Models;
 
 namespace NaPoso.Controllers
 {
-    [Authorize]
-    public class PrijavaRecenzijeController : Controller
+    [Authorize(Roles = RoleConstants.Radnik)]
+    public class PrijavaOglasaController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Korisnik> _userManager;
 
-        public PrijavaRecenzijeController(ApplicationDbContext context, UserManager<Korisnik> userManager)
+        public PrijavaOglasaController(ApplicationDbContext context, UserManager<Korisnik> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -22,35 +22,35 @@ namespace NaPoso.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Prijavi(int recenzijaId, string razlog)
+        public async Task<IActionResult> Prijavi(int oglasId, string razlog)
         {
             if (string.IsNullOrWhiteSpace(razlog))
             {
                 TempData["ErrorMessage"] = "Razlog prijave je obavezan.";
-                return RedirectToAction("MojeRecenzije", "Recenzija");
+                return RedirectToAction("Details", "Oglas", new { id = oglasId });
             }
 
             var userId = _userManager.GetUserId(User);
-            var recenzija = await _context.Recenzija.FindAsync(recenzijaId);
+            var oglas = await _context.Oglas.FindAsync(oglasId);
 
-            if (recenzija == null)
+            if (oglas == null)
             {
                 return NotFound();
             }
 
-            var prijava = new PrijavaRecenzije
+            var prijava = new PrijavaOglasa
             {
-                RecenzijaId = recenzijaId,
-                PrijavioKorisnikId = userId,
+                OglasId = oglasId,
+                PrijavioKorisnikId = userId ?? string.Empty,
                 Razlog = razlog,
                 DatumPrijave = DateTime.UtcNow,
                 JeRijeseno = false
             };
 
-            _context.PrijavaRecenzije.Add(prijava);
+            _context.PrijavaOglasa.Add(prijava);
             await _context.SaveChangesAsync();
 
-            // Notify all admins about the new review report
+            // Notify all admins about the new report
             var adminRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == NaPoso.Constants.RoleConstants.Admin);
             if (adminRole != null)
             {
@@ -64,7 +64,7 @@ namespace NaPoso.Controllers
                     _context.Obavijest.Add(new NaPoso.Models.Obavijest
                     {
                         KorisnikId = adminId,
-                        Sadrzaj = $"⚠️ Recenzija prijavljena. Razlog: {razlog.Substring(0, Math.Min(razlog.Length, 80))}",
+                        Sadrzaj = $"⚠️ Novi oglas prijavljen: '{oglas.Naslov}'. Razlog: {razlog.Substring(0, Math.Min(razlog.Length, 60))}...",
                         VrijemeSlanja = DateTime.UtcNow,
                         Tip = NaPoso.Enums.Enums.Obavjestenje.Email,
                         IsRead = false
@@ -73,8 +73,8 @@ namespace NaPoso.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            TempData["SuccessMessage"] = "Recenzija je uspješno prijavljena adminu.";
-            return RedirectToAction("Index", "Recenzija");
+            TempData["SuccessMessage"] = "Oglas je uspješno prijavljen adminu.";
+            return RedirectToAction("Details", "Oglas", new { id = oglasId });
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -53,19 +53,19 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Polje za trenutnu lozinku je obavezno.")]
             [DataType(DataType.Password)]
-            [Display(Name = "Current password")]
+            [Display(Name = "Trenutna lozinka")]
             public string OldPassword { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Polje za novu lozinku je obavezno.")]
+            [StringLength(100, ErrorMessage = "Nova lozinka mora imati najmanje {2}, a najviše {1} karaktera.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "New password")]
+            [Display(Name = "Nova lozinka")]
             public string NewPassword { get; set; }
 
             /// <summary>
@@ -73,8 +73,8 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm new password")]
-            [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+            [Display(Name = "Potvrdi novu lozinku")]
+            [Compare("NewPassword", ErrorMessage = "Nova lozinka i potvrda lozinke se ne poklapaju.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -120,7 +120,7 @@ namespace NaPoso.Areas.Identity.Pages.Account.Manage
 
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("User changed their password successfully.");
-            StatusMessage = "Your password has been changed.";
+            StatusMessage = "Uspješno ste promijenili šifru.";
 
             return RedirectToPage();
         }

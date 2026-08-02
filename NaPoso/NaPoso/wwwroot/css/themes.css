@@ -35,3 +35,10 @@ button.dropdown-item.text-danger:hover,
   background: var(--color-danger-light);
 }
 
+
+/* --- Dark Mode: Input Focus --- */
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
