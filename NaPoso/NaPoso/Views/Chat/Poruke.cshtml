@@ -62,8 +62,8 @@
 
     <form method="post" asp-action="PosaljiPoruku" class="mt-4">
         <input type="hidden" name="chatId" value="@Model.Id" />
-        <div class="d-flex gap-3 align-items-center">
-            <textarea name="tekst" class="form-control" placeholder="Unesi poruku..." required rows="2" style="resize:none;"></textarea>
+        <div class="d-flex gap-3 align-items-stretch flex-column flex-sm-row mobile-stack-actions">
+            <textarea name="tekst" class="form-control" placeholder="Unesi poruku..." required rows="2" style="resize:none; min-height: 48px;"></textarea>
             <button type="submit" class="btn btn-primary" style="height: 48px; white-space: nowrap; flex-shrink: 0;">
                 <i class="bi bi-send me-1"></i>Pošalji
             </button>

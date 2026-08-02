@@ -25,6 +25,7 @@ namespace NaPoso.Data
         public DbSet<Poruka> Poruka { get; set; }
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<PrijavaRecenzije> PrijavaRecenzije { get; set; }
+        public DbSet<PrijavaOglasa> PrijavaOglasa { get; set; }
 
         /// <summary>
         /// Idempotent handler for Stripe webhook events — only processes each event once.

@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-lg-8 mx-auto">
         <div class="content-card">
-            <div class="d-flex justify-content-between align-items-start mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-start gap-3 mb-4">
                 <div>
                     <h2 class="h3 mb-2" style="font-family: var(--font-heading);">@Model.Naslov</h2>
                     <div class="d-flex gap-3 text-muted" style="font-size: var(--text-small);">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="text-end">
-                    <div class="text-accent fs-3 fw-bold">@Model.CijenaPosla KM</div>
+                    <div class="text-accent fs-3 fw-bold amount-nowrap">@Model.CijenaPosla KM</div>
                     <span class="badge @(Model.Status == NaPoso.Enums.Enums.Status.Zavrsen ? "bg-secondary" : "bg-success") mt-2">
                         @OglasStatusHelper.GetLabel(Model.Status)
                     </span>
@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="d-flex gap-3 mt-4 justify-content-center" id="details-actions">
+        <div class="d-flex gap-3 mt-4 justify-content-center flex-wrap mobile-stack-actions" id="details-actions">
             @if (User.IsInRole("Klijent"))
             {
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="bi bi-pencil me-1"></i>Uredi</a>
@@ -64,6 +64,11 @@
                     @Html.AntiForgeryToken()
                 }
                 <a asp-controller="Oglas" asp-action="PrikazOglasa" class="btn btn-secondary"><i class="bi bi-arrow-left me-1"></i>Nazad na listu oglasa</a>
+                
+                <!-- Prijavi oglas dugme -->
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#prijaviOglasModal">
+                    <i class="bi bi-flag me-1"></i>Prijavi oglas
+                </button>
             }
             else
             {
@@ -73,6 +78,39 @@
     </div>
 </div>
 
+@section Modals {
+    @if (User.IsInRole("Radnik"))
+    {
+        <div class="modal fade" id="prijaviOglasModal" tabindex="-1" aria-labelledby="prijaviOglasModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 500px;">
+                <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-primary);">
+                    <form asp-controller="PrijavaOglasa" asp-action="Prijavi" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="oglasId" value="@Model.Id" />
+                        <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
+                            <h5 class="modal-title fw-bold" id="prijaviOglasModalLabel">
+                                <i class="bi bi-flag me-2 text-danger"></i>Prijavi oglas
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <p class="text-muted small mb-3">Navedite razlog prijave ovog oglasa. Admin će pregledati vašu prijavu u najkraćem roku.</p>
+                            <div class="form-group mb-0">
+                                <label class="form-label fw-semibold mb-2">Razlog prijave</label>
+                                <textarea name="razlog" class="form-control" rows="4" placeholder="Opišite zašto prijavljujete ovaj oglas..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top" style="border-color: var(--border-color) !important;">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                            <button type="submit" class="btn btn-danger"><i class="bi bi-send me-1"></i>Pošalji prijavu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+
 @section Scripts {
 <script>
 (function () {
@@ -81,7 +119,35 @@
 
     var csrfField = document.querySelector('input[name="__RequestVerificationToken"]');
     var csrfToken = csrfField ? csrfField.value : '';
-    var showToast = window.showToast || window.NaPosoToast?.show || function (m) { alert(m); };
+    function showToastMsg(m, type) {
+        var container = document.querySelector('.toast-container');
+        if (!container) return;
+        
+        var isError = type === 'danger' || type === 'error';
+        var toastClass = isError ? 'toast-error' : 'toast-success';
+        var iconClass = isError ? 'bi-x-circle-fill' : 'bi-check-circle-fill';
+        
+        var toastHTML = `
+            <div class="toast toast-naposo ${toastClass} align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  <i class="bi ${iconClass} toast-icon me-2"></i>${m}
+                </div>
+                <button type="button" class="btn-close btn-close-naposo me-2 m-auto" data-bs-dismiss="toast" aria-label="Zatvori"></button>
+              </div>
+            </div>`;
+            
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = toastHTML.trim();
+        var toastEl = tempDiv.firstChild;
+        container.appendChild(toastEl);
+        
+        if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    }
+
     var originalHTML = btn.innerHTML;
 
     btn.addEventListener('click', async function () {
@@ -116,18 +182,18 @@
             } catch (_) { }
 
             if (resp.ok && ok) {
-                showToast(msg || 'Uspješno ste se prijavili na oglas.', 'success-oglas-radnik');
+                showToastMsg(msg || 'Uspješno ste se prijavili na oglas.', 'success-oglas-radnik');
                 var replacement = document.createElement('span');
                 replacement.className = 'badge bg-success px-3 py-2 fs-6';
                 replacement.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Prijavljeni ste';
                 if (btn.parentNode) btn.parentNode.replaceChild(replacement, btn);
             } else {
-                showToast(msg, 'danger');
+                showToastMsg(msg, 'danger');
                 btn.disabled = false;
                 btn.innerHTML = originalHTML;
             }
         } catch (err) {
-            showToast('Došlo je do greške prilikom prijave.', 'danger');
+            showToastMsg('Došlo je do greške prilikom prijave.', 'danger');
             btn.disabled = false;
             btn.innerHTML = originalHTML;
         }

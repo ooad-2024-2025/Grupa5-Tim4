@@ -39,7 +39,7 @@
     <div class="col-md-4 d-flex">
         <div class="stat-card stat-card-primary shadow-sm hover-lift w-100">
             <i class="bi bi-wallet2 stat-icon"></i>
-            <div class="stat-value">@ukupnoPotroseno KM <span class="badge badge-soft-accent fs-6 align-middle ms-2" style="font-size:0.85rem; vertical-align: middle !important;">Sve vrijeme</span></div>
+            <div class="stat-value"><span class="amount-nowrap">@ukupnoPotroseno KM</span> <span class="badge badge-soft-accent fs-6 align-middle ms-2" style="font-size:0.85rem; vertical-align: middle !important;">Sve vrijeme</span></div>
             <div class="stat-label fw-bold">Ukupno isplaćeno radnicima</div>
             <div class="stat-detail flex-wrap" style="gap:0.5rem 1rem;">
                 <span class="stat-detail-item">
@@ -71,7 +71,7 @@
             <div class="d-flex flex-column gap-3 h-100">
                 <div class="stat-card h-100 mb-0" style="border-left:4px solid var(--color-accent);">
                     <i class="bi bi-cash-stack stat-icon" style="color:var(--color-accent);"></i>
-                    <div class="stat-value">@(Math.Round(godisnjaUkupno, 2)) KM</div>
+                    <div class="stat-value"><span class="amount-nowrap">@(Math.Round(godisnjaUkupno, 2)) KM</span></div>
                     <div class="stat-label fw-bold">Ukupna potrošnja @godina.</div>
                     <div class="stat-detail">
                         <span class="stat-detail-item">Sve isplate u tekućoj godini</span>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="stat-card h-100 mb-0" style="border-left:4px solid var(--brand-accent);">
                     <i class="bi bi-calendar3 stat-icon" style="color:var(--brand-accent);"></i>
-                    <div class="stat-value">@prosjecnaMjesecna KM</div>
+                    <div class="stat-value"><span class="amount-nowrap">@prosjecnaMjesecna KM</span></div>
                     <div class="stat-label fw-bold">Prosječna mjesečna potrošnja</div>
                     <div class="stat-detail">
                         <span class="stat-detail-item">

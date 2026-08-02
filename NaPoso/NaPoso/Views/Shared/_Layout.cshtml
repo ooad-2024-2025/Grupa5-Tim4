@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/utilities.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="icon" type="image/png" href="~/images/naposo_logo_icon.png" />
+    <link rel="icon" type="image/svg+xml" href="~/images/logo.svg" />
 </head>
 @using Microsoft.AspNetCore.Identity
 @using NaPoso.Data
@@ -32,6 +32,7 @@
 
 @{
     List<Obavijest> obavijesti = new();
+    string punoIme = "Korisnički Meni";
     if (User.IsInRole("Klijent") || User.IsInRole("Radnik") || User.IsInRole("Admin"))
     {
         var userId = UserManager.GetUserId(User);
@@ -40,132 +41,219 @@
             .OrderByDescending(x => x.VrijemeSlanja)
             .Take(5)
             .ToList();
+            
+        var ulogovaniKorisnik = Db.Korisnik.FirstOrDefault(k => k.Id == userId);
+        if (ulogovaniKorisnik != null && (!string.IsNullOrEmpty(ulogovaniKorisnik.Ime) || !string.IsNullOrEmpty(ulogovaniKorisnik.Prezime)))
+        {
+            punoIme = $"{ulogovaniKorisnik.Ime} {ulogovaniKorisnik.Prezime}".Trim();
+        }
     }
 }
 
 <body>
     <div id="pageLoader" class="page-loader" aria-hidden="true">
-        <img src="~/images/naposo_logo_icon.png" alt="NaPoso" class="page-loader-logo" />
+        <img src="~/images/logo.svg" alt="NaPoso" class="page-loader-logo" style="width: 64px; height: 64px; animation: loader-pulse 1.2s ease-in-out infinite;" />
     </div>
     <header>
-        <div style="height: 4px; background: var(--color-accent); width: 100%;"></div>
-        <nav class="navbar navbar-expand-sm navbar-naPoso" aria-label="Glavna navigacija">
+        <div style="height: 4px; background: var(--primary-accent); width: 100%;"></div>
+        <nav class="navbar navbar-expand-lg navbar-naPoso" aria-label="Glavna navigacija">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/naposo_logo_icon.png" alt="NaPoso" class="navbar-brand-logo me-2" />
+                <!-- 1. LOGO -->
+                <a class="navbar-brand me-3" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.svg" alt="NaPoso" class="navbar-brand-logo me-2" style="width: 28px; height: 28px;" />
                     <span class="navbar-brand-copy">
-                        <span class="navbar-brand-title">NaPoso</span>
-                        <span class="navbar-brand-subtitle">oglasi, komunikacija, isplate</span>
+                        <span class="navbar-brand-title">NaPoso<span class="text-primary-accent">.me</span></span>
+                        <span class="navbar-brand-subtitle">usluge, komunikacija, isplate</span>
                     </span>
                 </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                         aria-controls="mainNav" aria-expanded="false" aria-label="Otvori navigaciju">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="mainNav">
-                    <ul class="navbar-nav me-auto">
+                    <!-- 2 & 3 & 4. MEGA DROPDOWN KATEGORIJE | PRETRAGA | OBJAVI USLUGU -->
+                    <ul class="navbar-nav me-auto align-items-lg-center gap-1 gap-lg-2">
+                        <!-- 2. KATEGORIJE MEGA DROPDOWN -->
+                        <li class="nav-item dropdown position-static">
+                            <a class="nav-link dropdown-toggle fw-semibold d-inline-flex align-items-center gap-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-grid-3x3-gap-fill text-primary"></i> Kategorije
+                            </a>
+                            <div class="dropdown-menu mega-dropdown-menu w-100 shadow-lg border-0 mt-0 p-4" style="border-radius: 0 0 16px 16px;">
+                                <div class="container">
+                                    <div class="row g-4">
+                                        <!-- Kolona 1: Građevinarstvo & Renoviranje -->
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                                <i class="bi bi-tools me-2"></i>Građevinarstvo & Renoviranje
+                                            </h6>
+                                            <ul class="list-unstyled mega-dropdown-list">
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Vodoinstalater" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Vodoinstalateri</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Električar" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Električari</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Moler" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Moleri & Keramičari</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Stolarija" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Stolarija</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Krovopokrivači" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Krovopokrivači</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Suha" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Suha gradnja & Gips</a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Kolona 2: Servisi & Popravke -->
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                                <i class="bi bi-wrench me-2"></i>Servisi & Popravke
+                                            </h6>
+                                            <ul class="list-unstyled mega-dropdown-list">
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Bijela" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Bijela tehnika</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Klima" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Klima uređaji</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Mehanika" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Auto-mehanika</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Računari" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Računari & Telefoni</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Namještaj" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Popravka namještaja</a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Kolona 3: Domaćinstvo & Transport -->
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                                <i class="bi bi-house-door me-2"></i>Domaćinstvo & Transport
+                                            </h6>
+                                            <ul class="list-unstyled mega-dropdown-list">
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Čišćenje" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Čišćenje stanova & kancelarija</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Selidbe" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Selidbe & Transport</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Bašta" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Održavanje bašte</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Tepisi" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Pranje tepiha & nameštaja</a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Kolona 4: IT, Dizajn & Poslovanje -->
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                                <i class="bi bi-laptop me-2"></i>IT, Dizajn & Poslovanje
+                                            </h6>
+                                            <ul class="list-unstyled mega-dropdown-list">
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Web" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Web & Mobilni razvoj</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Grafički" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Grafički dizajn</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Marketing" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Digitalni marketing</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Knjigovodstvo" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Knjigovodstvo</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Prevođenje" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Prevođenje & Pisanje</a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Kolona 5: Ljepota, Zdravlje & Njega -->
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                                <i class="bi bi-heart me-2"></i>Ljepota, Zdravlje & Njega
+                                            </h6>
+                                            <ul class="list-unstyled mega-dropdown-list">
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Frizerske" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Frizerske & Kozmetičke usluge</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Masaže" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Masaže & Tretmani</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Trener" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Personalni treneri</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Njega" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Njega starijih & čuvanje djece</a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- Kolona 6: Edukacija & Instrukcije -->
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                                                <i class="bi bi-book me-2"></i>Edukacija & Instrukcije
+                                            </h6>
+                                            <ul class="list-unstyled mega-dropdown-list">
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Jezici" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Časovi jezika</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Instrukcije" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Instrukcije za školu/fakultet</a></li>
+                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Muzika" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Muzički časovi</a></li>
+                                                <li class="mt-2"><a asp-controller="Oglas" asp-action="PrikazOglasa" class="dropdown-item py-1 fw-bold text-primary"><i class="bi bi-arrow-right-circle-fill me-1"></i> Pregledaj sve oglase &rarr;</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- 3. PRETRAGA OGLASA -->
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house me-1"></i>Početna
+                            <a class="nav-link fw-semibold d-inline-flex align-items-center gap-1" asp-controller="Oglas" asp-action="PrikazOglasa">
+                                <i class="bi bi-search text-secondary"></i> Pretraga Oglasa
                             </a>
                         </li>
-                        
-                        @if (User.IsInRole("Klijent"))
+
+                        <!-- 4. OBJAVI USLUGU (CTA DUGME) -->
+                        @if (User.IsInRole("Klijent") || !User.Identity.IsAuthenticated)
                         {
-                            <!-- Klijent vidi isključivo svoje oglase -->
-                            <li class="nav-item">
-                                <a class="nav-link active-link" asp-controller="Oglas" asp-action="OglasiKlijenta">
-                                    <i class="bi bi-briefcase me-1"></i>Moji Oglasi
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <!-- Radnik i Admin vide sve oglase -->
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Oglas" asp-action="PrikazOglasa">
-                                    <i class="bi bi-search me-1"></i>Pretraga Oglasa
+                            <li class="nav-item ms-lg-2 d-flex align-items-center">
+                                <a class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm d-inline-flex align-items-center gap-1" asp-controller="Oglas" asp-action="Create">
+                                    <i class="bi bi-plus-circle-fill me-2"></i> Objavi Uslugu
                                 </a>
                             </li>
                         }
                         
-                        @if (User.IsInRole("Radnik"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link active-link" asp-controller="Oglas" asp-action="MojePrijave">
-                                    <i class="bi bi-clock-history me-1"></i>Moje prijave
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Radnik">
-                                    <i class="bi bi-speedometer2 me-1"></i>Moj Dashboard
-                                </a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Klijent"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link active-link" asp-controller="Home" asp-action="Klijent">
-                                    <i class="bi bi-speedometer2 me-1"></i>Moj Dashboard
-                                </a>
-                            </li>
-                        }
-                        
+                        <!-- ADMIN PANEL -->
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link active-link" asp-controller="Admin" asp-action="Index">
-                                    <i class="bi bi-shield-lock me-1"></i>Admin Panel
+                                <a class="nav-link fw-semibold d-inline-flex align-items-center gap-1" asp-controller="Admin" asp-action="Index">
+                                    <i class="bi bi-speedometer2"></i> Admin Panel
                                 </a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link fw-semibold d-inline-flex align-items-center gap-1 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-flag-fill text-warning"></i> Prijave
+                                </a>
+                                <ul class="dropdown-menu shadow border-0" style="border-radius: 10px;">
+                                    <li><a class="dropdown-item py-2" asp-controller="Admin" asp-action="PrijaveOglasa"><i class="bi bi-megaphone me-2 text-danger"></i>Prijavljeni oglasi</a></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="Admin" asp-action="PrijaveRecenzija"><i class="bi bi-chat-left-text me-2 text-warning"></i>Prijavljene recenzije</a></li>
+                                </ul>
+                            </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Documents">
-                                    <i class="bi bi-file-earmark-check me-1"></i>Verifikacija
+                                <a class="nav-link fw-semibold d-inline-flex align-items-center gap-1" asp-controller="Admin" asp-action="Documents">
+                                    <i class="bi bi-file-earmark-check"></i> Verifikacija
                                 </a>
                             </li>
                         }
+                    </ul>
 
+                    <!-- 5. NOTIFIKACIJE + THEME TOGGLE + MOJ NAPOSO (OFFCANVAS) -->
+                    <div class="d-flex align-items-center gap-2 gap-lg-3 mt-3 mt-lg-0">
                         @if (User.IsInRole("Admin") || User.IsInRole("Radnik") || User.IsInRole("Klijent"))
                         {
                             var notifUrl = User.IsInRole("Admin")
                                 ? Url.Action("Index", "Obavijest")!
                                 : Url.Action("MyNotifications", "ObavijestKorisniku")!;
 
-                            <li class="nav-item dropdown notification-badge">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-bell"></i>
-                                    @if (obavijesti.Any())
-                                    {
-                                        <span class="notification-count">@obavijesti.Count</span>
-                                    }
+                            <div class="dropdown notification-badge me-1">
+                                <a class="nav-link p-2 rounded-circle hover-surface d-flex align-items-center justify-content-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Obavještenja">
+                                    <span class="position-relative d-inline-flex align-items-center justify-content-center">
+                                        <i class="bi bi-bell fs-5 text-secondary"></i>
+                                        @if (obavijesti.Any())
+                                        {
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.25em 0.4em; border: 2px solid var(--bg-surface, #fff);">@obavijesti.Count</span>
+                                        }
+                                    </span>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <div class="notification-container">
+                                <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0" style="border-radius: 12px; width: 300px;">
+                                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 fw-bold">Obavještenja</h6>
+                                        <span class="badge bg-primary rounded-pill">@obavijesti.Count novih</span>
+                                    </div>
+                                    <div class="notification-container p-2" style="max-height: 280px; overflow-y: auto;">
                                         @if (!obavijesti.Any())
                                         {
-                                            <span class="dropdown-item no-notifications">Nema novih obavijesti</span>
+                                            <div class="text-center py-3 text-muted fs-8">Nema novih obavijesti</div>
                                         }
                                         else
                                         {
                                             foreach (var o in obavijesti)
                                             {
-                                                <a class="dropdown-item notification-item" data-id="@o.Id">
-                                                    @o.Sadrzaj <br />
-                                                    <small>@o.VrijemeSlanja.ToString("g")</small>
+                                                <a class="dropdown-item p-2 rounded-2 mb-1 notification-item" data-id="@o.Id">
+                                                    <div class="fw-medium fs-8">@o.Sadrzaj</div>
+                                                    <small class="text-muted fs-9">@o.VrijemeSlanja.ToString("g")</small>
                                                 </a>
                                             }
                                         }
                                     </div>
-                                    <hr class="dropdown-divider" />
-                                    <a class="dropdown-item text-center" href="@notifUrl">Prikaži sve</a>
+                                    <div class="p-2 border-top text-center bg-surface-subtle" style="border-radius: 0 0 12px 12px;">
+                                        <a class="text-primary fw-semibold fs-8 text-decoration-none" href="@notifUrl">Prikaži sve obavijesti &rarr;</a>
+                                    </div>
                                 </div>
-                            </li>
+                            </div>
                         }
-                    </ul>
 
-                    <div class="d-flex align-items-center gap-3">
                         <!-- Theme Toggle -->
-                        <div class="theme-toggle" role="radiogroup" aria-label="Odabir teme">
+                        <div class="theme-toggle me-1" role="radiogroup" aria-label="Odabir teme">
                             <button class="theme-toggle-btn active" data-theme="light" aria-label="Svijetla tema" title="Svijetla">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                             </button>
@@ -177,6 +265,7 @@
                             </button>
                         </div>
 
+                        <!-- 5. KORISNIČKI PROFIL (OFFCANVAS TRIGGER) -->
                         <partial name="_LoginPartial" />
                     </div>
                 </div>
@@ -239,58 +328,162 @@
         (function () {
             var SESSION_KEY = 'naposo_loaded';
             var storage = typeof window.sessionStorage !== 'undefined' ? window.sessionStorage : null;
-
-            if (storage && storage.getItem(SESSION_KEY)) {
-                var existing = document.getElementById('pageLoader');
-                if (existing) {
-                    existing.classList.add('is-hidden');
-                    if (existing.parentNode) existing.parentNode.removeChild(existing);
-                }
-                return;
-            }
-
             var loader = document.getElementById('pageLoader');
-            var minDurationMs = 2700;
-            var startTime = Date.now();
-            var pageLoaded = false;
-            var timeoutFired = false;
-            var done = false;
 
-            var tryHide = function () {
-                if (done) return;
-                if (!pageLoaded || !timeoutFired) return;
-                done = true;
+            window.showLoader = function() {
+                if (loader) {
+                    loader.classList.remove('is-hidden');
+                }
+            };
+
+            window.hideLoader = function() {
                 if (loader && !loader.classList.contains('is-hidden')) {
                     loader.classList.add('is-hidden');
-                    setTimeout(function () {
-                        if (loader && loader.parentNode) {
-                            loader.parentNode.removeChild(loader);
-                        }
-                        if (storage) {
-                            try { storage.setItem(SESSION_KEY, 'true'); } catch (e) { }
-                        }
-                    }, 500);
                 }
             };
 
-            setTimeout(function () {
-                timeoutFired = true;
-                tryHide();
-            }, minDurationMs);
-
-            var onLoaded = function () {
-                pageLoaded = true;
-                tryHide();
-            };
-
-            if (document.readyState === 'complete') {
-                onLoaded();
+            if (storage && storage.getItem(SESSION_KEY)) {
+                if (loader) {
+                    loader.classList.add('is-hidden');
+                }
             } else {
-                window.addEventListener('load', onLoaded);
+                var minDurationMs = 2700;
+                var pageLoaded = false;
+                var timeoutFired = false;
+                var done = false;
+
+                var tryHide = function () {
+                    if (done) return;
+                    if (!pageLoaded || !timeoutFired) return;
+                    done = true;
+                    window.hideLoader();
+                    if (storage) {
+                        try { storage.setItem(SESSION_KEY, 'true'); } catch (e) { }
+                    }
+                };
+
+                setTimeout(function () {
+                    timeoutFired = true;
+                    tryHide();
+                }, minDurationMs);
+
+                var onLoaded = function () {
+                    pageLoaded = true;
+                    tryHide();
+                };
+
+                if (document.readyState === 'complete') {
+                    onLoaded();
+                } else {
+                    window.addEventListener('load', onLoaded);
+                }
             }
+
+            // Global event listener for form submissions to show loader
+            document.addEventListener('submit', function(e) {
+                // Ignore if default prevented or target is _blank
+                if (e.defaultPrevented || e.target.target === '_blank') return;
+                window.showLoader();
+            });
         })();
     </script>
 
+    @if (User.Identity.IsAuthenticated)
+    {
+        <!-- Offcanvas Korisnički Meni (Staviti prije </body>) -->
+        <style>
+            .user-menu-item {
+                border-radius: 0.75rem;
+                margin-bottom: 0.25rem;
+                margin-left: 1rem;
+                margin-right: 1rem;
+                transition: background-color 0.2s ease;
+                padding: 0.75rem 1rem !important;
+            }
+            .user-menu-item:hover {
+                background-color: var(--hover-bg, rgba(0,0,0,0.05));
+            }
+            [data-theme="dark"] .user-menu-item:hover {
+                background-color: rgba(255,255,255,0.1);
+            }
+            .user-menu-icon {
+                color: var(--primary-accent) !important;
+                font-size: 1.1rem;
+                width: 24px;
+                display: inline-block;
+                text-align: center;
+            }
+        </style>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="userOffcanvas" aria-labelledby="userOffcanvasLabel" style="background-color: var(--bg-card); color: var(--text-primary);">
+            <div class="offcanvas-header border-bottom bg-surface-subtle" style="border-color: var(--border-color) !important; padding-bottom: 1.5rem;">
+                <div class="d-flex align-items-center w-100">
+                    <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 48px; height: 48px; flex-shrink: 0;">
+                        <i class="bi bi-person fs-4"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <h6 class="mb-0 fw-bold text-truncate">@punoIme</h6>
+                        <div class="text-muted text-truncate fs-7" id="userOffcanvasLabel" title="@User.Identity.Name">@User.Identity.Name</div>
+                    </div>
+                    <button type="button" class="btn-close text-reset ms-auto align-self-start" data-bs-dismiss="offcanvas" aria-label="Zatvori" style="filter: var(--icon-filter, none);"></button>
+                </div>
+            </div>
+            <div class="offcanvas-body p-0 pt-3">
+                <!-- Navigacija unutar Offcanvasa -->
+                <div class="list-group list-group-flush">
+                    @if (User.IsInRole("Klijent"))
+                    {
+                        <a asp-controller="Oglas" asp-action="Create" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary); font-weight: 600;">
+                            <i class="bi bi-plus-circle me-2 user-menu-icon"></i> Kreiraj Oglas
+                        </a>
+                    }
+                    else if (User.IsInRole("Radnik"))
+                    {
+                        <a asp-controller="Oglas" asp-action="PrikazOglasa" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary); font-weight: 600;">
+                            <i class="bi bi-search me-2 user-menu-icon"></i> Prijavi se na Oglase
+                        </a>
+                    }
+
+                    @if (User.IsInRole("Radnik"))
+                    {
+                        <a asp-controller="Home" asp-action="Radnik" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary);">
+                            <i class="bi bi-speedometer2 me-2 user-menu-icon"></i> Moj Dashboard
+                        </a>
+                    }
+                    else if (User.IsInRole("Klijent"))
+                    {
+                        <a asp-controller="Home" asp-action="Klijent" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary);">
+                            <i class="bi bi-speedometer2 me-2 user-menu-icon"></i> Moj Dashboard
+                        </a>
+                    }
+                    <a asp-controller="Chat" asp-action="Index" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary);">
+                        <i class="bi bi-chat-dots me-2 user-menu-icon"></i> Poruke i Razgovori
+                    </a>
+                    <a asp-controller="Recenzija" asp-action="Index" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary);">
+                        <i class="bi bi-star me-2 user-menu-icon"></i> Moje Recenzije
+                    </a>
+                    
+                    <h6 class="dropdown-header mx-3 mt-3 mb-2 text-uppercase fw-bold" style="font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.5px;">Postavke Naloga</h6>
+                    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary);">
+                        <i class="bi bi-gear me-2 user-menu-icon"></i> Uredi Profil & Sigurnost
+                    </a>
+                    <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item" style="color: var(--text-primary);">
+                        <i class="bi bi-shield-lock me-2 user-menu-icon"></i> Promijeni šifru
+                    </a>
+                    
+                    <hr class="mx-4 my-2" style="border-color: var(--border-color);">
+                    
+                    <!-- Forma za odjavu -->
+                    <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/">
+                        <button type="submit" class="list-group-item list-group-item-action bg-transparent border-0 user-menu-item text-danger text-start fw-semibold">
+                            <i class="bi bi-box-arrow-right me-2" style="color: var(--bs-danger) !important; width: 24px; display: inline-block; text-align: center;"></i> Odjavi se sa platforme
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+    
+    @RenderSection("Modals", required: false)
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

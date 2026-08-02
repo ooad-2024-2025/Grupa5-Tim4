@@ -341,5 +341,52 @@ namespace NaPoso.Controllers
             var oglasi = await query.OrderByDescending(o => o.Id).ToListAsync();
             return View(oglasi);
         }
+
+        public async Task<IActionResult> PrijaveOglasa()
+        {
+            var prijave = await _context.PrijavaOglasa
+                .IgnoreQueryFilters()
+                .Include(p => p.Oglas)
+                .Include(p => p.PrijavioKorisnik)
+                .OrderBy(p => p.JeRijeseno)
+                .ThenByDescending(p => p.DatumPrijave)
+                .ToListAsync();
+
+            return View(prijave);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RijesitPrijavaOglasa(int prijavaId)
+        {
+            var prijava = await _context.PrijavaOglasa.FindAsync(prijavaId);
+            if (prijava != null)
+            {
+                prijava.JeRijeseno = true;
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Prijava je označena kao riješena.";
+            }
+            return RedirectToAction(nameof(PrijaveOglasa));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ObrisiOglasIzPrijave(int prijavaId, int oglasId)
+        {
+            var oglas = await _context.Oglas.IgnoreQueryFilters().FirstOrDefaultAsync(o => o.Id == oglasId);
+            if (oglas != null)
+            {
+                oglas.IsDeleted = true;
+            }
+
+            var prijava = await _context.PrijavaOglasa.FindAsync(prijavaId);
+            if (prijava != null)
+            {
+                prijava.JeRijeseno = true;
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["ToastMessage"] = "Oglas je obrisan, a prijava označena kao riješena.";
+            return RedirectToAction(nameof(PrijaveOglasa));
+        }
     }
 }

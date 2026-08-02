@@ -1,0 +1,82 @@
+@model IEnumerable<NaPoso.Models.PrijavaOglasa>
+
+@{
+    ViewData["Title"] = "Prijavljeni oglasi";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><i class="bi bi-flag-fill text-danger me-2"></i>Prijavljeni oglasi</h1>
+        <p class="lead">Upravljanje prijavama korisnika na oglase</p>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="bi bi-shield-check text-success"></i></div>
+        <h3>Nema dokumenata za pregled</h3>
+        <p>Trenutno nema prijavljenih oglasa.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-12">
+                <div class="content-card @(item.JeRijeseno ? "border-success opacity-75" : "border-danger")" style="border-left: 4px solid;">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <strong>Oglas:</strong>
+                            @if (item.Oglas != null)
+                            {
+                                <a asp-controller="Oglas" asp-action="Details" asp-route-id="@item.OglasId" class="text-primary">@item.Oglas.Naslov</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Oglas obrisan</span>
+                            }
+                            <br />
+                            <strong>Prijavio:</strong> @item.PrijavioKorisnik?.Email <br />
+                            <small class="text-muted d-block mt-1 mb-2"><i class="bi bi-calendar me-1"></i>@item.DatumPrijave.ToString("g")</small>
+                        </div>
+                        <span class="badge @(item.JeRijeseno ? "bg-success" : "bg-danger")">
+                            @(item.JeRijeseno ? "Riješeno" : "Otvoreno")
+                        </span>
+                    </div>
+
+                    <div class="mb-3 p-3 rounded" style="background-color: var(--bg-surface);">
+                        <strong>Razlog prijave:</strong><br />
+                        @item.Razlog
+                    </div>
+
+                    @if (!item.JeRijeseno)
+                    {
+                        <div class="d-flex gap-2 justify-content-end mt-3">
+                            <form asp-action="RijesitPrijavaOglasa" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="prijavaId" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="bi bi-check-circle me-1"></i>Odbaci prijavu
+                                </button>
+                            </form>
+                            @if (item.Oglas != null)
+                            {
+                                <form asp-action="ObrisiOglasIzPrijave" method="post"
+                                      onsubmit="return confirm('Jeste li sigurni da želite obrisati oglas \'@item.Oglas.Naslov\'?')">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="prijavaId" value="@item.Id" />
+                                    <input type="hidden" name="oglasId" value="@item.OglasId" />
+                                    <button type="submit" class="btn btn-sm btn-danger text-white">
+                                        <i class="bi bi-trash me-1"></i>Obriši oglas
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}

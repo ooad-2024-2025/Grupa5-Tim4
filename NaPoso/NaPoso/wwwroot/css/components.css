@@ -97,7 +97,7 @@ body {
 }
 
 /* =====================================================
-   ČISTA CRVENA TRAKA ISPOD SVIH NAV-LINKOVA (#FF3D68)
+   ČISTA CRVENA TRAKA ISPOD SVIH NAV-LINKOVA (var(--primary-accent))
    - Bez miješanja boja, uvijek čisto brand-accent crvena
    - Koristimo ::before da ne uđemo u konflikt sa Bootstrap dropdown strelicom (koja koristi ::after)
    ===================================================== */
@@ -108,7 +108,7 @@ body {
   left: 0;
   width: 0;
   height: 3px;
-  background-color: #FF3D68 !important; /* ČISTA CRVENA */
+  background-color: var(--primary-accent) !important; /* ČISTA CRVENA */
   transition: width 0.25s ease-out;
   z-index: 1031;
 }
@@ -116,7 +116,7 @@ body {
 .navbar-naPoso .nav-link:hover::before,
 .navbar-naPoso .nav-link.active-link::before {
   width: 100%;
-  background-color: #FF3D68 !important; /* ČISTA CRVENA */
+  background-color: var(--primary-accent) !important; /* ČISTA CRVENA */
 }
 
 .navbar-naPoso .nav-link.active-link {
@@ -131,7 +131,7 @@ body {
 }
 .navbar-naPoso .nav-link:hover::before {
   width: 100%;
-  background-color: #FF3D68 !important; /* ČISTA CRVENA */
+  background-color: var(--primary-accent) !important; /* ČISTA CRVENA */
 }
 
 /* ========== TRAKA ISPOD ZVONA (NOTIFIKACIJE) - ČISTA CRVENA ==========
@@ -139,36 +139,36 @@ body {
    - Osigurava da se hover underline za zvona i profil NE miješa sa drugim bojama
    ====================================================================== */
 .navbar-naPoso .notification-badge > .nav-link::before {
-  background-color: #FF3D68 !important; /* ČISTA CRVENA - bez ikakvog mijenjanja */
+  background-color: var(--primary-accent) !important; /* ČISTA CRVENA - bez ikakvog mijenjanja */
   opacity: 1 !important;
 }
 
 .navbar-naPoso .notification-badge > .nav-link:hover::before,
 .navbar-naPoso .notification-badge > .nav-link.active-link::before,
 .navbar-naPoso .notification-badge.show > .nav-link::before {
-  background-color: #FF3D68 !important;
+  background-color: var(--primary-accent) !important;
   width: 100%;
 }
 
 /* Crvena vršna ivica na dropdown meniju notifikacija (ispod zvona) */
 .navbar-naPoso .notification-badge .dropdown-menu {
-  border-top: 4px solid #FF3D68 !important; /* ČISTA CRVENA TRAKA ISPOD ZVONA */
+  border-top: 4px solid var(--primary-accent) !important; /* ČISTA CRVENA TRAKA ISPOD ZVONA */
   margin-top: 0 !important;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 /* Isto za profilni dropdown - čista crvena traka */
 .navbar-naPoso li.nav-item.dropdown > .nav-link::before {
-  background-color: #FF3D68 !important;
+  background-color: var(--primary-accent) !important;
 }
 .navbar-naPoso li.nav-item.dropdown > .nav-link:hover::before,
 .navbar-naPoso li.nav-item.dropdown.show > .nav-link::before {
-  background-color: #FF3D68 !important;
+  background-color: var(--primary-accent) !important;
   width: 100%;
 }
 
 .navbar-naPoso li.nav-item.dropdown > .dropdown-menu {
-  border-top: 4px solid #FF3D68 !important;
+  border-top: 4px solid var(--primary-accent) !important;
   margin-top: 0 !important;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
@@ -181,6 +181,258 @@ body {
 
 .navbar-toggler-icon {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%235a6078' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* =====================================================
+   MOBILE HAMBURGER MENU — Collapse Panel Fix
+   Bootstrap sm breakpoint = 576px, so hamburger shows < 576px.
+   The fix:
+   1) Remove fixed height on navbar so collapse can expand
+   2) Position the collapse panel absolutely below the navbar row
+   3) Give it an OPAQUE background (not frosted/transparent)
+   4) Full width, high z-index to cover page content
+   ===================================================== */
+@media (max-width: 991.98px) {
+  /* Allow navbar to NOT clip the collapse panel */
+  .navbar-naPoso {
+    height: auto;
+    min-height: var(--navbar-height);
+  }
+
+  /* The .container inside needs to wrap so toggler + brand stay on first row */
+  .navbar-naPoso > .container {
+    flex-wrap: wrap;
+  }
+
+  /* The collapse panel itself — absolute dropdown below navbar */
+  .navbar-naPoso .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1050;
+    background: var(--color-surface, #1A2023);
+    border-bottom: 2px solid var(--color-accent, #e63950);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-4) var(--space-5);
+    max-height: calc(100vh - var(--navbar-height) - 4px);
+    overflow-y: auto;
+  }
+
+  /* Stack nav items vertically with spacing */
+  .navbar-naPoso .navbar-collapse .navbar-nav {
+    flex-direction: column;
+    gap: var(--space-1);
+    width: 100%;
+  }
+
+  /* Each nav link — full width, comfortable touch target */
+  .navbar-naPoso .navbar-collapse .nav-link {
+    padding: var(--space-3) var(--space-4) !important;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-base, 1rem);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-link:hover {
+    background: var(--color-surface-hover) !important;
+  }
+
+  /* Theme toggle + login partial wrapper — keep mobile controls on one row */
+  .navbar-naPoso .navbar-collapse .d-flex {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    flex-wrap: nowrap;
+  }
+
+  /* Hide the desktop theme toggle strip on mobile; use inline indicator in profile row */
+  .navbar-naPoso .navbar-collapse .theme-toggle {
+    display: none;
+  }
+
+  .navbar-naPoso .navbar-collapse .d-flex > ul.navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-2);
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .navbar-naPoso .navbar-collapse .d-flex > ul.navbar-nav > li.nav-item.dropdown {
+    width: 100% !important;
+    align-self: stretch !important;
+    justify-content: flex-start !important;
+    margin-right: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-row {
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-hover);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    flex: 0 0 auto;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-avatar i {
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-theme-indicator {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: var(--radius-full);
+    color: var(--color-text-muted);
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-theme-indicator i {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-caret {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    flex: 0 0 auto;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-caret::after {
+    margin-left: 0;
+    vertical-align: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .mobile-profile-row:hover .mobile-theme-indicator,
+  .navbar-naPoso .navbar-collapse .mobile-profile-row:hover .mobile-profile-caret {
+    color: var(--color-accent);
+  }
+
+  .navbar-naPoso .navbar-collapse .desktop-profile-toggle {
+    display: none !important;
+  }
+
+  .navbar-naPoso .navbar-collapse .d-flex > ul.navbar-nav > li.nav-item.dropdown > .dropdown-menu {
+    width: 100% !important;
+    margin-left: 0;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-item.dropdown > .nav-link.dropdown-toggle::after {
+    margin-left: 2px;
+    flex: 0 0 auto;
+  }
+
+  /* Prijava button — full width on mobile */
+  .navbar-naPoso .navbar-collapse .btn-primary.btn-sm {
+    width: 100%;
+    text-align: center;
+    padding: var(--space-3) var(--space-5);
+    min-height: 44px;
+  }
+
+  /* Compact dropdown menus on mobile */
+  .navbar-naPoso .navbar-collapse .dropdown-menu {
+    border: none;
+    background: transparent;
+    padding: var(--space-1) 0 0 var(--space-3); /* Slightly tighter indent */
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .navbar-naPoso .navbar-collapse .dropdown-item {
+    padding: var(--space-2) var(--space-2);
+    border-radius: var(--radius-sm);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+
+  .navbar-naPoso .navbar-collapse .dropdown-header {
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .navbar-naPoso .navbar-collapse .dropdown-divider {
+    margin: var(--space-1) 0;
+    opacity: 0.1;
+  }
+
+  /* Notification badge should sit on the bell edge, not float beside it */
+  .navbar-naPoso .notification-badge > .nav-link > .notification-bell-icon {
+    width: 1.15em;
+    height: 1.15em;
+    line-height: 1;
+  }
+
+  .navbar-naPoso .notification-badge .notification-count {
+    top: -6px;
+    right: -6px;
+    min-width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 9px;
+    padding: 0 3px;
+    transform: translate(20%, -20%);
+  }
+
+  .navbar-naPoso .notification-badge > .nav-link.dropdown-toggle::after {
+    margin-left: 2px;
+    vertical-align: middle;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-item.dropdown > .dropdown-menu,
+  .navbar-naPoso .navbar-collapse .notification-badge > .dropdown-menu {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    width: 100%;
+    margin-top: var(--space-2) !important;
+  }
+
+  .navbar-naPoso .navbar-collapse .nav-item.dropdown > .nav-link,
+  .navbar-naPoso .navbar-collapse .notification-badge > .nav-link {
+    justify-content: flex-start;
+  }
 }
 
 /* --- Buttons --- */
@@ -437,9 +689,9 @@ input[type="number"]::-webkit-outer-spin-button {
   font-weight: 600;
 }
 .badge-soft-accent {
-  background: color-mix(in srgb, var(--color-accent, #FF3D68) 18%, transparent) !important;
-  color: var(--color-accent, #FF3D68) !important;
-  border: 1px solid color-mix(in srgb, var(--color-accent, #FF3D68) 45%, transparent) !important;
+  background: color-mix(in srgb, var(--color-accent, var(--primary-accent)) 18%, transparent) !important;
+  color: var(--color-accent, var(--primary-accent)) !important;
+  border: 1px solid color-mix(in srgb, var(--color-accent, var(--primary-accent)) 45%, transparent) !important;
   font-weight: 600;
 }
 
@@ -944,9 +1196,6 @@ input[type="number"]::-webkit-outer-spin-button {
 .hero-section {
   position: relative;
   overflow: hidden;
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
-  gap: var(--space-8);
   align-items: center;
   padding: var(--space-16) clamp(var(--space-8), 6vw, var(--space-16));
   background-color: var(--color-surface);
@@ -1018,6 +1267,12 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-top: var(--space-2);
 }
 
+@media (max-width: 575.98px) {
+  .hero-actions .btn {
+    width: 100%;
+  }
+}
+
 .hero-side-panel {
   display: grid;
   gap: var(--space-4);
@@ -1029,6 +1284,24 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   box-shadow: var(--shadow-sm);
+}
+
+.hero-side-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.hero-workflow-illustration {
+  width: clamp(100px, 20vw, 136px);
+  height: clamp(100px, 20vw, 136px);
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 12px;
+  padding: var(--space-2);
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  box-shadow: 0 12px 28px -20px rgba(0, 0, 0, 0.7);
 }
 
 .hero-side-card h3 {
@@ -1253,6 +1526,12 @@ input[type="number"]::-webkit-outer-spin-button {
   border-color: var(--color-accent-subtle);
 }
 
+@media (max-width: 575.98px) {
+  .feature-card {
+    padding: var(--space-5);
+  }
+}
+
 .feature-card-icon {
   font-size: 2rem;
   margin-bottom: var(--space-4);
@@ -1275,6 +1554,16 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: var(--text-small);
   color: var(--color-text-muted);
   margin-bottom: 0;
+}
+
+.feature-grid-three-col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.amount-nowrap {
+  white-space: nowrap;
 }
 
 /* --- Notification Dropdown --- */
@@ -1465,13 +1754,63 @@ dl.row dd {
   }
 
   .hero-section {
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
     padding: var(--space-8) var(--space-5);
   }
 
   .hero-section h1 {
     max-width: none;
+  }
+
+  .hero-side-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-workflow-illustration {
+    width: 120px;
+    height: 120px;
+  }
+
+  .feature-grid-three-col {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-stack-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mobile-stack-actions .btn {
+    width: 100%;
+  }
+
+  .chat-box {
+    max-height: 60vh;
+  }
+
+  .chat-bubble {
+    max-width: 88%;
+  }
+
+  .profile-file-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-file-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .profile-file-name {
+    max-width: none;
+    width: 100%;
+    white-space: normal;
+  }
+
+  .btn-verify-email,
+  .btn-profile-save {
+    width: 100%;
   }
 
   .profile-header {
@@ -1853,18 +2192,19 @@ dl.row dd {
   font-size: var(--fs-small);
   letter-spacing: 0.01em;
   color: #ffffff;
-  background: var(--profile-save-gradient);
+  background: var(--primary-accent);
   border: none;
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--palette-neon-fuchsia) 75%, transparent);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .btn-profile-save:hover {
-  background: var(--profile-save-gradient-hover);
+  background: var(--primary-accent);
+  filter: brightness(1.1);
   transform: translateY(-2px);
-  box-shadow: 0 14px 28px -8px color-mix(in srgb, var(--palette-neon-fuchsia) 82%, transparent);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
 
 .btn-profile-save:active {
@@ -1872,7 +2212,7 @@ dl.row dd {
 }
 
 .btn-profile-save:focus-visible {
-  outline: 2px solid var(--palette-neon-fuchsia);
+  outline: 2px solid var(--primary-accent);
   outline-offset: 3px;
 }
 
@@ -2107,6 +2447,12 @@ dl.row dd {
     padding: var(--space-6);
     border-radius: var(--radius-lg);
   }
+  /* Checkout Summary mobile tweaks to prevent currency wrap */
+  .checkout-summary-amount,
+  .checkout-summary-baksis,
+  .checkout-summary-total {
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 576px) {
@@ -2142,6 +2488,22 @@ dl.row dd {
     left: 10px !important;
   }
   .naPoso-toast { max-width: 100% !important; }
+
+  .auth-container {
+    padding: 0 var(--space-3);
+  }
+
+  .auth-card {
+    padding: var(--space-5);
+  }
+
+  .profile-card {
+    padding: var(--space-6);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-h2);
+  }
 }
 
 /* --- Chat Styles --- */
@@ -2314,3 +2676,124 @@ dl.row dd {
     opacity: 1;
   }
 }
+
+@keyframes loader-dot {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================
+   OLX-STYLE REDESIGN COMPONENTS (Mega Dropdown, Offcanvas, Hero Search)
+   ========================================================== */
+
+/* Mega Dropdown */
+.mega-dropdown-menu {
+  background-color: var(--color-surface);
+  border-bottom: 3px solid var(--primary-accent) !important;
+  z-index: 1040;
+}
+
+.mega-dropdown-list .dropdown-item {
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.mega-dropdown-list .dropdown-item:hover {
+  color: var(--primary-accent);
+  background-color: var(--color-surface-hover);
+  transform: translateX(4px);
+}
+
+/* Off-canvas "Moj NaPoso" */
+.naposo-offcanvas {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-left: 1px solid var(--color-border);
+  width: 320px;
+}
+
+.offcanvas-avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-surface-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.offcanvas-section-title {
+  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+}
+
+.user-avatar-pill {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--primary-accent);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.btn-outline-nav {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  transition: all var(--transition-fast);
+}
+
+.btn-outline-nav:hover {
+  border-color: var(--primary-accent);
+  background-color: var(--color-surface-hover);
+  color: var(--primary-accent);
+}
+
+/* Hero Search Box */
+.hero-search-box {
+  background-color: var(--color-surface);
+  border-color: var(--color-border) !important;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md) !important;
+}
+
+.border-start-md {
+  border-left: 1px solid var(--color-border) !important;
+}
+
+@media (max-width: 767.98px) {
+  .border-start-md {
+    border-left: none !important;
+    border-top: 1px solid var(--color-border) !important;
+  }
+}
+
+.category-card {
+  background-color: var(--color-surface);
+  border-color: var(--color-border) !important;
+  transition: all var(--transition-base);
+}
+
+.category-card:hover {
+  border-color: var(--primary-accent) !important;
+  background-color: var(--color-surface-hover);
+}
+
+.fs-7 { font-size: 0.75rem; }
+.fs-8 { font-size: 0.825rem; }
+.fs-9 { font-size: 0.75rem; }
+.text-primary-accent { color: var(--primary-accent) !important; }

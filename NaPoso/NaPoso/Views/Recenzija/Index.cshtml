@@ -47,6 +47,14 @@ else
                                 {
                                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-ghost btn-sm text-danger"><i class="bi bi-trash me-1"></i>Obriši</a>
                                 }
+                                @if (User.IsInRole(NaPoso.Constants.RoleConstants.Radnik))
+                                {
+                                    <button type="button" class="btn btn-ghost btn-sm text-warning prijavi-recenziju-btn"
+                                            data-recenzija-id="@item.Id"
+                                            data-bs-toggle="modal" data-bs-target="#prijaviRecenzijaModal">
+                                        <i class="bi bi-flag me-1"></i>Prijavi
+                                    </button>
+                                }
                             </div>
                         </td>
                     </tr>
@@ -55,3 +63,46 @@ else
         </table>
     </div>
 }
+
+@section Modals {
+    @if (User.IsInRole(NaPoso.Constants.RoleConstants.Radnik))
+    {
+        <div class="modal fade" id="prijaviRecenzijaModal" tabindex="-1" aria-labelledby="prijaviRecenzijaModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 500px;">
+                <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-primary);">
+                    <form asp-controller="PrijavaRecenzije" asp-action="Prijavi" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="recenzijaId" id="recenzijaIdInput" value="" />
+                        <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
+                            <h5 class="modal-title fw-bold" id="prijaviRecenzijaModalLabel">
+                                <i class="bi bi-flag me-2 text-warning"></i>Prijavi recenziju
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <p class="text-muted small mb-3">Navedite razlog prijave ove recenzije. Admin će pregledati vašu prijavu u najkraćem roku.</p>
+                            <div class="form-group mb-0">
+                                <label class="form-label fw-semibold mb-2">Razlog prijave</label>
+                                <textarea name="razlog" class="form-control" rows="4" placeholder="Opišite zašto prijavljujete ovu recenziju..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top" style="border-color: var(--border-color) !important;">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                            <button type="submit" class="btn btn-warning"><i class="bi bi-send me-1"></i>Pošalji prijavu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+    
+    <script>
+    document.querySelectorAll('.prijavi-recenziju-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.getElementById('recenzijaIdInput').value = this.getAttribute('data-recenzija-id');
+        });
+    });
+    </script>
+}
+
