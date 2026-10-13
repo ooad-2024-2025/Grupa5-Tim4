@@ -101,14 +101,26 @@
   --font-heading: 'Sora', 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* Veličine iz briefa */
-  --fs-h1: 2.25rem;
-  --fs-h2: 1.75rem;
-  --fs-h3: 1.25rem;
+  /* Veličine iz briefa — fluid typography */
+  --fs-h1: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+  --fs-h2: clamp(1.375rem, 1.2rem + 0.75vw, 1.75rem);
+  --fs-h3: clamp(1.125rem, 1rem + 0.25vw, 1.25rem);
   --fs-h4: 1.125rem;
   --fs-body: 1rem;
   --fs-small: 0.875rem;
   --text-caption: 0.75rem;
+
+  /* Fluid display size */
+  --text-display: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+
+  /* Mapped aliases for components that use text-* tokens */
+  --text-h1: var(--fs-h1);
+  --text-h2: var(--fs-h2);
+  --text-h3: var(--fs-h3);
+  --text-h4: var(--fs-h4);
+  --text-body: var(--fs-body);
+  --text-base: var(--fs-body);
+  --text-small: var(--fs-small);
 
   --weight-regular: 400;
   --weight-medium: 500;
