@@ -546,6 +546,7 @@ body {
 .form-control, .form-select {
   font-family: var(--font-sans);
   font-size: var(--text-body);
+  min-height: 44px;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   border: 1.5px solid var(--color-border);
@@ -554,6 +555,10 @@ body {
   color: var(--color-text);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   width: 100%;
+}
+
+textarea.form-control {
+  min-height: 80px;
 }
 
 .form-control[readonly] {
@@ -658,13 +663,15 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 .password-toggle {
   position: absolute;
-  right: var(--space-3);
+  right: var(--space-2);
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--color-text-muted);
   cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
   padding: var(--space-1);
   border-radius: var(--radius-sm);
   display: flex;
