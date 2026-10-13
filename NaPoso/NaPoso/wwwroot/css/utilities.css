@@ -91,3 +91,12 @@
 .stat-card .stat-value-coral {
   color: var(--color-coral);
 }
+
+/* --- Object-Fit & Media Utilities (Bootstrap 5.3 Polyfill) --- */
+.object-fit-cover { object-fit: cover !important; }
+.object-fit-contain { object-fit: contain !important; }
+.object-fit-fill { object-fit: fill !important; }
+.object-fit-scale { object-fit: scale-down !important; }
+.object-fit-none { object-fit: none !important; }
+.object-position-top { object-position: top !important; }
+.object-position-center { object-position: center !important; }
