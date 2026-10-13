@@ -2824,6 +2824,36 @@ dl.row dd {
   border-color: var(--color-border) !important;
 }
 
+@media (min-width: 768px) {
+  .hero-search-input-col { flex-basis: 55%; width: auto !important; }
+  .hero-search-select-col { flex-basis: 30%; width: auto !important; }
+  .hero-search-btn-col { flex-basis: 15%; width: auto !important; }
+}
+
+@media (max-width: 767.98px) {
+  .hero-search-box {
+    padding: var(--space-3) !important;
+  }
+  .hero-search-input-col,
+  .hero-search-select-col,
+  .hero-search-btn-col {
+    width: 100% !important;
+    flex-basis: 100% !important;
+  }
+  .hero-search-box .input-group {
+    border-radius: var(--radius-md) !important;
+    background: var(--color-surface-hover) !important;
+    margin-bottom: var(--space-1);
+  }
+}
+
+.hero-actions .badge {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
 .hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -2853,6 +2883,12 @@ dl.row dd {
 .category-card:hover {
   border-color: var(--primary-accent) !important;
   background-color: var(--color-surface-hover);
+}
+
+@media (max-width: 575.98px) {
+  .category-card {
+    padding: var(--space-3) var(--space-4) !important;
+  }
 }
 
 .fs-7 { font-size: 0.75rem; }
