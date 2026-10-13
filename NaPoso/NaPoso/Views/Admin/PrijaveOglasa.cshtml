@@ -53,7 +53,7 @@ else
 
                     @if (!item.JeRijeseno)
                     {
-                        <div class="d-flex gap-2 justify-content-end mt-3">
+                        <div class="d-flex gap-2 justify-content-end mt-3 flex-wrap">
                             <form asp-action="RijesitPrijavaOglasa" method="post">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="prijavaId" value="@item.Id" />

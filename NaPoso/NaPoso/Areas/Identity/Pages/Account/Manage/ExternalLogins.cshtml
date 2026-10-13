@@ -15,40 +15,42 @@
 {
     <h3>Registrovane prijave</h3>
     <div class="content-card">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Davatelj usluge</th>
-                    <th>Akcija</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var login in Model.CurrentLogins)
-                {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
-                        <td>
-                            @if (Model.ShowRemoveButton)
-                            {
-                                <form id="@($"remove-login-{login.LoginProvider}")" asp-page-handler="RemoveLogin" method="post">
-                                    <div>
-                                        <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
-                                        <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
-                                        <button type="submit" class="btn btn-danger btn-sm" title="Ukloni ovu prijavu @login.ProviderDisplayName sa vašeg računa">
-                                            <i class="bi bi-x-lg me-1"></i>Ukloni
-                                        </button>
-                                    </div>
-                                </form>
-                            }
-                            else
-                            {
-                                @: &nbsp;
-                            }
-                        </td>
+                        <th>Davatelj usluge</th>
+                        <th>Akcija</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var login in Model.CurrentLogins)
+                    {
+                        <tr>
+                            <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
+                            <td>
+                                @if (Model.ShowRemoveButton)
+                                {
+                                    <form id="@($"remove-login-{login.LoginProvider}")" asp-page-handler="RemoveLogin" method="post">
+                                        <div>
+                                            <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
+                                            <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Ukloni ovu prijavu @login.ProviderDisplayName sa vašeg računa">
+                                                <i class="bi bi-x-lg me-1"></i>Ukloni
+                                            </button>
+                                        </div>
+                                    </form>
+                                }
+                                else
+                                {
+                                    @: &nbsp;
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }
 
