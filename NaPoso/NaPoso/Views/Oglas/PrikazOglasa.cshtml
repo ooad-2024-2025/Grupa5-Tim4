@@ -46,6 +46,26 @@
         align-items: flex-end !important;
     }
     
+    /* Mobile responsive card list */
+    @@media (max-width: 767.98px) {
+        .ad-card {
+            padding: 1rem !important;
+        }
+        #adContainer.layout-list .ad-card-inner {
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+        #adContainer.layout-list .ad-card-right {
+            align-items: center !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            min-width: 100% !important;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color, #e1e5f2);
+        }
+    }
+    
     /* Status Badge */
     .badge-status-modern {
         background-color: rgba(25, 135, 84, 0.1);
@@ -64,26 +84,26 @@
 
 <!-- Toolbar: Pretraga, Filteri i Grid/List Kontrole -->
 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
-    <form method="get" asp-action="PrikazOglasa" class="flex-grow-1" style="max-width: 600px;">
+    <form method="get" asp-action="PrikazOglasa" class="flex-grow-1 w-100" style="max-width: 600px;">
         <div class="input-group shadow-sm rounded-pill overflow-hidden border bg-surface">
             <span class="input-group-text bg-transparent border-0 text-muted ps-3">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="text" name="search" class="form-control border-0 bg-transparent shadow-none" placeholder="Pretraga po naslovu ili opisu..." value="@searchValue" />
-            <button type="submit" class="btn btn-primary px-4 fw-semibold">Pretraži</button>
+            <input type="text" name="search" class="form-control border-0 bg-transparent shadow-none" placeholder="Pretraga po naslovu ili opisu..." value="@searchValue" style="min-height: 44px;" />
+            <button type="submit" class="btn btn-primary px-3 px-sm-4 fw-semibold" style="min-height: 44px;">Pretraži</button>
         </div>
     </form>
     
-    <div class="d-flex align-items-center gap-2">
-        <button type="button" id="toggleFiltersBtn" class="btn btn-outline-secondary rounded-pill d-flex align-items-center gap-2 px-3 fw-semibold shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#filtersOffcanvas">
+    <div class="d-flex align-items-center justify-content-between justify-content-md-end gap-2 w-100 w-md-auto">
+        <button type="button" id="toggleFiltersBtn" class="btn btn-outline-secondary rounded-pill d-flex align-items-center gap-2 px-3 fw-semibold shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#filtersOffcanvas" style="min-height: 44px;">
             <i class="bi bi-funnel"></i> Filteri
         </button>
         
         <div class="btn-group bg-surface-subtle p-1 rounded-pill border" role="group">
-            <button type="button" id="btnList" class="btn btn-sm rounded-pill px-3 active-view" style="color: var(--primary-accent); background-color: var(--bg-card); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <button type="button" id="btnList" class="btn btn-sm rounded-pill px-3 active-view d-flex align-items-center justify-content-center" style="color: var(--primary-accent); background-color: var(--bg-card); box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-height: 38px; min-width: 44px;">
                 <i class="bi bi-list-task fs-5"></i>
             </button>
-            <button type="button" id="btnGrid" class="btn btn-sm rounded-pill px-3 text-muted">
+            <button type="button" id="btnGrid" class="btn btn-sm rounded-pill px-3 text-muted d-flex align-items-center justify-content-center" style="min-height: 38px; min-width: 44px;">
                 <i class="bi bi-grid-fill fs-5"></i>
             </button>
         </div>

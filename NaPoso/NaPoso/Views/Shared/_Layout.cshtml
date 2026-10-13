@@ -59,11 +59,11 @@
         <nav class="navbar navbar-expand-lg navbar-naPoso" aria-label="Glavna navigacija">
             <div class="container">
                 <!-- 1. LOGO -->
-                <a class="navbar-brand me-3" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/logo.svg" alt="NaPoso" class="navbar-brand-logo me-2" style="width: 28px; height: 28px;" />
+                <a class="navbar-brand me-2 me-lg-3 d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.svg" alt="NaPoso" class="navbar-brand-logo me-2" style="width: 28px; height: 28px;" width="28" height="28" />
                     <span class="navbar-brand-copy">
                         <span class="navbar-brand-title">NaPoso<span class="text-primary-accent">.me</span></span>
-                        <span class="navbar-brand-subtitle">usluge, komunikacija, isplate</span>
+                        <span class="navbar-brand-subtitle d-none d-sm-block">usluge, komunikacija, isplate</span>
                     </span>
                 </a>
 
@@ -80,84 +80,108 @@
                             <a class="nav-link dropdown-toggle fw-semibold d-inline-flex align-items-center gap-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-grid-3x3-gap-fill text-primary"></i> Kategorije
                             </a>
-                            <div class="dropdown-menu mega-dropdown-menu w-100 shadow-lg border-0 mt-0 p-4" style="border-radius: 0 0 16px 16px;">
-                                <div class="container">
-                                    <div class="row g-4">
+                            <div class="dropdown-menu mega-dropdown-menu w-100 shadow-lg border-0 mt-0 p-3 p-lg-4" style="border-radius: 0 0 16px 16px;">
+                                <div class="container-fluid px-0 px-lg-3">
+                                    <div class="row g-2 g-lg-4">
                                         <!-- Kolona 1: Građevinarstvo & Renoviranje -->
-                                        <div class="col-md-4">
-                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
-                                                <i class="bi bi-tools me-2"></i>Građevinarstvo & Renoviranje
-                                            </h6>
-                                            <ul class="list-unstyled mega-dropdown-list">
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Vodoinstalater" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Vodoinstalateri</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Električar" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Električari</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Moler" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Moleri & Keramičari</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Stolarija" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Stolarija</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Krovopokrivači" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Krovopokrivači</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Suha" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Suha gradnja & Gips</a></li>
-                                            </ul>
+                                        <div class="col-12 col-lg-4">
+                                            <button class="mega-accordion-btn text-start border-0 bg-transparent p-0 w-100 fw-bold text-primary border-bottom pb-2 mb-2 d-flex justify-content-between align-items-center"
+                                                    type="button" data-bs-toggle="collapse" data-bs-target="#megaCol1" aria-expanded="false" aria-controls="megaCol1">
+                                                <span><i class="bi bi-tools me-2"></i>Građevinarstvo & Renoviranje</span>
+                                                <i class="bi bi-chevron-down d-lg-none mega-accordion-chevron"></i>
+                                            </button>
+                                            <div class="collapse d-lg-block" id="megaCol1">
+                                                <ul class="list-unstyled mega-dropdown-list mb-3 mb-lg-0">
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Vodoinstalater" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Vodoinstalateri</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Električar" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Električari</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Moler" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Moleri & Keramičari</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Stolarija" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Stolarija</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Krovopokrivači" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Krovopokrivači</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Suha" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Suha gradnja & Gips</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <!-- Kolona 2: Servisi & Popravke -->
-                                        <div class="col-md-4">
-                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
-                                                <i class="bi bi-wrench me-2"></i>Servisi & Popravke
-                                            </h6>
-                                            <ul class="list-unstyled mega-dropdown-list">
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Bijela" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Bijela tehnika</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Klima" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Klima uređaji</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Mehanika" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Auto-mehanika</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Računari" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Računari & Telefoni</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Namještaj" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Popravka namještaja</a></li>
-                                            </ul>
+                                        <div class="col-12 col-lg-4">
+                                            <button class="mega-accordion-btn text-start border-0 bg-transparent p-0 w-100 fw-bold text-primary border-bottom pb-2 mb-2 d-flex justify-content-between align-items-center"
+                                                    type="button" data-bs-toggle="collapse" data-bs-target="#megaCol2" aria-expanded="false" aria-controls="megaCol2">
+                                                <span><i class="bi bi-wrench me-2"></i>Servisi & Popravke</span>
+                                                <i class="bi bi-chevron-down d-lg-none mega-accordion-chevron"></i>
+                                            </button>
+                                            <div class="collapse d-lg-block" id="megaCol2">
+                                                <ul class="list-unstyled mega-dropdown-list mb-3 mb-lg-0">
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Bijela" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Bijela tehnika</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Klima" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Klima uređaji</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Mehanika" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Auto-mehanika</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Računari" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Računari & Telefoni</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Namještaj" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Popravka namještaja</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <!-- Kolona 3: Domaćinstvo & Transport -->
-                                        <div class="col-md-4">
-                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
-                                                <i class="bi bi-house-door me-2"></i>Domaćinstvo & Transport
-                                            </h6>
-                                            <ul class="list-unstyled mega-dropdown-list">
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Čišćenje" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Čišćenje stanova & kancelarija</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Selidbe" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Selidbe & Transport</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Bašta" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Održavanje bašte</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Tepisi" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Pranje tepiha & nameštaja</a></li>
-                                            </ul>
+                                        <div class="col-12 col-lg-4">
+                                            <button class="mega-accordion-btn text-start border-0 bg-transparent p-0 w-100 fw-bold text-primary border-bottom pb-2 mb-2 d-flex justify-content-between align-items-center"
+                                                    type="button" data-bs-toggle="collapse" data-bs-target="#megaCol3" aria-expanded="false" aria-controls="megaCol3">
+                                                <span><i class="bi bi-house-door me-2"></i>Domaćinstvo & Transport</span>
+                                                <i class="bi bi-chevron-down d-lg-none mega-accordion-chevron"></i>
+                                            </button>
+                                            <div class="collapse d-lg-block" id="megaCol3">
+                                                <ul class="list-unstyled mega-dropdown-list mb-3 mb-lg-0">
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Čišćenje" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Čišćenje stanova & kancelarija</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Selidbe" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Selidbe & Transport</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Bašta" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Održavanje bašte</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Tepisi" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Pranje tepiha & nameštaja</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <!-- Kolona 4: IT, Dizajn & Poslovanje -->
-                                        <div class="col-md-4">
-                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
-                                                <i class="bi bi-laptop me-2"></i>IT, Dizajn & Poslovanje
-                                            </h6>
-                                            <ul class="list-unstyled mega-dropdown-list">
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Web" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Web & Mobilni razvoj</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Grafički" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Grafički dizajn</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Marketing" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Digitalni marketing</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Knjigovodstvo" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Knjigovodstvo</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Prevođenje" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Prevođenje & Pisanje</a></li>
-                                            </ul>
+                                        <div class="col-12 col-lg-4">
+                                            <button class="mega-accordion-btn text-start border-0 bg-transparent p-0 w-100 fw-bold text-primary border-bottom pb-2 mb-2 d-flex justify-content-between align-items-center"
+                                                    type="button" data-bs-toggle="collapse" data-bs-target="#megaCol4" aria-expanded="false" aria-controls="megaCol4">
+                                                <span><i class="bi bi-laptop me-2"></i>IT, Dizajn & Poslovanje</span>
+                                                <i class="bi bi-chevron-down d-lg-none mega-accordion-chevron"></i>
+                                            </button>
+                                            <div class="collapse d-lg-block" id="megaCol4">
+                                                <ul class="list-unstyled mega-dropdown-list mb-3 mb-lg-0">
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Web" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Web & Mobilni razvoj</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Grafički" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Grafički dizajn</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Marketing" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Digitalni marketing</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Knjigovodstvo" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Knjigovodstvo</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Prevođenje" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Prevođenje & Pisanje</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <!-- Kolona 5: Ljepota, Zdravlje & Njega -->
-                                        <div class="col-md-4">
-                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
-                                                <i class="bi bi-heart me-2"></i>Ljepota, Zdravlje & Njega
-                                            </h6>
-                                            <ul class="list-unstyled mega-dropdown-list">
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Frizerske" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Frizerske & Kozmetičke usluge</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Masaže" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Masaže & Tretmani</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Trener" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Personalni treneri</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Njega" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Njega starijih & čuvanje djece</a></li>
-                                            </ul>
+                                        <div class="col-12 col-lg-4">
+                                            <button class="mega-accordion-btn text-start border-0 bg-transparent p-0 w-100 fw-bold text-primary border-bottom pb-2 mb-2 d-flex justify-content-between align-items-center"
+                                                    type="button" data-bs-toggle="collapse" data-bs-target="#megaCol5" aria-expanded="false" aria-controls="megaCol5">
+                                                <span><i class="bi bi-heart me-2"></i>Ljepota, Zdravlje & Njega</span>
+                                                <i class="bi bi-chevron-down d-lg-none mega-accordion-chevron"></i>
+                                            </button>
+                                            <div class="collapse d-lg-block" id="megaCol5">
+                                                <ul class="list-unstyled mega-dropdown-list mb-3 mb-lg-0">
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Frizerske" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Frizerske & Kozmetičke usluge</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Masaže" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Masaže & Tretmani</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Trener" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Personalni treneri</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Njega" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Njega starijih & čuvanje djece</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <!-- Kolona 6: Edukacija & Instrukcije -->
-                                        <div class="col-md-4">
-                                            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
-                                                <i class="bi bi-book me-2"></i>Edukacija & Instrukcije
-                                            </h6>
-                                            <ul class="list-unstyled mega-dropdown-list">
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Jezici" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Časovi jezika</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Instrukcije" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Instrukcije za školu/fakultet</a></li>
-                                                <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Muzika" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Muzički časovi</a></li>
-                                                <li class="mt-2"><a asp-controller="Oglas" asp-action="PrikazOglasa" class="dropdown-item py-1 fw-bold text-primary"><i class="bi bi-arrow-right-circle-fill me-1"></i> Pregledaj sve oglase &rarr;</a></li>
-                                            </ul>
+                                        <div class="col-12 col-lg-4">
+                                            <button class="mega-accordion-btn text-start border-0 bg-transparent p-0 w-100 fw-bold text-primary border-bottom pb-2 mb-2 d-flex justify-content-between align-items-center"
+                                                    type="button" data-bs-toggle="collapse" data-bs-target="#megaCol6" aria-expanded="false" aria-controls="megaCol6">
+                                                <span><i class="bi bi-book me-2"></i>Edukacija & Instrukcije</span>
+                                                <i class="bi bi-chevron-down d-lg-none mega-accordion-chevron"></i>
+                                            </button>
+                                            <div class="collapse d-lg-block" id="megaCol6">
+                                                <ul class="list-unstyled mega-dropdown-list mb-3 mb-lg-0">
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Jezici" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Časovi jezika</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Instrukcije" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Instrukcije za školu/fakultet</a></li>
+                                                    <li><a asp-controller="Oglas" asp-action="PrikazOglasa" asp-route-search="Muzika" class="dropdown-item py-1"><i class="bi bi-chevron-right me-1 text-muted fs-8"></i> Muzički časovi</a></li>
+                                                    <li class="mt-2"><a asp-controller="Oglas" asp-action="PrikazOglasa" class="dropdown-item py-1 fw-bold text-primary"><i class="bi bi-arrow-right-circle-fill me-1"></i> Pregledaj sve oglase &rarr;</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -224,7 +248,7 @@
                                         }
                                     </span>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0" style="border-radius: 12px; width: 300px;">
+                                <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0" style="border-radius: 12px; max-width: 300px; width: calc(100vw - 2rem);">
                                     <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0 fw-bold">Obavještenja</h6>
                                         <span class="badge bg-primary rounded-pill">@obavijesti.Count novih</span>

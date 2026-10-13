@@ -1,55 +1,48 @@
-# NaPoso — Oglasi za poslove
+# NaPoso — Job Listings Platform
 
-Web aplikacija za povezivanje klijenata i radnika kroz sistematic oglašavanja poslova, sa ugrađenim plaćanjem, notifikacijama i verifikacijom korisnika.
+Web app that connects clients with workers through job postings. Has built-in payments (Stripe), notifications, and user verification.
+
+**Live at:** [naposo.me](https://naposo.me)
 
 ## Tech Stack
 
 - **.NET 8.0** (ASP.NET Core MVC + Razor Pages)
-- **PostgreSQL** (via EF Core + Npgsql)
-- **ASP.NET Core Identity** (autentikacija/autorizacija)
-- **Stripe** (plaćanje)
+- **PostgreSQL** (EF Core + Npgsql)
+- **ASP.NET Core Identity** (auth)
+- **Stripe** (payments)
 - **Bootstrap 5** + custom CSS
-- **Docker** (lokalno pokretanje)
+- **Docker**
 
-## Brzi početak
+## Quick Start
 
-### 1. Lokalno sa Docker Compose (preporučeno)
+### 1. Docker Compose (recommended)
 
 ```bash
-# Kopiraj env fajl
 cp .env.example .env
-
-# Pokreni sve servise
 docker compose up --build
 ```
 
-Aplikacija će biti dostupna na `http://localhost:5000`.
+App runs at `http://localhost:5000`.
 
-### 2. Lokalno bez Docker-a
+### 2. Without Docker
 
-Zahtjevi:
-- .NET 8.0 SDK
-- PostgreSQL (lokalno ili u Docker-u)
+Requirements: .NET 8.0 SDK, PostgreSQL
 
 ```bash
-# Kopiraj env fajl
 cp .env.example .env
 
-# Pokreni PostgreSQL (ili koristi docker za samo bazu)
+# Spin up just the database
 docker run -d --name naposo-db -p 5432:5432 \
   -e POSTGRES_DB=naposo \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=postgres \
   postgres:16-alpine
 
-# Instaliraj dependencies
 dotnet restore NaPoso/NaPoso.sln
-
-# Pokreni migracije i aplikaciju
 dotnet run --project NaPoso/NaPoso
 ```
 
-### 3. User Secrets (lokalni razvoj)
+### 3. User Secrets (local dev)
 
 ```bash
 dotnet user-secrets set "Stripe:SecretKey" "sk_test_..." --project NaPoso/NaPoso
@@ -57,32 +50,18 @@ dotnet user-secrets set "Stripe:PublishableKey" "pk_test_..." --project NaPoso/N
 dotnet user-secrets set "Email:Brevo:ApiKey" "your-key" --project NaPoso/NaPoso
 ```
 
-### 4. Reset baze (obriši sve i kreiraj iznova)
+### 4. Database Reset
 
-Aplikacija koristi `EnsureCreated` + seed pri startu. Da bi se sve ponovo kreiralo, baza mora biti potpuno obrisana.
+The app uses `EnsureCreated` + seed on startup. To start fresh, nuke the database.
 
-**Docker Compose (preporučeno):**
-
-```powershell
-# Brise volume sa podacima i pokrece sve iznova
-.\scripts\reset-database.ps1 -UseDocker
-```
-
-Ili ručno:
+**Docker Compose:**
 
 ```bash
 docker compose down -v
 docker compose up --build
 ```
 
-**Lokalni PostgreSQL (bez Docker-a):**
-
-```powershell
-.\scripts\reset-database.ps1
-dotnet run --project NaPoso/NaPoso
-```
-
-Ili ručno preko psql:
+**Local PostgreSQL:**
 
 ```bash
 psql -U postgres -c "DROP DATABASE IF EXISTS naposo WITH (FORCE);"
@@ -90,144 +69,125 @@ psql -U postgres -c "CREATE DATABASE naposo;"
 dotnet run --project NaPoso/NaPoso
 ```
 
-Nakon reseta, seed kreira:
+After reset, seed creates:
 - Admin: `admin@mail.com` / `Admin123!`
-- Test klijent: `klijent@mail.com` / `Test123!`
-- Test radnik: `radnik@mail.com` / `Test123!`
-- + 10 klijenata, 15 radnika, 35 oglasa (dummy podaci)
+- Test client: `klijent@mail.com` / `Test123!`
+- Test worker: `radnik@mail.com` / `Test123!`
+- 10 clients, 15 workers, 35 job listings (dummy data)
 
-## Konfiguracija
+## Configuration
 
-| Varijable | Opis | Default |
-|-----------|------|---------|
+| Variable | Description | Default |
+|----------|-------------|---------|
 | `ConnectionStrings:DefaultConnection` | PostgreSQL connection string | `Host=localhost;...` |
-| `Stripe:SecretKey` | Stripe tajni ključ | (prazno) |
-| `Stripe:PublishableKey` | Stripe javni ključ | (prazno) |
-| `Stripe:WebhookSecret` | Stripe webhook tajna | (prazno) |
-| `Email:Provider` | Email provider (`brevo` ili `console`) | `console` |
-| `Email:Brevo:ApiKey` | Brevo API ključ | (prazno) |
-| `Email:Brevo:BaseUrl` | Brevo API URL | (prazno) |
-| `Email:From` | Adresa pošiljaoca | `noreply@naposo.example.com` |
-| `Admin:Email` | Admin email za seed | `admin@mail.com` |
-| `Admin:Password` | Admin lozinka za seed | `Admin123!` |
+| `Stripe:SecretKey` | Stripe secret key | (empty) |
+| `Stripe:PublishableKey` | Stripe publishable key | (empty) |
+| `Stripe:WebhookSecret` | Stripe webhook secret | (empty) |
+| `Email:Provider` | `brevo` or `console` | `console` |
+| `Email:Brevo:ApiKey` | Brevo API key | (empty) |
+| `Email:Brevo:BaseUrl` | Brevo API URL | (empty) |
+| `Email:From` | Sender address | `noreply@naposo.example.com` |
+| `Admin:Email` | Admin email for seed | `admin@mail.com` |
+| `Admin:Password` | Admin password for seed | `Admin123!` |
 
-## Arhitektura
+## Architecture
 
-### Email Provider Pattern
+### Email
 
-Email slanje koristi `IEmailSender` interface sa dva provider-a:
+Uses `IEmailSender` with two providers:
+- **BrevoEmailSender** — calls Brevo API over HTTP (production)
+- **ConsoleEmailSender** — prints to stdout (dev/test)
 
-- **BrevoEmailSender** — HTTP klijent za Brevo API (produkcijski)
-- **ConsoleEmailSender** — loguje u konzolu (razvoj/test)
+Set via `Email:Provider`.
 
-Konfiguracija `Email:Provider` bira aktivni provider.
+### Payments
 
-### Stripe Payment Status
+Stripe webhook at `/webhook/stripe` tracks payment status in `PaymentTransaction`:
+- `Pending` → `Paid` / `Failed` / `Refunded`
 
-Webhook endpoint na `/webhook/stripe` beleži status plaćanja u `PaymentTransaction` tabelu:
+Each webhook event is idempotent (StripeEventId unique index).
 
-- `Pending` — obrada u toku
-- `Paid` — uspešno plaćeno
-- `Failed` — neuspešno
-- `Refunded` — refundirano
+### Admin Stats
 
-Svaki webhook event je idempotentan (StripeEventId indeks).
-
-### Statistika
-
-Admin panel prikazuje agregirane podatke:
-- Ukupan broj korisnika (klijenti + radnici)
-- Broj poslova (aktivni, završeni, plaćeni)
-- Prosječna ocjena recenzija
+Dashboard shows: total users, job counts (active/completed/paid), average review rating.
 
 ## CI/CD
 
-GitHub Actions workflow-ovi:
+- **`.github/workflows/ci.yml`** — restore + build + test (PostgreSQL service container)
+- **`.github/workflows/docker.yml`** — Docker build check
 
-- **`.github/workflows/ci.yml`** — restore + build + test (sa PostgreSQL service container)
-- **`.github/workflows/docker.yml`** — Docker build verifikacija
+## Production Checklist
 
-## TODO za produkciju
-
-- [x] Struktuirani logging (ILogger + Correlation ID)
-- [x] Health checks (/health/live, /health/ready)
+Done:
+- [x] Structured logging (ILogger + Correlation ID)
+- [x] Health checks (`/health/live`, `/health/ready`)
 - [x] Rate limiting (100 req/min)
 - [x] Path traversal defense
 - [x] Anti-forgery enforcement
 - [x] API versioning (v1.0)
 - [x] OpenTelemetry tracing
 - [x] Prometheus metrics
-- [x] CI quality gates (coverage + vulnerability scan)
+- [x] CI quality gates (coverage + vuln scan)
 - [x] k6 load test baseline
 - [x] Release gates & rollback procedures
-- [ ] Zamijeniti placeholder Brevo API ključeve sa producijskim
-- [ ] Konfigurisati Stripe webhook secret za produkciju
-- [ ] Deploy na hosting platformu
-- [ ] Postaviti HTTPS redirect za produkciju
-- [ ] Podesiti CORS za produkciju
 
-## Production Readiness
+Still needed:
+- [ ] Production Brevo API keys
+- [ ] Production Stripe webhook secret
+- [ ] Deploy to hosting
+- [ ] HTTPS redirect
+- [ ] CORS config
 
-Aplikacija je prošla kroz 8 faza quality hardeninga:
+## Test Coverage
 
-| Faza | Focus | Testovi |
-|------|-------|---------|
-| Phase 1-2 | UI/UX, dark mode, CSS, password toggle | 60 → 117 |
-| Phase 3 | Mutation testing, security, performance | 117 → 156 |
-| Phase 4 | Auth lockdown, path traversal, anti-forgery | 156 → 156 |
-| Phase 5 | Health checks, rate limiting, observability | 156 → 202 |
-| Phase 6 | Continuous improvement loop (3 iterations) | 202 → 211 |
-| Phase 7 | Serilog, OTel, Prometheus, API versioning, benchmarks | 211 |
-| Phase 8 | Load testing, release gates, operational docs | 211 |
+211 tests, all passing. Built up across 8 hardening phases covering UI, security, auth, observability, and load testing.
 
-**Ukupno: 211 testova, 100% pass rate.**
+### Operational Controls
 
-### Operativne kontrole
-- ✅ Health checks (/health/live, /health/ready)
-- ✅ Rate limiting (100 req/min)
-- ✅ Correlation ID middleware
-- ✅ Structured logging (ILogger)
-- ✅ OpenTelemetry tracing (OTLP)
-- ✅ Prometheus metrics (/metrics)
-- ✅ API versioning (v1.0)
-- ✅ CI quality gates + vulnerability scan
-- ✅ k6 load test baseline
+- Health checks (`/health/live`, `/health/ready`)
+- Rate limiting (100 req/min)
+- Correlation ID middleware
+- Structured logging (ILogger)
+- OpenTelemetry tracing (OTLP)
+- Prometheus metrics (`/metrics`)
+- API versioning (v1.0)
 
-### Dokumentacija
+### Docs
+
 - [Go-Live Verdict](docs/go-live-verdict.md)
 - [Release Checklist](docs/go-live-checklist-execution.md)
 - [Staging Smoke Plan](docs/staging-smoke-plan.md)
 - [Rollback Quick Guide](docs/rollback-quick-guide.md)
 - [QA Reports](docs/qa-phase*.md)
 
-## Struktura projekta
+## Project Structure
 
 ```
 Grupa5-Tim4/
-├── NaPoso/                    # C# kod i web projekat
+├── NaPoso/                    # Main .NET project
 │   ├── NaPoso.sln
 │   └── NaPoso/
-│       ├── Controllers/       # MVC kontroleri
-│       ├── Data/              # DbContext + migracije
-│       ├── Enums/             # Enum definicije
-│       ├── Models/            # Domain modeli
-│       ├── Services/          # Business logika
+│       ├── Controllers/       # MVC controllers
+│       ├── Data/              # DbContext + migrations
+│       ├── Enums/
+│       ├── Models/            # Domain models
+│       ├── Services/          # Business logic
 │       ├── Views/             # Razor views
 │       ├── Areas/Identity/    # Identity pages (auth, payment)
-│       └── wwwroot/           # Statički fajlovi (CSS, JS, slike)
-├── docs/                      # Dokumentacija i test izvještaji
-├── scripts/                   # Skripte za bazu i deployment
-├── grafana/                   # Grafana dashboard konfiguracije
-├── loadtest/                  # k6 load testing skripte
+│       └── wwwroot/           # Static files (CSS, JS, images)
+├── docs/                      # Documentation & test reports
+├── scripts/                   # DB & deployment scripts
+├── grafana/                   # Grafana dashboard configs
+├── loadtest/                  # k6 load testing scripts
 ├── .github/workflows/         # CI/CD (GitHub Actions)
 ├── Dockerfile                 # Multi-stage Docker build
-├── docker-compose.yml         # Glavna Docker konfiguracija (App + DB)
-├── docker-compose.otel.yml    # Telemetry servisi (Prometheus, Grafana, Jaeger)
-├── prometheus.yml             # Prometheus konfiguracija
-├── .env.example               # Template za lokalne environment varijable
-└── .gitignore                 # Git ignore pravila
+├── docker-compose.yml         # App + DB
+├── docker-compose.otel.yml    # Telemetry (Prometheus, Grafana, Jaeger)
+├── prometheus.yml
+├── .env.example
+└── .gitignore
 ```
 
-## Licenca
+## License
 
-Projekat za potrebe predmeta OOAD (2024/2025), Grupa 5, Tim 4.
+University project for OOAD course (2024/2025), Group 5, Team 4.

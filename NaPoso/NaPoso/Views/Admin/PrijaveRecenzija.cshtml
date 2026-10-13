@@ -57,7 +57,7 @@ else
 
                     @if (!item.JeRijeseno)
                     {
-                        <div class="d-flex gap-2 justify-content-end mt-3">
+                        <div class="d-flex gap-2 justify-content-end mt-3 flex-wrap">
                             <form asp-action="OdbaciPrijavu" method="post">
                                 <input type="hidden" name="prijavaId" value="@item.Id" />
                                 <button type="submit" class="btn btn-sm btn-secondary"><i class="bi bi-x-circle me-1"></i>Odbaci prijavu</button>

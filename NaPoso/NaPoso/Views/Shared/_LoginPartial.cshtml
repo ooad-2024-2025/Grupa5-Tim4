@@ -2,20 +2,20 @@
 @inject SignInManager<Korisnik> SignInManager
 @inject UserManager<Korisnik> UserManager
 
-<div class="d-flex align-items-center gap-2">
+<div class="d-flex align-items-center gap-2 nav-auth-buttons">
     @if (SignInManager.IsSignedIn(User))
     {
         <!-- Okidač za korisnički meni (u Navbaru) -->
-        <button class="btn btn-outline-secondary border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#userOffcanvas" aria-controls="userOffcanvas">
+        <button class="btn btn-outline-secondary border-0 d-flex align-items-center justify-content-center p-2 rounded-circle" type="button" data-bs-toggle="offcanvas" data-bs-target="#userOffcanvas" aria-controls="userOffcanvas" aria-label="Korisnički meni" style="min-width: 44px; min-height: 44px;">
             <i class="bi bi-list fs-3"></i>
         </button>
     }
     else
     {
-        <a class="btn btn-outline-secondary px-4 py-2 fw-semibold border-0 rounded-pill" asp-area="Identity" asp-page="/Account/Register">
+        <a class="btn btn-outline-secondary px-3 px-sm-4 py-2 fw-semibold border-0 rounded-pill btn-nav-auth" asp-area="Identity" asp-page="/Account/Register">
             <i class="bi bi-person-plus me-1"></i>Registracija
         </a>
-        <a class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm" asp-area="Identity" asp-page="/Account/Login">
+        <a class="btn btn-primary px-3 px-sm-4 py-2 rounded-pill fw-semibold shadow-sm btn-nav-auth" asp-area="Identity" asp-page="/Account/Login">
             <i class="bi bi-box-arrow-in-right me-1"></i>Prijava
         </a>
     }

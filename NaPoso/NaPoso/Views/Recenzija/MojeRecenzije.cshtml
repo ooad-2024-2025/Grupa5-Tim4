@@ -24,14 +24,14 @@ else
     <div class="row g-4">
         @foreach (var recenzija in Model)
         {
-            <div class="col-md-6">
+            <div class="col-12 col-md-6">
                 <div class="content-card">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden">
                             <div class="avatar-circle">
                                 @(string.IsNullOrEmpty(recenzija.KlijentEmail) ? "?" : recenzija.KlijentEmail.Substring(0, 1).ToUpper())
                             </div>
-                            <strong>@recenzija.KlijentEmail</strong>
+                            <strong class="text-truncate" style="max-width: 180px;">@recenzija.KlijentEmail</strong>
                         </div>
                         <div class="text-accent">
                             @for (int i = 1; i <= 5; i++)
